@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
-import 'package:teaming/login/join.dart';
+import 'package:teaming/login/login.dart';
 
-class LoginPage extends StatelessWidget {
-  const LoginPage({super.key});
+class JoinPage extends StatelessWidget {
+  const JoinPage({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -40,13 +40,13 @@ class LoginPage extends StatelessWidget {
               Text.rich(
                 TextSpan(children: [
                   TextSpan(
-                      text: "로그인을 통해 더 쉽게\n",
+                      text: "회원가입으로 TEAMING만의\n",
                       style: TextStyle(
                         fontFamily: 'Leferi',
                         fontWeight: FontWeight.w400,
                       )),
                   TextSpan(
-                      text: "팀 프로젝트를 관리",
+                      text: "서비스를 경험",
                       style: TextStyle(
                         fontFamily: 'Leferi',
                         fontWeight: FontWeight.bold,
@@ -119,11 +119,38 @@ class LoginPage extends StatelessWidget {
                         color: Color.fromRGBO(156, 156, 156, 1)),
                   ),
                 ),
+              ),SizedBox(height: 15),
+              Container(
+                decoration: BoxDecoration(
+                  borderRadius: BorderRadius.circular(30),
+                  color: Colors.white,
+                  boxShadow: [
+                    BoxShadow(
+                      color: Colors.grey.withOpacity(0.5),
+                      spreadRadius: 2,
+                      blurRadius: 5,
+                      offset: Offset(0, 3),
+                    ),
+                  ],
+                ),
+                child: TextField(
+                  obscureText: true,
+                  style: TextStyle(
+                      fontFamily: 'Inter', fontSize: 15, color: Colors.black),
+                  decoration: InputDecoration(
+                    hintText: '비밀번호 확인',
+                    border: InputBorder.none,
+                    contentPadding: EdgeInsets.symmetric(horizontal: 20),
+                    hintStyle: TextStyle(
+                        fontWeight: FontWeight.w400,
+                        color: Color.fromRGBO(156, 156, 156, 1)),
+                  ),
+                ),
               ),
               SizedBox(height: 15),
               ElevatedButton(
                 onPressed: () {
-                  // 로그인 처리 로직 추가
+                  // 회원가입 처리 로직 추가
                 },
                 style: ElevatedButton.styleFrom(
                   backgroundColor: Color.fromRGBO(84, 84, 84, 1),
@@ -133,7 +160,7 @@ class LoginPage extends StatelessWidget {
                   ),
                 ),
                 child: Text(
-                  '로그인',
+                  '회원가입',
                   style: TextStyle(
                     fontSize: 18,
                     fontFamily: 'Inter',
@@ -142,30 +169,7 @@ class LoginPage extends StatelessWidget {
                   ),
                 ),
               ),
-              SizedBox(height: 10),
-              Row(
-                children: [
-                  Checkbox(
-                    value: true,
-                    activeColor: Color.fromRGBO(84, 84, 84, 1),
-                    checkColor: Colors.white,
-                    onChanged: (value) {
-                      // 변수 추가해서 로그인 시 서버 처리 구현
-                    },
-                    shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(10)),
-                  ),
-                  Text(
-                    '로그인 상태 유지하기',
-                    style: TextStyle(
-                        fontFamily: 'Inter',
-                        fontWeight: FontWeight.normal,
-                        fontSize: 14,
-                        color: Color.fromRGBO(72, 72, 72, 1)),
-                  ),
-                ],
-              ),
-              SizedBox(height: 80),
+              SizedBox(height: 100),
               Row(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
@@ -180,7 +184,7 @@ class LoginPage extends StatelessWidget {
                     width: 5,
                   ),
                   Text(
-                    '간편 로그인',
+                    '간편 회원가입',
                     style: TextStyle(
                         fontFamily: 'Inter',
                         fontWeight: FontWeight.normal,
@@ -205,21 +209,21 @@ class LoginPage extends StatelessWidget {
                 children: [
                   IconButton(
                     onPressed: () {
-                      // 네이버 로그인 로직 추가
+                      // 네이버 회원가입 로직 추가
                     },
                     icon: Image.asset('assets/icon/naver_icon.png',
                         width: 33, height: 33),
                   ),
                   IconButton(
                     onPressed: () {
-                      // 카카오톡 로그인 로직 추가
+                      // 카카오톡 회원가입 로직 추가
                     },
                     icon: Image.asset('assets/icon/kakao_icon.png',
                         width: 33, height: 33),
                   ),
                   IconButton(
                     onPressed: () {
-                      // 구글 로그인 로직 추가
+                      // 구글 회원가입 로직 추가
                     },
                     icon: Image.asset('assets/icon/google_icon.png',
                         width: 33, height: 33),
@@ -229,13 +233,13 @@ class LoginPage extends StatelessWidget {
               Center(
                 child: TextButton(
                   onPressed: () {
-                    // 회원가입 페이지로 이동
+                    // 로그인 페이지로 이동
                     Navigator.pushAndRemoveUntil(
                         context,
                         PageRouteBuilder(
                           pageBuilder:
                               (context, animation, secondaryAnimation) =>
-                                  JoinPage(),
+                                  LoginPage(),
                           transitionsBuilder:
                               (context, animation, secondaryAnimation, child) {
                             return FadeTransition(
@@ -250,13 +254,13 @@ class LoginPage extends StatelessWidget {
                   child: Text.rich(
                 TextSpan(children: [
                   TextSpan(
-                      text: "회원이 아니신가요? ",
+                      text: "이미 회원이신가요? ",
                       style: TextStyle(
                         fontFamily: 'Inter',
                         fontWeight: FontWeight.w400,
                       )),
                   TextSpan(
-                      text: "회원가입",
+                      text: "로그인",
                       style: TextStyle(
                         fontFamily: 'Inter',
                         fontWeight: FontWeight.bold,
