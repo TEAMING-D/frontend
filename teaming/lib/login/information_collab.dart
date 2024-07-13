@@ -1,14 +1,20 @@
 import 'package:flutter/material.dart';
+import 'package:teaming/login/information_school.dart';
+import 'package:teaming/login/information_widget.dart';
 
-class CollaborationPage extends StatefulWidget {
-  const CollaborationPage({super.key});
+class CollabInfoPage extends StatefulWidget {
+  const CollabInfoPage({super.key});
 
   @override
-  State<CollaborationPage> createState() => _CollaborationPageState();
+  State<CollabInfoPage> createState() => _CollabInfoPageState();
 }
 
-class _CollaborationPageState extends State<CollaborationPage> {
+class _CollabInfoPageState extends State<CollabInfoPage> {
   List<Widget> additionalFields = [];
+
+  final TextEditingController notionController = TextEditingController();
+  final TextEditingController githubController = TextEditingController();
+  final TextEditingController eMailController = TextEditingController();
 
   @override
   Widget build(BuildContext context) {
@@ -94,89 +100,14 @@ class _CollaborationPageState extends State<CollaborationPage> {
                           ),
                         ),
                         SizedBox(height: 50),
-                        Text(
-                          'Notion',
-                          style: TextStyle(
-                            fontFamily: 'Inter',
-                            fontWeight: FontWeight.w500,
-                            fontSize: 16,
-                            color: Color(0xFF484848),
-                          ),
-                        ),
-                        SizedBox(
-                          height: 30,
-                          child: TextField(
-                            style: TextStyle(fontSize: 15, color: Colors.black),
-                            decoration: InputDecoration(
-                              hintText: '계정 이메일을 입력해주세요',
-                              border: InputBorder.none,
-                              contentPadding: EdgeInsets.symmetric(vertical: 5),
-                              hintStyle: TextStyle(
-                                  fontFamily: 'Inter',
-                                  fontWeight: FontWeight.w400,
-                                  fontSize: 15,
-                                  color: Color(0xFFA9A9A9)),
-                            ),
-                          ),
-                        ),
-                        SizedBox(height: 3),
-                        Divider(color: Color(0xFF9C9C9C), thickness: 1),
+                        buildTextField(
+                            'Notion', '계정 이메일을 입력해주세요', notionController),
                         SizedBox(height: 20),
-                        Text(
-                          'Github',
-                          style: TextStyle(
-                            fontFamily: 'Inter',
-                            fontWeight: FontWeight.w500,
-                            fontSize: 16,
-                            color: Color(0xFF484848),
-                          ),
-                        ),
-                        SizedBox(
-                          height: 30,
-                          child: TextField(
-                            style: TextStyle(fontSize: 15, color: Colors.black),
-                            decoration: InputDecoration(
-                              hintText: '계정 이메일을 입력해주세요',
-                              border: InputBorder.none,
-                              contentPadding: EdgeInsets.symmetric(vertical: 5),
-                              hintStyle: TextStyle(
-                                  fontFamily: 'Inter',
-                                  fontWeight: FontWeight.w400,
-                                  fontSize: 15,
-                                  color: Color(0xFFA9A9A9)),
-                            ),
-                          ),
-                        ),
-                        SizedBox(height: 3),
-                        Divider(color: Color(0xFF9C9C9C), thickness: 1),
+                        buildTextField(
+                            'Github', '계정 이메일을 입력해주세요', githubController),
                         SizedBox(height: 20),
-                        Text(
-                          'E-mail',
-                          style: TextStyle(
-                            fontFamily: 'Inter',
-                            fontWeight: FontWeight.w500,
-                            fontSize: 16,
-                            color: Color(0xFF484848),
-                          ),
-                        ),
-                        SizedBox(
-                          height: 30,
-                          child: TextField(
-                            style: TextStyle(fontSize: 15, color: Colors.black),
-                            decoration: InputDecoration(
-                              hintText: '추가로 사용할 이메일을 입력해주세요',
-                              border: InputBorder.none,
-                              contentPadding: EdgeInsets.symmetric(vertical: 5),
-                              hintStyle: TextStyle(
-                                  fontFamily: 'Inter',
-                                  fontWeight: FontWeight.w400,
-                                  fontSize: 15,
-                                  color: Color(0xFFA9A9A9)),
-                            ),
-                          ),
-                        ),
-                        SizedBox(height: 3),
-                        Divider(color: Color(0xFF9C9C9C), thickness: 1),
+                        buildTextField(
+                            'E-mail', '추가로 사용할 이메일을 입력해주세요', eMailController),
                         SizedBox(height: 40),
                         Row(
                           children: [
@@ -221,12 +152,12 @@ class _CollaborationPageState extends State<CollaborationPage> {
                                                 fontFamily: 'Inter',
                                                 fontWeight: FontWeight.w400,
                                                 fontSize: 15,
-                                                color: Color(0xFFA9A9A9)),
+                                                color: Color(0xFF828282)),
                                           ),
                                         ),
                                       ),
                                       Divider(
-                                          color: Color(0xFF9C9C9C),
+                                          color: Color(0xFF828282),
                                           thickness: 1),
                                     ],
                                   ),
@@ -251,12 +182,12 @@ class _CollaborationPageState extends State<CollaborationPage> {
                                                 fontFamily: 'Inter',
                                                 fontWeight: FontWeight.w400,
                                                 fontSize: 15,
-                                                color: Color(0xFFA9A9A9)),
+                                                color: Color(0xFF828282)),
                                           ),
                                         ),
                                       ),
                                       Divider(
-                                          color: Color(0xFF9C9C9C),
+                                          color: Color(0xFF828282),
                                           thickness: 1),
                                     ],
                                   ),
@@ -268,10 +199,25 @@ class _CollaborationPageState extends State<CollaborationPage> {
                             ),
                           ],
                         ),
-                        SizedBox(height: 50),
+                        SizedBox(height: 58),
                         ElevatedButton(
                           onPressed: () {
                             // 다음 정보 입력란 페이지로 전환
+                            Navigator.push(
+                              context,
+                              PageRouteBuilder(
+                                pageBuilder:
+                                    (context, animation, secondaryAnimation) =>
+                                        SchoolInfoPage(),
+                                transitionsBuilder: (context, animation,
+                                    secondaryAnimation, child) {
+                                  return FadeTransition(
+                                    opacity: animation,
+                                    child: child,
+                                  );
+                                },
+                              ),
+                            );
                           },
                           style: ElevatedButton.styleFrom(
                             backgroundColor: Color.fromRGBO(84, 84, 84, 1),
@@ -291,8 +237,8 @@ class _CollaborationPageState extends State<CollaborationPage> {
                           ),
                         ),
                         SizedBox(
-                          height: 50,
-                        )
+                          height: 30,
+                        ),
                       ],
                     ),
                   ),
@@ -307,8 +253,6 @@ class _CollaborationPageState extends State<CollaborationPage> {
 
   void addFields() {
     int addFieldsLength = additionalFields.length;
-    int colorMultiple = 169 - (addFieldsLength + 1) * 20;
-    Color colorForNewFields = Color.fromARGB(255, colorMultiple, colorMultiple, colorMultiple);
 
     if (addFieldsLength < 4) {
       setState(() {
@@ -334,11 +278,11 @@ class _CollaborationPageState extends State<CollaborationPage> {
                                 fontFamily: 'Inter',
                                 fontWeight: FontWeight.w400,
                                 fontSize: 15,
-                                color: colorForNewFields),
+                                color: Color(0xFF828282)),
                           ),
                         ),
                       ),
-                      Divider(color: colorForNewFields, thickness: 1),
+                      Divider(color: Color(0xFF828282), thickness: 1),
                     ],
                   ),
                 ),
@@ -358,11 +302,11 @@ class _CollaborationPageState extends State<CollaborationPage> {
                                 fontFamily: 'Inter',
                                 fontWeight: FontWeight.w400,
                                 fontSize: 15,
-                                color: colorForNewFields),
+                                color: Color(0xFF828282)),
                           ),
                         ),
                       ),
-                      Divider(color: colorForNewFields, thickness: 1),
+                      Divider(color: Color(0xFF828282), thickness: 1),
                     ],
                   ),
                 ),

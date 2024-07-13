@@ -83,6 +83,9 @@ flutter:
         - asset: assets/font/Inter-Medium.ttf
         - asset: assets/font/Inter-Regular.ttf
         - asset: assets/font/Inter-SemiBold.ttf
+        - asset: assets/font/Inter-ExtraBold.ttf
+        - asset: assets/font/Inter-Black.ttf
+
     - family: Leferi
       fonts:
         - asset: assets/font/LeferiBaseBold.ttf

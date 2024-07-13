@@ -29,9 +29,6 @@ class JoinPage extends StatelessWidget {
               mainAxisAlignment: MainAxisAlignment.center,
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                SizedBox(
-                  height: 70,
-                ),
                 Center(
                   child: Image.asset(
                     'assets/login_logo.png',
@@ -159,7 +156,7 @@ class JoinPage extends StatelessWidget {
                       context,
                       PageRouteBuilder(
                         pageBuilder: (context, animation, secondaryAnimation) =>
-                            CollaborationPage(),
+                            CollabInfoPage(),
                         transitionsBuilder:
                             (context, animation, secondaryAnimation, child) {
                           return FadeTransition(
