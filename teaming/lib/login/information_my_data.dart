@@ -131,7 +131,7 @@ class _MyInfoPageState extends State<MyInfoPage> {
                     constraints: BoxConstraints(
                       minHeight: constraints.maxHeight,
                     ),
-                    child: Container(
+                    child: Container( 
                       padding: EdgeInsets.symmetric(horizontal: 50),
                       width: MediaQuery.of(context).size.width,
                       decoration: BoxDecoration(
