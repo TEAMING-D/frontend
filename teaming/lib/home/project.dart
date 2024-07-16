@@ -1,38 +1,74 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:teaming/home/notice.dart';
 
-class TeamProjectPage extends StatelessWidget {
+class TeamProjectPage extends StatefulWidget {
   final List<Map<String, dynamic>> projects;
   final bool hasNotification;
 
   const TeamProjectPage(
-      {super.key, required this.projects, this.hasNotification = true});
+      {super.key, required this.projects, required this.hasNotification});
+
+  @override
+  State<TeamProjectPage> createState() => _TeamProjectPageState();
+}
+
+class _TeamProjectPageState extends State<TeamProjectPage> {
+  List<Map<String, String>> notifications = [
+    /*{
+      "title": "프로젝트명C",
+      "message": "프로젝트명C에서 팀원 삭제 요청이 들어왔습니다.\n해당 프로젝트에서 나가시겠습니까?"
+    },
+    {
+      "title": "프로젝트명B",
+      "message": "프로젝트명B에 팀원으로 초대되었습니다.\n해당 프로젝트에 참여하시겠습니까?"
+    },*/
+  ];
+
+  void _handleAccept(int index) {
+    setState(() {
+      notifications.removeAt(index);
+    });
+    Navigator.of(context).pop(); // 드로어를 닫습니다.
+  }
+
+  void _handleReject(int index) {
+    setState(() {
+      notifications.removeAt(index);
+    });
+    Navigator.of(context).pop(); // 드로어를 닫습니다.
+  }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        leading: Padding(
-          padding: const EdgeInsets.only(left: 10),
-          child: IconButton(
-            icon: hasNotification
-                ? Image.asset(
-                    'assets/icon/alert_true_icon.png',
-                    width: 28,
-                    height: 28,
-                  )
-                : Image.asset(
-                    'assets/icon/alert_false_icon.png',
-                    width: 28,
-                    height: 28,
-                  ),
-            onPressed: () {
-              // 알림 페이지로 popup 로직 추가
-            },
-          ),
+        leading: Builder(
+          builder: (context) {
+            return Padding(
+              padding: const EdgeInsets.only(left: 10),
+              child: IconButton(
+                icon: widget.hasNotification
+                    ? Image.asset(
+                        'assets/icon/alert_true_icon.png',
+                        width: 28,
+                        height: 28,
+                      )
+                    : Image.asset(
+                        'assets/icon/alert_false_icon.png',
+                        width: 28,
+                        height: 28,
+                      ),
+                onPressed: () {
+                  // 드로어 열기
+                  Scaffold.of(context).openDrawer();
+                },
+              ),
+            );
+          },
         ),
         actions: [
-          projects.isNotEmpty
+          widget.projects.isNotEmpty
               ? Padding(
                   padding: EdgeInsets.symmetric(horizontal: 4.0), // 버튼 간격 조정
                   child: SizedBox(
@@ -92,9 +128,14 @@ class TeamProjectPage extends StatelessWidget {
             width: 15,
           ),
         ],
-        backgroundColor: Colors.transparent,
+        backgroundColor: Color.fromRGBO(255, 255, 255, 0.8),
       ),
       extendBodyBehindAppBar: true,
+      drawer: NotificationDrawer(
+        notifications: notifications,
+        onAccept: _handleAccept,
+        onReject: _handleReject,
+      ),
       body: LayoutBuilder(
         builder: (BuildContext context, BoxConstraints constraints) {
           return SingleChildScrollView(
@@ -115,7 +156,7 @@ class TeamProjectPage extends StatelessWidget {
                     ],
                   ),
                 ),
-                child: projects.isEmpty
+                child: widget.projects.isEmpty
                     ? Center(child: _buildEmptyView())
                     : Column(
                         crossAxisAlignment: CrossAxisAlignment.end,
@@ -176,7 +217,7 @@ class TeamProjectPage extends StatelessWidget {
   // 프로젝트가 있을 때의 화면
   Widget _buildProjectListView(BuildContext context) {
     return Column(
-      children: projects.map((project) {
+      children: widget.projects.map((project) {
         return GestureDetector(
           onTap: () {
             // 상세 프로젝트 페이지로 이동하는 로직 추가
@@ -297,3 +338,5 @@ class TeamProjectPage extends StatelessWidget {
     );
   }
 }
+
+
