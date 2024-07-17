@@ -1,5 +1,6 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:teaming/home/add_project.dart';
 import 'package:teaming/home/notice.dart';
 
 class TeamProjectPage extends StatefulWidget {
@@ -37,6 +38,12 @@ class _TeamProjectPageState extends State<TeamProjectPage> {
       notifications.removeAt(index);
     });
     Navigator.of(context).pop(); // 드로어를 닫습니다.
+  }
+
+  void _addProject(Map<String, dynamic> newProject) {
+    setState(() {
+      widget.projects.insert(0, newProject);
+    });
   }
 
   @override
@@ -101,7 +108,14 @@ class _TeamProjectPageState extends State<TeamProjectPage> {
                   height: 33,
                 ),
                 onPressed: () {
-                  // 플러스 버튼 로직 추가
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) => AddProjectPage(
+                        onAddProject: _addProject,
+                      ),
+                    ),
+                  );
                 },
               ),
             ),
@@ -338,5 +352,3 @@ class _TeamProjectPageState extends State<TeamProjectPage> {
     );
   }
 }
-
-

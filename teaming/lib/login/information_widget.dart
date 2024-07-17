@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 
-Widget buildTextField(String label, String hint, TextEditingController? controllerName) {
+Widget buildTextField(
+    String label, String hint, TextEditingController? controllerName) {
   return Column(
     crossAxisAlignment: CrossAxisAlignment.start,
     children: [
@@ -38,7 +40,11 @@ Widget buildTextField(String label, String hint, TextEditingController? controll
 }
 
 Widget buildDivideTextField(
-    String label, String categoryHint, String detailHint, TextEditingController? controllerName1, TextEditingController? controllerName2) {
+    String label,
+    String categoryHint,
+    String detailHint,
+    TextEditingController? controllerName1,
+    TextEditingController? controllerName2) {
   return Column(
     crossAxisAlignment: CrossAxisAlignment.start,
     children: [
@@ -110,7 +116,12 @@ Widget buildDivideTextField(
   );
 }
 
-Widget buildShortTextField(String hintText, TextEditingController? controllerName) {
+Widget buildShortTextField(
+  String hintText,
+  TextEditingController? controllerName, {
+  TextInputType keyboardType = TextInputType.text,
+  List<TextInputFormatter>? inputFormatters,
+}) {
   return Expanded(
     child: Column(
       children: [
@@ -120,6 +131,8 @@ Widget buildShortTextField(String hintText, TextEditingController? controllerNam
             controller: controllerName,
             style: TextStyle(fontSize: 15, color: Colors.black),
             textAlign: TextAlign.center,
+            keyboardType: keyboardType,
+            inputFormatters: inputFormatters,
             decoration: InputDecoration(
               hintText: hintText,
               border: InputBorder.none,
@@ -137,4 +150,3 @@ Widget buildShortTextField(String hintText, TextEditingController? controllerNam
     ),
   );
 }
-
