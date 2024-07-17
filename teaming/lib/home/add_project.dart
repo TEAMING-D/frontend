@@ -309,7 +309,7 @@ class _AddProjectPageState extends State<AddProjectPage> {
             children: [
               Positioned.fill(
                 child: Container(
-                  color: Colors.transparent, // 투명한 배경을 추가하여 터치 이벤트를 감지
+                  color: Colors.transparent, //터치 이벤트 감지용
                 ),
               ),
               Positioned(
@@ -347,10 +347,10 @@ class _AddProjectPageState extends State<AddProjectPage> {
 
   void handleSearch(BuildContext context) {
     if (teamMembersController.text.isNotEmpty) {
-      FocusScope.of(context).unfocus(); // 키보드를 숨김
+      FocusScope.of(context).unfocus();
       WidgetsBinding.instance.addPostFrameCallback((_) {
-        removeDropdownOverlay(); // 기존 드롭다운 오버레이를 제거
-        showDropdownOverlay(); // 새로운 프레임이 그려진 후 드롭다운 오버레이를 표시
+        removeDropdownOverlay();
+        showDropdownOverlay();
       });
     }
   }

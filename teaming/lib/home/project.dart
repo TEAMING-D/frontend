@@ -1,6 +1,7 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:teaming/home/add_project.dart';
+import 'package:teaming/home/delete_project.dart';
 import 'package:teaming/home/notice.dart';
 
 class TeamProjectPage extends StatefulWidget {
@@ -90,6 +91,20 @@ class _TeamProjectPageState extends State<TeamProjectPage> {
                       ),
                       onPressed: () {
                         // 팀 프로젝트 삭제 페이지로 이동하는 로직 추가
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) => DeleteProjectPage(
+                              projects: widget.projects,
+                              onDeleteProjects: (selectedProjects) {
+                                setState(() {
+                                  widget.projects.removeWhere((project) =>
+                                      selectedProjects.contains(project));
+                                });
+                              },
+                            ),
+                          ),
+                        );
                       },
                     ),
                   ),
