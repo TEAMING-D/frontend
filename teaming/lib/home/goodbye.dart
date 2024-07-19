@@ -1,12 +1,50 @@
 import 'package:flutter/material.dart';
+import 'package:teaming/login/information_widget.dart';
 
-class WelcomePage extends StatelessWidget {
-  const WelcomePage({super.key});
+class GoodbyePage extends StatefulWidget {
+  const GoodbyePage({super.key});
+
+  @override
+  State<GoodbyePage> createState() => _GoodbyePageState();
+}
+
+class _GoodbyePageState extends State<GoodbyePage> {
+  final TextEditingController passwordController = TextEditingController();
+
+  @override
+  void dispose() {
+    // 컨트롤러 해제
+    passwordController.dispose();
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
     return Stack(children: [
       Scaffold(
+        extendBodyBehindAppBar: true,
+        appBar: AppBar(
+          scrolledUnderElevation: 0,
+          backgroundColor: Colors.transparent,
+          elevation: 0,
+          leading: IconButton(
+            icon: Icon(
+              Icons.arrow_back,
+              color: Colors.white,
+            ),
+            onPressed: () => Navigator.pop(context),
+          ),
+          title: Text(
+            '회원 탈퇴',
+            style: TextStyle(
+              color: Colors.white,
+              fontFamily: 'Inter',
+              fontWeight: FontWeight.w800,
+              fontSize: 16,
+            ),
+          ),
+          centerTitle: true,
+        ),
         body: LayoutBuilder(
           builder: (BuildContext context, BoxConstraints constraints) {
             return SingleChildScrollView(
@@ -21,7 +59,7 @@ class WelcomePage extends StatelessWidget {
                     image: DecorationImage(
                       fit: BoxFit.cover,
                       image:
-                          AssetImage('assets/welcome_background.png'), // 배경 이미지
+                          AssetImage('assets/goodbye_background.png'), // 배경 이미지
                     ),
                   ),
                   child: Center(
@@ -33,16 +71,16 @@ class WelcomePage extends StatelessWidget {
                           TextSpan(
                             children: [
                               TextSpan(
-                                text: "TEAMING에 가입하신 것을\n",
+                                text: "TEAMING의 계정을\n",
                                 style: TextStyle(
                                   fontSize: 15,
                                   fontWeight: FontWeight.w500,
                                 ),
                               ),
                               TextSpan(
-                                text: "환영합니다",
+                                text: "정말 삭제하시겠어요?",
                                 style: TextStyle(
-                                  fontSize: 40,
+                                  fontSize: 24,
                                   fontWeight: FontWeight.w900,
                                   letterSpacing: -0.5,
                                 ),
@@ -52,26 +90,25 @@ class WelcomePage extends StatelessWidget {
                           textAlign: TextAlign.center,
                           style: TextStyle(
                             fontFamily: 'Inter',
-                            color: Color(0xFF797979),
+                            color: Colors.white,
                             height: 1.2,
                           ),
                         ),
                         SizedBox(height: 30),
                         SizedBox(
                           width: 33,
-                          child:
-                              Divider(color: Color(0xFF858585), thickness: 1),
+                          child: Divider(color: Colors.white, thickness: 1),
                         ),
                         SizedBox(
                           height: 25,
                         ),
                         Text(
-                          "기본적인 정보 입력과\n시간표 설정이 완료되었습니다",
+                          "탈퇴를 진행하시는 경우\n계정과 관련된 모든 정보가 삭제되며\n이후 해당 계정으로는\n모든 서비스 접근이 불가합니다",
                           style: TextStyle(
                             fontFamily: "Inter",
                             fontWeight: FontWeight.w500,
                             fontSize: 15,
-                            color: Color(0xff797979),
+                            color: Colors.white,
                           ),
                           textAlign: TextAlign.center,
                         ),
@@ -79,15 +116,38 @@ class WelcomePage extends StatelessWidget {
                           height: 10,
                         ),
                         Text(
-                          "앞으로 티밍과 함께 대학 팀플을\n쉽고 빠르게 관리해보세요!",
+                          "계속하시려면 아래에 계정 비밀번호를\n다시 한 번 입력해 주세요",
                           style: TextStyle(
                             fontFamily: "Inter",
                             fontWeight: FontWeight.w500,
                             fontSize: 15,
-                            color: Color(0xff797979),
+                            color: Colors.white,
                           ),
                           textAlign: TextAlign.center,
-                        )
+                        ),
+                        SizedBox(
+                          height: 40,
+                        ),
+                        SizedBox(
+          height: 30,
+          child: TextField(obscureText: true,
+            controller: passwordController,
+            style: TextStyle(fontSize: 15, color: Colors.white),
+            textAlign: TextAlign.center,cursorColor: Colors.white,
+            decoration: InputDecoration(
+              hintText: "계정 비밀번호를 입력해주세요",
+              border: InputBorder.none,
+              contentPadding: EdgeInsets.symmetric(vertical: 5),
+              hintStyle: TextStyle(
+                  fontFamily: 'Inter',
+                  fontWeight: FontWeight.w400,
+                  fontSize: 15,
+                  color: Color(0xFFCDCDCD)), alignLabelWithHint: true,
+            ),
+          ),
+        ),
+        SizedBox(height: 3,),
+        SizedBox(width: 280, child: Divider(color: Colors.white, thickness: 1,)),
                       ],
                     ),
                   ),
@@ -103,89 +163,22 @@ class WelcomePage extends StatelessWidget {
         bottom: 53,
         child: ElevatedButton(
           onPressed: () {
-            // 메인 페이지 이동 로직 추가
-            Navigator.pushNamedAndRemoveUntil(
-              context,
-              '/teamProjects',
-              (Route<dynamic> route) => false, // 모든 이전 화면 제거
-              arguments: {
-                // 샘플 데이터이므로 API 연결 시 제거
-                'projects': [
-                  {
-                    'name': '프로젝트명A',
-                    'members': ['김세아', '오수진', '윤소윤'],
-                    'class': '수업명A',
-                    'progress': 80,
-                    'startDate': '2024.03.04',
-                    'endDate': '2024.08.15',
-                  },
-                  {
-                    'name': '프로젝트명B',
-                    'members': [
-                      '김세아',
-                      '오수진',
-                      '윤소윤',
-                      '황익명',
-                      '박익명',
-                      '김익명',
-                      '이익명',
-                      '장익명'
-                    ],
-                    'class': '수업명B',
-                    'progress': 45,
-                    'startDate': '2024.01.13',
-                    'endDate': '2024.07.20',
-                  },
-                  {
-                    'name': '프로젝트명C',
-                    'members': ['김세아', '박익명', '최익명'],
-                    'class': '대회명A',
-                    'progress': 100,
-                    'startDate': '2023.12.13',
-                    'endDate': '2024.05.23',
-                  },
-                  {
-                    'name': '프로젝트명D',
-                    'members': ['김세아', '이익명'],
-                    'class': '수업명C ',
-                    'progress': 20,
-                    'startDate': '2023.08.15',
-                    'endDate': '2024.02.21',
-                  },
-                  {
-                    'name': '프로젝트명E',
-                    'members': ['김세아', '이익명', '박익명'],
-                    'class': '대회명B',
-                    'progress': 95,
-                    'startDate': '2023.08.15',
-                    'endDate': '2023.12.21',
-                  },
-                  {
-                    'name': '프로젝트명F',
-                    'members': ['김세아', '박익명'],
-                    'class': '봉사명A',
-                    'progress': 20,
-                    'startDate': '2023.06.25',
-                    'endDate': '2023.08.10',
-                  },
-                ],
-              },
-            );
+            // 계정 탈퇴 로직 추가
           },
           style: ElevatedButton.styleFrom(
-            backgroundColor: Color.fromRGBO(84, 84, 84, 1),
+            backgroundColor: Colors.white,
             minimumSize: Size(double.infinity, 50),
             shape: RoundedRectangleBorder(
               borderRadius: BorderRadius.circular(30),
             ),
           ),
           child: Text(
-            '가입 완료',
+            '탈퇴하기',
             style: TextStyle(
               fontSize: 18,
               fontFamily: 'Inter',
-              fontWeight: FontWeight.bold,
-              color: Colors.white,
+              fontWeight: FontWeight.w900,
+              color: Color.fromRGBO(84, 84, 84, 1),
             ),
           ),
         ),

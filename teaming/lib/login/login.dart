@@ -1,8 +1,17 @@
 import 'package:flutter/material.dart';
 import 'package:teaming/login/join.dart';
 
-class LoginPage extends StatelessWidget {
+class LoginPage extends StatefulWidget {
   const LoginPage({super.key});
+
+  @override
+  State<LoginPage> createState() => _LoginPageState();
+}
+
+class _LoginPageState extends State<LoginPage> {
+  bool isChecked = false;
+  bool _isPasswordVisible = false;
+  
 
   @override
   Widget build(BuildContext context) {
@@ -29,7 +38,7 @@ class LoginPage extends StatelessWidget {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 SizedBox(
-                  height: 70,
+                  height: 100,
                 ),
                 Center(
                   child: Image.asset(
@@ -107,16 +116,31 @@ class LoginPage extends StatelessWidget {
                     ],
                   ),
                   child: TextField(
-                    obscureText: true,
+                    obscureText: !_isPasswordVisible,
                     style: TextStyle(
                         fontFamily: 'Inter', fontSize: 15, color: Colors.black),
                     decoration: InputDecoration(
                       hintText: '비밀번호',
                       border: InputBorder.none,
-                      contentPadding: EdgeInsets.symmetric(horizontal: 20),
+                      contentPadding: EdgeInsets.symmetric(horizontal: 20, vertical: 11),
                       hintStyle: TextStyle(
                           fontWeight: FontWeight.w400,
                           color: Color.fromRGBO(156, 156, 156, 1)),
+                      suffixIcon: IconButton(
+                        icon: Icon(
+                          _isPasswordVisible
+                              ? Icons.visibility
+                              : Icons.visibility_off,
+                          color: Color.fromRGBO(156, 156, 156, 1),
+                        ),
+                        onPressed: () {
+                          setState(() {
+                            _isPasswordVisible = !_isPasswordVisible;
+                          });
+                        },
+                        constraints: BoxConstraints(),
+                        padding: EdgeInsets.zero,
+                      ),
                     ),
                   ),
                 ),
@@ -146,14 +170,19 @@ class LoginPage extends StatelessWidget {
                 Row(
                   children: [
                     Checkbox(
-                      value: true,
-                      activeColor: Color.fromRGBO(84, 84, 84, 1),
+                      value: isChecked,
+                      activeColor: isChecked
+                          ? Color.fromRGBO(84, 84, 84, 1)
+                          : Colors.grey,
                       checkColor: Colors.white,
                       onChanged: (value) {
-                        // 변수 추가해서 로그인 시 서버 처리 구현
+                        setState(() {
+                          isChecked = value!;
+                        });
                       },
                       shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(10)),
+                        borderRadius: BorderRadius.circular(10),
+                      ),
                     ),
                     Text(
                       '로그인 상태 유지하기',
@@ -165,109 +194,51 @@ class LoginPage extends StatelessWidget {
                     ),
                   ],
                 ),
-                SizedBox(height: 80),
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    SizedBox(
-                      width: 28,
-                      child: Divider(
-                        color: Color.fromRGBO(84, 84, 84, 1),
-                        thickness: 1,
-                      ),
-                    ),
-                    SizedBox(
-                      width: 5,
-                    ),
-                    Text(
-                      '간편 로그인',
-                      style: TextStyle(
-                          fontFamily: 'Inter',
-                          fontWeight: FontWeight.normal,
-                          fontSize: 12,
-                          color: Color.fromRGBO(72, 72, 72, 1)),
-                    ),
-                    SizedBox(
-                      width: 5,
-                    ),
-                    SizedBox(
-                      width: 28,
-                      child: Divider(
-                        color: Color.fromRGBO(84, 84, 84, 1),
-                        thickness: 1,
-                      ),
-                    ),
-                  ],
-                ),
-                SizedBox(height: 10),
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    IconButton(
-                      onPressed: () {
-                        // 네이버 로그인 로직 추가
-                      },
-                      icon: Image.asset('assets/icon/naver_icon.png',
-                          width: 33, height: 33),
-                    ),
-                    IconButton(
-                      onPressed: () {
-                        // 카카오톡 로그인 로직 추가
-                      },
-                      icon: Image.asset('assets/icon/kakao_icon.png',
-                          width: 33, height: 33),
-                    ),
-                    IconButton(
-                      onPressed: () {
-                        // 구글 로그인 로직 추가
-                      },
-                      icon: Image.asset('assets/icon/google_icon.png',
-                          width: 33, height: 33),
-                    ),
-                  ],
+                SizedBox(
+                  height: 100,
                 ),
                 Center(
                   child: TextButton(
                     onPressed: () {
                       // 회원가입 페이지로 이동
                       Navigator.pushAndRemoveUntil(
-                          context,
-                          PageRouteBuilder(
-                            pageBuilder:
-                                (context, animation, secondaryAnimation) =>
-                                    JoinPage(),
-                            transitionsBuilder:
-                                (context, animation, secondaryAnimation, child) {
-                              return FadeTransition(
-                                opacity: animation,
-                                child: child,
-                              );
-                            },
-                          ),
-                          (Route<dynamic> route) => false, // 이전의 모든 화면을 제거합니다.
-                        );
+                        context,
+                        PageRouteBuilder(
+                          pageBuilder:
+                              (context, animation, secondaryAnimation) =>
+                                  JoinPage(),
+                          transitionsBuilder:
+                              (context, animation, secondaryAnimation, child) {
+                            return FadeTransition(
+                              opacity: animation,
+                              child: child,
+                            );
+                          },
+                        ),
+                        (Route<dynamic> route) => false, // 이전의 모든 화면을 제거합니다.
+                      );
                     },
                     child: Text.rich(
-                  TextSpan(children: [
-                    TextSpan(
-                        text: "회원이 아니신가요? ",
-                        style: TextStyle(
-                          fontFamily: 'Inter',
-                          fontWeight: FontWeight.w400,
-                        )),
-                    TextSpan(
-                        text: "회원가입",
-                        style: TextStyle(
-                          fontFamily: 'Inter',
-                          fontWeight: FontWeight.bold,
-                        )),
-                  ]),
-                  textAlign: TextAlign.left,
-                  style: TextStyle(
-                    fontSize: 15,
-                    color: Color.fromRGBO(72, 72, 72, 1),
-                  ),
-                ),
+                      TextSpan(children: [
+                        TextSpan(
+                            text: "회원이 아니신가요? ",
+                            style: TextStyle(
+                              fontFamily: 'Inter',
+                              fontWeight: FontWeight.w400,
+                            )),
+                        TextSpan(
+                            text: "회원가입",
+                            style: TextStyle(
+                              fontFamily: 'Inter',
+                              fontWeight: FontWeight.bold,
+                            )),
+                      ]),
+                      textAlign: TextAlign.left,
+                      style: TextStyle(
+                        fontSize: 15,
+                        color: Color.fromRGBO(72, 72, 72, 1),
+                      ),
+                    ),
                   ),
                 ),
               ],

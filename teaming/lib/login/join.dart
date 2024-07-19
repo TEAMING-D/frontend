@@ -2,8 +2,16 @@ import 'package:flutter/material.dart';
 import 'package:teaming/login/information_collab.dart';
 import 'package:teaming/login/login.dart';
 
-class JoinPage extends StatelessWidget {
+class JoinPage extends StatefulWidget {
   const JoinPage({super.key});
+
+  @override
+  State<JoinPage> createState() => _JoinPageState();
+}
+
+class _JoinPageState extends State<JoinPage> {
+  bool _isPasswordVisible = false;
+  bool _isConfirmPasswordVisible = false;
 
   @override
   Widget build(BuildContext context) {
@@ -29,6 +37,9 @@ class JoinPage extends StatelessWidget {
               mainAxisAlignment: MainAxisAlignment.center,
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
+                SizedBox(
+                  height: 100,
+                ),
                 Center(
                   child: Image.asset(
                     'assets/login_logo.png',
@@ -105,16 +116,32 @@ class JoinPage extends StatelessWidget {
                     ],
                   ),
                   child: TextField(
-                    obscureText: true,
+                    obscureText: !_isPasswordVisible,
                     style: TextStyle(
                         fontFamily: 'Inter', fontSize: 15, color: Colors.black),
                     decoration: InputDecoration(
                       hintText: '비밀번호',
                       border: InputBorder.none,
-                      contentPadding: EdgeInsets.symmetric(horizontal: 20),
+                      contentPadding:
+                          EdgeInsets.symmetric(horizontal: 20, vertical: 11),
                       hintStyle: TextStyle(
                           fontWeight: FontWeight.w400,
                           color: Color.fromRGBO(156, 156, 156, 1)),
+                      suffixIcon: IconButton(
+                        icon: Icon(
+                          _isPasswordVisible
+                              ? Icons.visibility
+                              : Icons.visibility_off,
+                          color: Color.fromRGBO(156, 156, 156, 1),
+                        ),
+                        onPressed: () {
+                          setState(() {
+                            _isPasswordVisible = !_isPasswordVisible;
+                          });
+                        },
+                        constraints: BoxConstraints(),
+                        padding: EdgeInsets.zero,
+                      ),
                     ),
                   ),
                 ),
@@ -133,16 +160,33 @@ class JoinPage extends StatelessWidget {
                     ],
                   ),
                   child: TextField(
-                    obscureText: true,
+                    obscureText: !_isConfirmPasswordVisible,
                     style: TextStyle(
                         fontFamily: 'Inter', fontSize: 15, color: Colors.black),
                     decoration: InputDecoration(
                       hintText: '비밀번호 확인',
                       border: InputBorder.none,
-                      contentPadding: EdgeInsets.symmetric(horizontal: 20),
+                      contentPadding:
+                          EdgeInsets.symmetric(horizontal: 20, vertical: 11),
                       hintStyle: TextStyle(
                           fontWeight: FontWeight.w400,
                           color: Color.fromRGBO(156, 156, 156, 1)),
+                      suffixIcon: IconButton(
+                        icon: Icon(
+                          _isConfirmPasswordVisible
+                              ? Icons.visibility
+                              : Icons.visibility_off,
+                          color: Color.fromRGBO(156, 156, 156, 1),
+                        ),
+                        onPressed: () {
+                          setState(() {
+                            _isConfirmPasswordVisible =
+                                !_isConfirmPasswordVisible;
+                          });
+                        },
+                        constraints: BoxConstraints(),
+                        padding: EdgeInsets.zero,
+                      ),
                     ),
                   ),
                 ),
@@ -150,7 +194,7 @@ class JoinPage extends StatelessWidget {
                 ElevatedButton(
                   onPressed: () {
                     // 회원가입 처리 로직 추가
-        
+
                     // 일단 화면 전환 처리
                     Navigator.pushAndRemoveUntil(
                       context,
@@ -185,66 +229,8 @@ class JoinPage extends StatelessWidget {
                     ),
                   ),
                 ),
-                SizedBox(height: 100),
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    SizedBox(
-                      width: 28,
-                      child: Divider(
-                        color: Color.fromRGBO(84, 84, 84, 1),
-                        thickness: 1,
-                      ),
-                    ),
-                    SizedBox(
-                      width: 5,
-                    ),
-                    Text(
-                      '간편 회원가입',
-                      style: TextStyle(
-                          fontFamily: 'Inter',
-                          fontWeight: FontWeight.normal,
-                          fontSize: 12,
-                          color: Color.fromRGBO(72, 72, 72, 1)),
-                    ),
-                    SizedBox(
-                      width: 5,
-                    ),
-                    SizedBox(
-                      width: 28,
-                      child: Divider(
-                        color: Color.fromRGBO(84, 84, 84, 1),
-                        thickness: 1,
-                      ),
-                    ),
-                  ],
-                ),
-                SizedBox(height: 10),
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    IconButton(
-                      onPressed: () {
-                        // 네이버 회원가입 로직 추가
-                      },
-                      icon: Image.asset('assets/icon/naver_icon.png',
-                          width: 33, height: 33),
-                    ),
-                    IconButton(
-                      onPressed: () {
-                        // 카카오톡 회원가입 로직 추가
-                      },
-                      icon: Image.asset('assets/icon/kakao_icon.png',
-                          width: 33, height: 33),
-                    ),
-                    IconButton(
-                      onPressed: () {
-                        // 구글 회원가입 로직 추가
-                      },
-                      icon: Image.asset('assets/icon/google_icon.png',
-                          width: 33, height: 33),
-                    ),
-                  ],
+                SizedBox(
+                  height: 100,
                 ),
                 Center(
                   child: TextButton(
@@ -253,8 +239,9 @@ class JoinPage extends StatelessWidget {
                       Navigator.pushAndRemoveUntil(
                         context,
                         PageRouteBuilder(
-                          pageBuilder: (context, animation, secondaryAnimation) =>
-                              LoginPage(),
+                          pageBuilder:
+                              (context, animation, secondaryAnimation) =>
+                                  LoginPage(),
                           transitionsBuilder:
                               (context, animation, secondaryAnimation, child) {
                             return FadeTransition(

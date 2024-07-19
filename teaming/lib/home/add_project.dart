@@ -293,8 +293,8 @@ class _AddProjectPageState extends State<AddProjectPage> {
   }
 
   void showDropdownOverlay() {
-    // VM 오류때문에 시간 지연 걸어둠
-    Future.delayed(Duration(milliseconds: 1500), () {
+    // 키보드 사라지는 시간때문에 지연 걸어둠
+    Future.delayed(Duration(milliseconds: 700), () {
       final renderBox =
           _textFieldKey.currentContext!.findRenderObject() as RenderBox;
       final size = renderBox.size;
@@ -422,15 +422,17 @@ class _AddProjectPageState extends State<AddProjectPage> {
                     ),
                     Row(
                       children: [
-                        Expanded(
-                          flex: 3,
+                        SizedBox(
+                          width: 80,
                           child: DropdownButtonFormField<String>(
+                            isExpanded: true,
                             value: selectedProjectType,
                             decoration: InputDecoration(
                               isDense: true,
                               contentPadding: EdgeInsets.symmetric(
                                   vertical: 5, horizontal: 10),
-                              enabledBorder: UnderlineInputBorder(
+                              enabledBorder: OutlineInputBorder(
+                                borderRadius: BorderRadius.circular(5),
                                 borderSide:
                                     BorderSide(color: Color(0xffd2d2d2)),
                               ),
@@ -450,7 +452,7 @@ class _AddProjectPageState extends State<AddProjectPage> {
                                     bool isSelected =
                                         selectedProjectType == value;
                                     return Container(
-                                      alignment: Alignment.centerLeft,
+                                      alignment: Alignment.center,
                                       padding: EdgeInsets.symmetric(
                                           vertical: 10, horizontal: 10),
                                       color: isSelected
@@ -485,7 +487,7 @@ class _AddProjectPageState extends State<AddProjectPage> {
                                     style: TextStyle(
                                       fontFamily: 'Inter',
                                       fontWeight: FontWeight.w400,
-                                      fontSize: 14,
+                                      fontSize: 13,
                                       color: Color(0xff404040),
                                     ),
                                   ),
@@ -505,7 +507,7 @@ class _AddProjectPageState extends State<AddProjectPage> {
                           width: 15,
                         ),
                         Expanded(
-                          flex: 7,
+                          flex: 5,
                           child: Column(
                             children: [
                               SizedBox(

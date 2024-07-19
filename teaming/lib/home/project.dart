@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:teaming/home/add_project.dart';
 import 'package:teaming/home/delete_project.dart';
 import 'package:teaming/home/notice.dart';
+import 'package:teaming/home/user_information_modify.dart';
 
 class TeamProjectPage extends StatefulWidget {
   final List<Map<String, dynamic>> projects;
@@ -136,7 +137,7 @@ class _TeamProjectPageState extends State<TeamProjectPage> {
             ),
           ),
           Padding(
-            padding: EdgeInsets.symmetric(horizontal: 4.0), // 버튼 간격 조정
+            padding: EdgeInsets.symmetric(horizontal: 4.0),
             child: SizedBox(
               width: 28,
               height: 28,
@@ -149,6 +150,20 @@ class _TeamProjectPageState extends State<TeamProjectPage> {
                 ),
                 onPressed: () {
                   // 사용자 아이콘 버튼 로직 추가
+                  Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) => UserInfoModifyPage(
+                              projects: widget.projects,
+                              onDeleteProjects: (selectedProjects) {
+                                setState(() {
+                                  widget.projects.removeWhere((project) =>
+                                      selectedProjects.contains(project));
+                                });
+                              },
+                            ),
+                          ),
+                        );
                 },
               ),
             ),
