@@ -2,7 +2,12 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
 Widget buildTextField(
-    String label, String hint, TextEditingController? controllerName) {
+  String label,
+  String hint,
+  TextEditingController? controllerName, {
+  TextInputType keyboardType = TextInputType.text,
+  List<TextInputFormatter>? inputFormatters,
+}) {
   return Column(
     crossAxisAlignment: CrossAxisAlignment.start,
     children: [
@@ -20,6 +25,8 @@ Widget buildTextField(
         child: TextField(
           obscureText: label.contains('비밀번호') ? true : false,
           controller: controllerName,
+          keyboardType: keyboardType,
+          inputFormatters: inputFormatters,
           style: TextStyle(fontSize: 15, color: Colors.black),
           decoration: InputDecoration(
             hintText: hint,

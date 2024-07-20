@@ -4,6 +4,7 @@ import 'package:teaming/home/goodbye.dart';
 import 'package:teaming/login/information_widget.dart';
 
 class UserInfoModifyPage extends StatefulWidget {
+
   final List<Map<String, dynamic>> projects;
   final Function(List<Map<String, dynamic>>) onDeleteProjects;
 
@@ -15,6 +16,9 @@ class UserInfoModifyPage extends StatefulWidget {
 }
 
 class _UserInfoModifyPageState extends State<UserInfoModifyPage> {
+  bool _isPasswordVisible = false;
+  bool _isConfirmPasswordVisible = false;
+
   final TextEditingController passwordController = TextEditingController();
   final TextEditingController confirmPasswordController =
       TextEditingController();

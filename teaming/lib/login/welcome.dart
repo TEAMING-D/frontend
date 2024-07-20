@@ -167,8 +167,8 @@ class WelcomePage extends StatelessWidget {
                     'progress': 20,
                     'startDate': '2023.06.25',
                     'endDate': '2023.08.10',
-                  },
-                ],
+                  }, 
+                ],'hasNotification': true,
               },
             );
           },

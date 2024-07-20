@@ -43,7 +43,7 @@ class _CollabInfoPageState extends State<CollabInfoPage> {
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        SizedBox(height: 150),
+                        SizedBox(height: 100),
                         Text.rich(
                           TextSpan(
                             children: [
@@ -99,16 +99,16 @@ class _CollabInfoPageState extends State<CollabInfoPage> {
                             letterSpacing: -0.3,
                           ),
                         ),
-                        SizedBox(height: 50),
+                        SizedBox(height: 40),
                         buildTextField(
                             'Notion', '계정 이메일을 입력해주세요', notionController),
-                        SizedBox(height: 20),
+                        SizedBox(height: 10),
                         buildTextField(
                             'Github', '계정 이메일을 입력해주세요', githubController),
-                        SizedBox(height: 20),
+                        SizedBox(height: 10),
                         buildTextField(
                             'E-mail', '추가로 사용할 이메일을 입력해주세요', eMailController),
-                        SizedBox(height: 40),
+                        SizedBox(height: 30),
                         Row(
                           children: [
                             Text(

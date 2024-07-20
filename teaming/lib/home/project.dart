@@ -1,5 +1,6 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:teaming/detail/time_table.dart';
 import 'package:teaming/home/add_project.dart';
 import 'package:teaming/home/delete_project.dart';
 import 'package:teaming/home/notice.dart';
@@ -18,28 +19,25 @@ class TeamProjectPage extends StatefulWidget {
 
 class _TeamProjectPageState extends State<TeamProjectPage> {
   List<Map<String, String>> notifications = [
-    /*{
+    {
       "title": "프로젝트명C",
       "message": "프로젝트명C에서 팀원 삭제 요청이 들어왔습니다.\n해당 프로젝트에서 나가시겠습니까?"
     },
-    {
-      "title": "프로젝트명B",
-      "message": "프로젝트명B에 팀원으로 초대되었습니다.\n해당 프로젝트에 참여하시겠습니까?"
-    },*/
+    {"title": "프로젝트명B", "message": "프로젝트명B에 팀원으로 초대되었습니다.\n해당 프로젝트에 참여하시겠습니까?"},
   ];
 
   void _handleAccept(int index) {
     setState(() {
       notifications.removeAt(index);
     });
-    Navigator.of(context).pop(); // 드로어를 닫습니다.
+    Navigator.of(context).pop();
   }
 
   void _handleReject(int index) {
     setState(() {
       notifications.removeAt(index);
     });
-    Navigator.of(context).pop(); // 드로어를 닫습니다.
+    Navigator.of(context).pop();
   }
 
   void _addProject(Map<String, dynamic> newProject) {
@@ -52,6 +50,7 @@ class _TeamProjectPageState extends State<TeamProjectPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
+        scrolledUnderElevation: 0,
         leading: Builder(
           builder: (context) {
             return Padding(
@@ -69,7 +68,6 @@ class _TeamProjectPageState extends State<TeamProjectPage> {
                         height: 28,
                       ),
                 onPressed: () {
-                  // 드로어 열기
                   Scaffold.of(context).openDrawer();
                 },
               ),
@@ -79,7 +77,7 @@ class _TeamProjectPageState extends State<TeamProjectPage> {
         actions: [
           widget.projects.isNotEmpty
               ? Padding(
-                  padding: EdgeInsets.symmetric(horizontal: 4.0), // 버튼 간격 조정
+                  padding: EdgeInsets.symmetric(horizontal: 4.0),
                   child: SizedBox(
                     width: 33,
                     height: 33,
@@ -112,7 +110,7 @@ class _TeamProjectPageState extends State<TeamProjectPage> {
                 )
               : SizedBox.shrink(),
           Padding(
-            padding: EdgeInsets.symmetric(horizontal: 4.0), // 버튼 간격 조정
+            padding: EdgeInsets.symmetric(horizontal: 4.0),
             child: SizedBox(
               width: 33,
               height: 33,
@@ -149,21 +147,20 @@ class _TeamProjectPageState extends State<TeamProjectPage> {
                   height: 28,
                 ),
                 onPressed: () {
-                  // 사용자 아이콘 버튼 로직 추가
                   Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                            builder: (context) => UserInfoModifyPage(
-                              projects: widget.projects,
-                              onDeleteProjects: (selectedProjects) {
-                                setState(() {
-                                  widget.projects.removeWhere((project) =>
-                                      selectedProjects.contains(project));
-                                });
-                              },
-                            ),
-                          ),
-                        );
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) => UserInfoModifyPage(
+                        projects: widget.projects,
+                        onDeleteProjects: (selectedProjects) {
+                          setState(() {
+                            widget.projects.removeWhere((project) =>
+                                selectedProjects.contains(project));
+                          });
+                        },
+                      ),
+                    ),
+                  );
                 },
               ),
             ),
@@ -265,6 +262,12 @@ class _TeamProjectPageState extends State<TeamProjectPage> {
         return GestureDetector(
           onTap: () {
             // 상세 프로젝트 페이지로 이동하는 로직 추가
+            Navigator.push(
+              context,
+              MaterialPageRoute(
+                builder: (context) => TeamSchedulePage(),
+              ),
+            );
           },
           child: Container(
             width: MediaQuery.of(context).size.width - 20, // 화면 가로 길이보다 20 작게

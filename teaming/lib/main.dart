@@ -7,6 +7,12 @@ void main() {
   runApp(
     MaterialApp(
       debugShowCheckedModeBanner: false, // 디버그 바 제거
+      theme: ThemeData(
+        primarySwatch: Colors.blue,
+        textSelectionTheme: TextSelectionThemeData(
+          cursorColor: Color.fromRGBO(84, 84, 84, 1), // 기본 커서 색상
+        ),
+      ),
       home: JoinPage(),
       onGenerateRoute: (settings) {
         if (settings.name == '/teamProjects') {
@@ -23,5 +29,6 @@ void main() {
         assert(false, 'Need to implement ${settings.name}');
         return null;
       },
-    ));
-  }
+    ),
+  );
+}

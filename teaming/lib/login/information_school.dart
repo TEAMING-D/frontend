@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:teaming/login/information_my_data.dart';
 import 'package:teaming/login/information_widget.dart';
 
@@ -187,7 +188,10 @@ class _SchoolInfoPageState extends State<SchoolInfoPage> {
                                 '학교명', '학교명을 입력해주세요', schoolNameController),
                             SizedBox(height: 20),
                             buildTextField(
-                                '학번', '학번을 입력해주세요', schoolNumController),
+                                '학번', '학번을 입력해주세요', schoolNumController, keyboardType: TextInputType.number,
+                                  inputFormatters: [
+                                    FilteringTextInputFormatter.digitsOnly,
+                                  ]),
                             SizedBox(height: 20),
                             buildTextField(
                                 '전공', '주전공을 입력해주세요', majorController),

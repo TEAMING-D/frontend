@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
+import 'package:teaming/login/information_schedule.dart';
 import 'package:teaming/login/information_widget.dart';
 
 class MyInfoPage extends StatefulWidget {
@@ -20,15 +22,7 @@ class _MyInfoPageState extends State<MyInfoPage> {
   final TextEditingController snsIdController = TextEditingController();
 
   bool _areFieldsFilled(BuildContext context) {
-    return nameController.text.isNotEmpty &&
-        phonePart1Controller.text.isNotEmpty &&
-        phonePart2Controller.text.isNotEmpty &&
-        phonePart3Controller.text.isNotEmpty &&
-        birthYearController.text.isNotEmpty &&
-        birthMonthController.text.isNotEmpty &&
-        birthDayController.text.isNotEmpty &&
-        snsNameController.text.isNotEmpty &&
-        snsIdController.text.isNotEmpty;
+    return nameController.text.isNotEmpty;
   }
 
   void _showPopup(BuildContext context) {
@@ -53,7 +47,7 @@ class _MyInfoPageState extends State<MyInfoPage> {
                   Padding(
                     padding: const EdgeInsets.fromLTRB(0, 10, 0, 15),
                     child: Text(
-                      "모든 입력란 기입이 필요합니다\n다시 한 번 확인해주세요",
+                      "이름은 필수 입력란입니다\n다시 한 번 확인해주세요",
                       textAlign: TextAlign.center,
                       style: TextStyle(
                         fontFamily: 'Inter',
@@ -131,7 +125,7 @@ class _MyInfoPageState extends State<MyInfoPage> {
                     constraints: BoxConstraints(
                       minHeight: constraints.maxHeight,
                     ),
-                    child: Container( 
+                    child: Container(
                       padding: EdgeInsets.symmetric(horizontal: 50),
                       width: MediaQuery.of(context).size.width,
                       decoration: BoxDecoration(
@@ -208,21 +202,40 @@ class _MyInfoPageState extends State<MyInfoPage> {
                             Row(
                               children: [
                                 buildShortTextField(
-                                    '000', phonePart1Controller),
+                                  '000',
+                                  phonePart1Controller,
+                                  keyboardType: TextInputType.number,
+                                  inputFormatters: [
+                                    FilteringTextInputFormatter.digitsOnly,
+                                    LengthLimitingTextInputFormatter(3),
+                                  ],
+                                ),
                                 Padding(
                                   padding: const EdgeInsets.symmetric(
                                       horizontal: 10),
                                   child: Text('-'),
                                 ),
                                 buildShortTextField(
-                                    '0000', phonePart2Controller),
+                                  '0000',
+                                  phonePart2Controller,
+                                  keyboardType: TextInputType.number,
+                                  inputFormatters: [
+                                    FilteringTextInputFormatter.digitsOnly,
+                                    LengthLimitingTextInputFormatter(4),
+                                  ],
+                                ),
                                 Padding(
                                   padding: const EdgeInsets.symmetric(
                                       horizontal: 10),
                                   child: Text('-'),
                                 ),
                                 buildShortTextField(
-                                    '0000', phonePart3Controller),
+                                    '0000', phonePart3Controller,
+                                  keyboardType: TextInputType.number,
+                                  inputFormatters: [
+                                    FilteringTextInputFormatter.digitsOnly,
+                                    LengthLimitingTextInputFormatter(4),
+                                  ],),
                               ],
                             ),
                             SizedBox(
@@ -240,15 +253,30 @@ class _MyInfoPageState extends State<MyInfoPage> {
                             Row(
                               children: [
                                 buildShortTextField(
-                                    'YYYY', birthYearController),
+                                    'YYYY', birthYearController,
+                                  keyboardType: TextInputType.number,
+                                  inputFormatters: [
+                                    FilteringTextInputFormatter.digitsOnly,
+                                    LengthLimitingTextInputFormatter(4),
+                                  ],),
                                 SizedBox(
                                   width: 20,
                                 ),
-                                buildShortTextField('MM', birthMonthController),
+                                buildShortTextField('MM', birthMonthController,
+                                  keyboardType: TextInputType.number,
+                                  inputFormatters: [
+                                    FilteringTextInputFormatter.digitsOnly,
+                                    LengthLimitingTextInputFormatter(2),
+                                  ],),
                                 SizedBox(
                                   width: 20,
                                 ),
-                                buildShortTextField('DD', birthDayController),
+                                buildShortTextField('DD', birthDayController,
+                                  keyboardType: TextInputType.number,
+                                  inputFormatters: [
+                                    FilteringTextInputFormatter.digitsOnly,
+                                    LengthLimitingTextInputFormatter(2),
+                                  ],),
                               ],
                             ),
                             SizedBox(
@@ -279,6 +307,20 @@ class _MyInfoPageState extends State<MyInfoPage> {
           onPressed: () {
             if (_areFieldsFilled(context)) {
               // 다음 페이지로 이동하는 로직 추가
+              Navigator.push(
+                context,
+                PageRouteBuilder(
+                  pageBuilder: (context, animation, secondaryAnimation) =>
+                      GetSchedulePage(),
+                  transitionsBuilder:
+                      (context, animation, secondaryAnimation, child) {
+                    return FadeTransition(
+                      opacity: animation,
+                      child: child,
+                    );
+                  },
+                ),
+              );
             } else {
               _showPopup(context);
             }
