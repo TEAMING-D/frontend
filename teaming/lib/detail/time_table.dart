@@ -1,6 +1,8 @@
 import 'dart:ui';
-
 import 'package:flutter/material.dart';
+import 'package:teaming/detail/meeting_time.dart';
+import 'package:teaming/detail/member_time_table.dart';
+import 'package:teaming/detail/navigation_bar.dart';
 
 class TeamSchedulePage extends StatefulWidget {
   const TeamSchedulePage({super.key});
@@ -11,9 +13,9 @@ class TeamSchedulePage extends StatefulWidget {
 
 class _TeamSchedulePageState extends State<TeamSchedulePage> {
   OverlayEntry? _balloonOverlay;
-  ScrollController _scrollController = ScrollController();
+  final ScrollController _scrollController = ScrollController();
 
-  List<Map<String, dynamic>> availability = [
+  List<Map<String, dynamic>> availability = [ 
     // 김세아
     {'name': '김세아', 'day': '월', 'startHour': 0, 'endHour': 13},
     {'name': '김세아', 'day': '월', 'startHour': 16, 'endHour': 24},
@@ -103,7 +105,7 @@ class _TeamSchedulePageState extends State<TeamSchedulePage> {
                   color: Color(0xFF404040),
                 ),
               ),
-              Icon(Icons.arrow_drop_down, color: Color(0xFF404040)),
+              Icon(Icons.keyboard_arrow_down_rounded, color: Color(0xFF404040)),
             ],
           ),
         ),
@@ -169,60 +171,15 @@ class _TeamSchedulePageState extends State<TeamSchedulePage> {
                 ),
                 SizedBox(height: 30),
                 _buildScheduleTable(),
-                SizedBox(
-                  height: 60,
-                )
+                SizedBox(height: 50,)
               ],
             ),
           ),
         ),
       ),
-      bottomNavigationBar: ClipRect(
-        child: BackdropFilter(
-          filter: ImageFilter.blur(sigmaX: 4, sigmaY: 4),
-          child: BottomNavigationBar(
-            type: BottomNavigationBarType.fixed,
-            items: [
-              BottomNavigationBarItem(
-                icon: Icon(Icons.schedule),
-                label: '시간표',
-              ),
-              BottomNavigationBarItem(
-                icon: Icon(Icons.task),
-                label: '업무관리',
-              ),
-              BottomNavigationBarItem(
-                icon: Icon(Icons.bar_chart),
-                label: '참여도',
-              ),
-              BottomNavigationBarItem(
-                icon: Icon(Icons.archive),
-                label: '아카이브',
-              ),
-              BottomNavigationBarItem(
-                icon: Icon(Icons.edit),
-                label: '수정',
-              ),
-            ],
-            currentIndex: 0,
-            selectedItemColor: Color(0xff3A3A3A),
-            unselectedItemColor: Color(0xff787878),
-            selectedLabelStyle: TextStyle(
-              fontFamily: 'Leferi', // 원하는 폰트 패밀리
-              fontWeight: FontWeight.bold, // 원하는 폰트 두께
-              fontSize: 10, // 원하는 폰트 크기
-            ),
-            unselectedLabelStyle: TextStyle(
-              fontFamily: 'Leferi', // 원하는 폰트 패밀리
-              fontWeight: FontWeight.bold, // 원하는 폰트 두께
-              fontSize: 10, // 원하는 폰트 크기
-            ),
-            onTap: (index) {
-              // 네비게이션 아이템 클릭 시 화면 전환 로직 추가
-            },
-            backgroundColor: Colors.white.withOpacity(0.6),
-          ),
-        ),
+       bottomNavigationBar: DetailNavigationBar(
+        currentIndex: 0,
+        currentPage: TeamSchedulePage,
       ),
     );
   }
@@ -300,7 +257,7 @@ class _TeamSchedulePageState extends State<TeamSchedulePage> {
           text,
           style: TextStyle(
             fontFamily: 'Inter',
-            fontWeight: isContent ? FontWeight.w400 : FontWeight.w600, // 두께 조정
+            fontWeight: isContent ? FontWeight.w400 : FontWeight.w600,
             fontSize: 12,
             color: isContent ? Colors.transparent : Colors.black,
           ),
@@ -338,7 +295,7 @@ class _TeamSchedulePageState extends State<TeamSchedulePage> {
                     avail['day'] == _getDayString(day) &&
                     hour >= avail['startHour'] &&
                     hour < avail['endHour'])
-                .length, // members 수 계산
+                .length,
           ),
       ],
     );
@@ -372,8 +329,8 @@ class _TeamSchedulePageState extends State<TeamSchedulePage> {
 
     _balloonOverlay = OverlayEntry(
       builder: (context) => Positioned(
-        left: position.dx - 40, // 적절한 x 좌표
-        top: position.dy - 50, // 적절한 y 좌표
+        left: position.dx - 40,
+        top: position.dy - 50,
         child: Material(
           color: Colors.transparent,
           child: Container(
@@ -398,7 +355,7 @@ class _TeamSchedulePageState extends State<TeamSchedulePage> {
       ),
     );
 
-    Overlay.of(context)?.insert(_balloonOverlay!);
+    Overlay.of(context).insert(_balloonOverlay!);
   }
 
   void _removeBalloon() {
@@ -456,7 +413,7 @@ class _TeamSchedulePageState extends State<TeamSchedulePage> {
           onTap: () {
             Navigator.pushReplacement(
               context,
-              MaterialPageRoute(builder: (context) => TeamMemberSchedulePage()),
+              MaterialPageRoute(builder: (context) => MemberSchedulePage()),
             );
           },
         ),
@@ -471,7 +428,7 @@ class _TeamSchedulePageState extends State<TeamSchedulePage> {
             Navigator.pushReplacement(
               context,
               MaterialPageRoute(
-                  builder: (context) => AvailableMeetingTimePage()),
+                  builder: (context) => MeetingTimePage()),
             );
           },
         ),
@@ -481,49 +438,19 @@ class _TeamSchedulePageState extends State<TeamSchedulePage> {
   }
 }
 
-class TeamMemberSchedulePage extends StatelessWidget {
-  const TeamMemberSchedulePage({super.key});
 
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: Text('팀원별 시간표 조회'),
-      ),
-      body: Center(
-        child: Text('팀원별 시간표 조회 페이지입니다.'),
-      ),
-    );
-  }
-}
-
-class AvailableMeetingTimePage extends StatelessWidget {
-  const AvailableMeetingTimePage({super.key});
-
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: Text('가능한 회의 날짜 및 시간 조회'),
-      ),
-      body: Center(
-        child: Text('가능한 회의 날짜 및 시간 조회 페이지입니다.'),
-      ),
-    );
-  }
-}
 
 class Balloon extends StatelessWidget {
   final String text;
   final Offset position;
 
-  const Balloon({required this.text, required this.position});
+  const Balloon({super.key, required this.text, required this.position});
 
   @override
   Widget build(BuildContext context) {
     return Positioned(
-      left: position.dx - 40, // 적절한 x 좌표
-      top: position.dy - 50, // 적절한 y 좌표
+      left: position.dx - 40,
+      top: position.dy - 50,
       child: Material(
         color: Colors.transparent,
         child: Container(
