@@ -1,6 +1,6 @@
 import 'dart:ui';
 import 'package:flutter/material.dart';
-import 'package:teaming/detail/member_time_table.dart';
+import 'package:teaming/detail/modify_project.dart';
 import 'package:teaming/detail/time_table.dart';
 
 class DetailNavigationBar extends StatelessWidget {
@@ -12,51 +12,36 @@ class DetailNavigationBar extends StatelessWidget {
     required this.currentIndex,
     required this.currentPage,
   });
-
   void _onItemTapped(BuildContext context, int index) {
-    Type destinationPage;
-
-    // 각 index별 기본 페이지 설정
     switch (index) {
       case 0:
-        destinationPage = TeamSchedulePage;
+        Navigator.pushReplacement(
+          context,
+          MaterialPageRoute(builder: (context) => TeamSchedulePage()),
+        );
         break;
       case 1:
-        // 예시: destinationPage = TaskManagementPage;
-        return;
+        // Add your navigation logic here
+        break;
       case 2:
-        // 예시: destinationPage = ParticipationPage;
-        return;
+        // Add your navigation logic here
+        break;
       case 3:
-        // 예시: destinationPage = ArchivePage;
-        return;
+        // Add your navigation logic here
+        break;
       case 4:
-        // 예시: destinationPage = EditPage;
-        return;
-      default:
-        return;
+      
+        Navigator.pushReplacement(
+          context,
+          MaterialPageRoute(builder: (context) => ModifyProjectPage()),
+        );
+        break;
     }
-
-    if (destinationPage != currentPage) {
-      Navigator.pushReplacement(
-        context,
-        MaterialPageRoute(builder: (context) => _getPageInstance(currentPage)),
-      );
-    }
-  }
-
-  Widget _getPageInstance(Type pageType) {
-    if (pageType == TeamSchedulePage) {
-      return TeamSchedulePage();
-    } else if (pageType == MemberSchedulePage) {
-      return MemberSchedulePage();
-    }
-    // 다른 페이지들도 추가 가능
-    return TeamSchedulePage();
   }
 
   @override
   Widget build(BuildContext context) {
+    
     return ClipRect(
       child: BackdropFilter(
         filter: ImageFilter.blur(sigmaX: 4, sigmaY: 4),

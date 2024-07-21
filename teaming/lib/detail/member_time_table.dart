@@ -116,7 +116,7 @@ class _MemberSchedulePageState extends State<MemberSchedulePage> {
           ],
         ),
       ),bottomNavigationBar: DetailNavigationBar(
-         currentIndex: 0,
+        currentIndex: 0,
         currentPage: MemberSchedulePage,
       ),
     );

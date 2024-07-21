@@ -46,6 +46,12 @@ class _TeamProjectPageState extends State<TeamProjectPage> {
     });
   }
 
+  void _updateProject(int index, Map<String, dynamic> updatedProject) {
+    setState(() {
+      widget.projects[index] = updatedProject;
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -75,40 +81,38 @@ class _TeamProjectPageState extends State<TeamProjectPage> {
           },
         ),
         actions: [
-          widget.projects.isNotEmpty
-              ? Padding(
-                  padding: EdgeInsets.symmetric(horizontal: 4.0),
-                  child: SizedBox(
+          if (widget.projects.isNotEmpty)
+            Padding(
+              padding: EdgeInsets.symmetric(horizontal: 4.0),
+              child: SizedBox(
+                width: 33,
+                height: 33,
+                child: CupertinoButton(
+                  padding: EdgeInsets.zero,
+                  child: Image.asset(
+                    'assets/icon/minus_icon.png',
                     width: 33,
                     height: 33,
-                    child: CupertinoButton(
-                      padding: EdgeInsets.zero,
-                      child: Image.asset(
-                        'assets/icon/minus_icon.png',
-                        width: 33,
-                        height: 33,
-                      ),
-                      onPressed: () {
-                        // 팀 프로젝트 삭제 페이지로 이동하는 로직 추가
-                        Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                            builder: (context) => DeleteProjectPage(
-                              projects: widget.projects,
-                              onDeleteProjects: (selectedProjects) {
-                                setState(() {
-                                  widget.projects.removeWhere((project) =>
-                                      selectedProjects.contains(project));
-                                });
-                              },
-                            ),
-                          ),
-                        );
-                      },
-                    ),
                   ),
-                )
-              : SizedBox.shrink(),
+                  onPressed: () {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) => DeleteProjectPage(
+                          projects: widget.projects,
+                          onDeleteProjects: (selectedProjects) {
+                            setState(() {
+                              widget.projects.removeWhere((project) =>
+                                  selectedProjects.contains(project));
+                            });
+                          },
+                        ),
+                      ),
+                    );
+                  },
+                ),
+              ),
+            ),
           Padding(
             padding: EdgeInsets.symmetric(horizontal: 4.0),
             child: SizedBox(
@@ -232,7 +236,6 @@ class _TeamProjectPageState extends State<TeamProjectPage> {
     );
   }
 
-  //프로젝트가 없을 때 화면
   Widget _buildEmptyView() {
     return Center(
       child: Column(
@@ -255,13 +258,11 @@ class _TeamProjectPageState extends State<TeamProjectPage> {
     );
   }
 
-  // 프로젝트가 있을 때의 화면
   Widget _buildProjectListView(BuildContext context) {
     return Column(
       children: widget.projects.map((project) {
         return GestureDetector(
           onTap: () {
-            // 상세 프로젝트 페이지로 이동하는 로직 추가
             Navigator.push(
               context,
               MaterialPageRoute(
@@ -270,7 +271,7 @@ class _TeamProjectPageState extends State<TeamProjectPage> {
             );
           },
           child: Container(
-            width: MediaQuery.of(context).size.width - 20, // 화면 가로 길이보다 20 작게
+            width: MediaQuery.of(context).size.width - 20,
             margin: EdgeInsets.symmetric(vertical: 10),
             padding: EdgeInsets.all(16),
             decoration: BoxDecoration(
@@ -341,42 +342,43 @@ class _TeamProjectPageState extends State<TeamProjectPage> {
                   ],
                 ),
                 Positioned(
-                    bottom: 0,
-                    right: 0,
-                    child: Text.rich(
-                      TextSpan(
-                        children: [
-                          TextSpan(
-                            text: '${project['progress']}%\n',
-                            style: TextStyle(
-                              fontSize: 40,
-                              fontWeight: FontWeight.bold,
-                              fontFamily: 'Leferi',
-                              color: project['progress'] == 100
-                                  ? Color(0xffEEEEEE)
-                                  : Color(0xffD6D6D6),
-                              letterSpacing: -1,
-                            ),
+                  bottom: 0,
+                  right: 0,
+                  child: Text.rich(
+                    TextSpan(
+                      children: [
+                        TextSpan(
+                          text: '${project['progress']}%\n',
+                          style: TextStyle(
+                            fontSize: 40,
+                            fontWeight: FontWeight.bold,
+                            fontFamily: 'Leferi',
+                            color: project['progress'] == 100
+                                ? Color(0xffEEEEEE)
+                                : Color(0xffD6D6D6),
+                            letterSpacing: -1,
                           ),
-                          TextSpan(
-                            text: project['progress'] == 100
-                                ? '완료된 프로젝트입니다'
-                                : '${project['endDate']}까지',
-                            style: TextStyle(
-                              color: project['progress'] == 100
-                                  ? Color(0xffEEEEEE)
-                                  : Color(0xffD6D6D6),
-                              fontFamily: 'Inter',
-                              fontWeight: FontWeight.w400,
-                              fontSize: 13,
-                              letterSpacing: -0.1,
-                            ),
-                          )
-                        ],
-                      ),
-                      textAlign: TextAlign.end,
-                      style: TextStyle(height: 1.25),
-                    )),
+                        ),
+                        TextSpan(
+                          text: project['progress'] == 100
+                              ? '완료된 프로젝트입니다'
+                              : '${project['endDate']}까지',
+                          style: TextStyle(
+                            color: project['progress'] == 100
+                                ? Color(0xffEEEEEE)
+                                : Color(0xffD6D6D6),
+                            fontFamily: 'Inter',
+                            fontWeight: FontWeight.w400,
+                            fontSize: 13,
+                            letterSpacing: -0.1,
+                          ),
+                        )
+                      ],
+                    ),
+                    textAlign: TextAlign.end,
+                    style: TextStyle(height: 1.25),
+                  ),
+                ),
               ],
             ),
           ),

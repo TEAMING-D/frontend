@@ -323,7 +323,7 @@ class _TeamSchedulePageState extends State<TeamSchedulePage> {
   }
 
   void _showBalloon(BuildContext context, TapUpDetails details, List<String> members) {
-    _removeBalloon(); // 기존 말풍선 제거
+    _removeBalloon();
 
     final position = details.globalPosition;
 
