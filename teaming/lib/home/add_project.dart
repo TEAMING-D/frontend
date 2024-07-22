@@ -406,7 +406,7 @@ class _AddProjectPageState extends State<AddProjectPage> {
                   children: [
                     SizedBox(height: 130),
                     buildTextField(
-                        '프로젝트명', '프로젝트 이름을 입력해주세요', projectNameController),
+                        '프로젝트명', '프로젝트 이름을 입력해주세요', controllerName: projectNameController),
                     SizedBox(height: 16),
                     Text(
                       '프로젝트 유형',
@@ -554,7 +554,7 @@ class _AddProjectPageState extends State<AddProjectPage> {
                       children: [
                         buildShortTextField(
                           'YYYY',
-                          endYearController,
+                           controllerName:endYearController,
                           keyboardType: TextInputType.number,
                           inputFormatters: [
                             FilteringTextInputFormatter.digitsOnly,
@@ -566,7 +566,7 @@ class _AddProjectPageState extends State<AddProjectPage> {
                         ),
                         buildShortTextField(
                           'MM',
-                          endMonthController,
+                           controllerName:endMonthController,
                           keyboardType: TextInputType.number,
                           inputFormatters: [
                             FilteringTextInputFormatter.digitsOnly,
@@ -578,7 +578,7 @@ class _AddProjectPageState extends State<AddProjectPage> {
                         ),
                         buildShortTextField(
                           'DD',
-                          endDayController,
+                           controllerName:endDayController,
                           keyboardType: TextInputType.number,
                           inputFormatters: [
                             FilteringTextInputFormatter.digitsOnly,

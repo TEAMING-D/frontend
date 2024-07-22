@@ -1,13 +1,11 @@
+import 'dart:ffi';
+
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
 Widget buildTextField(
-  String label,
-  String hint,
-  TextEditingController? controllerName, {
-  TextInputType keyboardType = TextInputType.text,
-  List<TextInputFormatter>? inputFormatters,
-}) {
+    String label, String hint, {TextEditingController? controllerName, TextInputType keyboardType = TextInputType.text,
+  List<TextInputFormatter>? inputFormatters,}) {
   return Column(
     crossAxisAlignment: CrossAxisAlignment.start,
     children: [
@@ -24,9 +22,8 @@ Widget buildTextField(
         height: 30,
         child: TextField(
           obscureText: label.contains('비밀번호') ? true : false,
-          controller: controllerName,
-          keyboardType: keyboardType,
-          inputFormatters: inputFormatters,
+          controller: controllerName, keyboardType: keyboardType,
+            inputFormatters: inputFormatters,
           style: TextStyle(fontSize: 15, color: Colors.black),
           decoration: InputDecoration(
             hintText: hint,
@@ -126,7 +123,7 @@ Widget buildDivideTextField(
 
 Widget buildShortTextField(
   String hintText,
-  TextEditingController? controllerName, {
+  { TextEditingController? controllerName,
   TextInputType keyboardType = TextInputType.text,
   List<TextInputFormatter>? inputFormatters,
 }) {
@@ -181,11 +178,11 @@ Widget buildPhoneTextField(
       ),
       Row(
         children: [
-          buildShortTextField(num1, controller1),
+          buildShortTextField(num1, controllerName: controller1),
           SizedBox(width: 20),
-          buildShortTextField(num2, controller2),
+          buildShortTextField(num2, controllerName: controller2),
           SizedBox(width: 20),
-          buildShortTextField(num3, controller3),
+          buildShortTextField(num3, controllerName: controller3),
         ],
       ),
     ],
@@ -215,18 +212,18 @@ Widget buildDateTextField(
       ),
       Row(
         children: [
-          buildShortTextField(num1, controller1),
+          buildShortTextField(num1, controllerName: controller1),
           SizedBox(width: 20),
-          buildShortTextField(num2, controller2),
+          buildShortTextField(num2, controllerName: controller2),
           SizedBox(width: 20),
-          buildShortTextField(num3, controller3),
+          buildShortTextField(num3, controllerName: controller3),
         ],
       ),
     ],
   );
 }
 
-Widget buildTextFieldOnly(String hint, TextEditingController? controllerName) {
+Widget buildTextFieldOnly(String hint, {TextEditingController? controllerName, bool centerHintText = false,}) {
   return Column(
     crossAxisAlignment: CrossAxisAlignment.start,
     children: [
@@ -235,6 +232,7 @@ Widget buildTextFieldOnly(String hint, TextEditingController? controllerName) {
         child: TextField(
           controller: controllerName,
           style: TextStyle(fontSize: 15, color: Colors.black),
+          textAlign:  centerHintText ? TextAlign.center : TextAlign.start,
           decoration: InputDecoration(
             hintText: hint,
             border: InputBorder.none,

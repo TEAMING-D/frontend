@@ -188,7 +188,7 @@ class _MyInfoPageState extends State<MyInfoPage> {
                               ),
                             ),
                             SizedBox(height: 50),
-                            buildTextField('이름', '이름을 입력해주세요', nameController),
+                            buildTextField('이름', '이름을 입력해주세요', controllerName: nameController),
                             SizedBox(height: 20),
                             Text(
                               '전화번호',
@@ -203,7 +203,7 @@ class _MyInfoPageState extends State<MyInfoPage> {
                               children: [
                                 buildShortTextField(
                                   '000',
-                                  phonePart1Controller,
+                                  controllerName:phonePart1Controller,
                                   keyboardType: TextInputType.number,
                                   inputFormatters: [
                                     FilteringTextInputFormatter.digitsOnly,
@@ -217,7 +217,7 @@ class _MyInfoPageState extends State<MyInfoPage> {
                                 ),
                                 buildShortTextField(
                                   '0000',
-                                  phonePart2Controller,
+                                  controllerName:phonePart2Controller,
                                   keyboardType: TextInputType.number,
                                   inputFormatters: [
                                     FilteringTextInputFormatter.digitsOnly,
@@ -230,7 +230,7 @@ class _MyInfoPageState extends State<MyInfoPage> {
                                   child: Text('-'),
                                 ),
                                 buildShortTextField(
-                                    '0000', phonePart3Controller,
+                                    '0000', controllerName: phonePart3Controller,
                                   keyboardType: TextInputType.number,
                                   inputFormatters: [
                                     FilteringTextInputFormatter.digitsOnly,
@@ -253,7 +253,7 @@ class _MyInfoPageState extends State<MyInfoPage> {
                             Row(
                               children: [
                                 buildShortTextField(
-                                    'YYYY', birthYearController,
+                                    'YYYY', controllerName: birthYearController,
                                   keyboardType: TextInputType.number,
                                   inputFormatters: [
                                     FilteringTextInputFormatter.digitsOnly,
@@ -262,7 +262,7 @@ class _MyInfoPageState extends State<MyInfoPage> {
                                 SizedBox(
                                   width: 20,
                                 ),
-                                buildShortTextField('MM', birthMonthController,
+                                buildShortTextField('MM', controllerName: birthMonthController,
                                   keyboardType: TextInputType.number,
                                   inputFormatters: [
                                     FilteringTextInputFormatter.digitsOnly,
@@ -271,7 +271,7 @@ class _MyInfoPageState extends State<MyInfoPage> {
                                 SizedBox(
                                   width: 20,
                                 ),
-                                buildShortTextField('DD', birthDayController,
+                                buildShortTextField('DD', controllerName: birthDayController,
                                   keyboardType: TextInputType.number,
                                   inputFormatters: [
                                     FilteringTextInputFormatter.digitsOnly,

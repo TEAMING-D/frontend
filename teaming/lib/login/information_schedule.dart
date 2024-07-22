@@ -254,7 +254,7 @@ class _GetSchedulePageState extends State<GetSchedulePage> {
                         ),
                         SizedBox(height: 50),
                         buildTextField(
-                            '시간표 URL', 'URL을 입력해 주세요', scheduleURLController),
+                            '시간표 URL', 'URL을 입력해 주세요', controllerName: scheduleURLController),
                         SizedBox(height: 50),
                         Row(
                           children: [

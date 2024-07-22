@@ -101,13 +101,13 @@ class _CollabInfoPageState extends State<CollabInfoPage> {
                         ),
                         SizedBox(height: 40),
                         buildTextField(
-                            'Notion', '계정 이메일을 입력해주세요', notionController),
+                            'Notion', '계정 이메일을 입력해주세요', controllerName: notionController),
                         SizedBox(height: 10),
                         buildTextField(
-                            'Github', '계정 이메일을 입력해주세요', githubController),
+                            'Github', '계정 이메일을 입력해주세요', controllerName: githubController),
                         SizedBox(height: 10),
                         buildTextField(
-                            'E-mail', '추가로 사용할 이메일을 입력해주세요', eMailController),
+                            'E-mail', '추가로 사용할 이메일을 입력해주세요', controllerName: eMailController),
                         SizedBox(height: 30),
                         Row(
                           children: [

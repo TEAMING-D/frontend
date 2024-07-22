@@ -185,16 +185,16 @@ class _SchoolInfoPageState extends State<SchoolInfoPage> {
                             ),
                             SizedBox(height: 50),
                             buildTextField(
-                                '학교명', '학교명을 입력해주세요', schoolNameController),
+                                '학교명', '학교명을 입력해주세요', controllerName: schoolNameController),
                             SizedBox(height: 20),
                             buildTextField(
-                                '학번', '학번을 입력해주세요', schoolNumController, keyboardType: TextInputType.number,
+                                '학번', '학번을 입력해주세요', controllerName: schoolNumController, keyboardType: TextInputType.number,
                                   inputFormatters: [
                                     FilteringTextInputFormatter.digitsOnly,
                                   ]),
                             SizedBox(height: 20),
                             buildTextField(
-                                '전공', '주전공을 입력해주세요', majorController),
+                                '전공', '주전공을 입력해주세요', controllerName: majorController),
                             SizedBox(height: 50),
                           ],
                         ),

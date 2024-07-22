@@ -1,10 +1,10 @@
 import 'dart:ui';
 import 'package:flutter/material.dart';
 import 'package:teaming/home/goodbye.dart';
+import 'package:teaming/home/user_time_table_modify.dart';
 import 'package:teaming/login/information_widget.dart';
 
 class UserInfoModifyPage extends StatefulWidget {
-
   final List<Map<String, dynamic>> projects;
   final Function(List<Map<String, dynamic>>) onDeleteProjects;
 
@@ -90,7 +90,7 @@ class _UserInfoModifyPageState extends State<UserInfoModifyPage> {
               ),
             ],
           ),
-          buildTextFieldOnly(hintText, controller),
+          buildTextFieldOnly(hintText, controllerName: controller),
         ],
       ),
     );
@@ -141,7 +141,7 @@ class _UserInfoModifyPageState extends State<UserInfoModifyPage> {
                       builder: (context) => GoodbyePage(),
                     ),
                   );
-                }, 
+                },
                 icon: Icon(
                   Icons.output_rounded,
                   color: Colors.black,
@@ -177,6 +177,11 @@ class _UserInfoModifyPageState extends State<UserInfoModifyPage> {
                     child: OutlinedButton(
                       onPressed: () {
                         // 내 시간표 수정하기 버튼 눌렀을 때 처리할 코드
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                              builder: (context) => ScheduleEditPage()),
+                        );
                       },
                       style: OutlinedButton.styleFrom(
                         backgroundColor: Colors.white,
@@ -241,13 +246,13 @@ class _UserInfoModifyPageState extends State<UserInfoModifyPage> {
                     padding:
                         const EdgeInsets.symmetric(horizontal: 50, vertical: 5),
                     child: buildTextField(
-                        "계정 비밀번호", "변경 비밀번호를 입력하세요", passwordController),
+                        "계정 비밀번호", "변경 비밀번호를 입력하세요", controllerName: passwordController),
                   ),
                   Padding(
                     padding:
                         const EdgeInsets.symmetric(horizontal: 50, vertical: 5),
                     child: buildTextField("계정 비밀번호 확인", "변경 비밀번호를 입력하세요",
-                        confirmPasswordController),
+                        controllerName: confirmPasswordController),
                   ),
                   SizedBox(
                     height: 65,
@@ -294,7 +299,7 @@ class _UserInfoModifyPageState extends State<UserInfoModifyPage> {
                       vertical: 5,
                     ),
                     child: buildTextField(
-                        "학교명", "학교명을 입력해주세요", schoolNameController),
+                        "학교명", "학교명을 입력해주세요", controllerName: schoolNameController),
                   ),
                   Padding(
                     padding: const EdgeInsets.symmetric(
@@ -302,7 +307,7 @@ class _UserInfoModifyPageState extends State<UserInfoModifyPage> {
                       vertical: 5,
                     ),
                     child:
-                        buildTextField("학번", "학번을 입력해주세요", studentIdController),
+                        buildTextField("학번", "학번을 입력해주세요", controllerName: studentIdController),
                   ),
                   buildToggleTextField(
                       "전공", "주전공을 입력해주세요", majorController, isMajorVisible,

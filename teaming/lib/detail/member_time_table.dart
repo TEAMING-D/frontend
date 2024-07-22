@@ -272,13 +272,13 @@ class _MemberSchedulePageState extends State<MemberSchedulePage> {
         controller: _scrollController,
         child: Center(
           child: ClipRRect(
-            borderRadius: BorderRadius.circular(10), // 가장자리를 둥글게 처리
+            borderRadius: BorderRadius.circular(10),
             child: Container(
-              width: 47.9 * 8, // 요일과 시간 포함한 너비
+              width: 47.9 * 8,
               height: (25.05 * 36).toDouble(),
               decoration: BoxDecoration(
                 border: Border.all(color: Colors.grey, width: 0.5),
-                borderRadius: BorderRadius.circular(10), // 가장자리를 둥글게 처리
+                borderRadius: BorderRadius.circular(10),
               ),
               child: Stack(
                 children: [
@@ -298,7 +298,7 @@ class _MemberSchedulePageState extends State<MemberSchedulePage> {
                             color: Colors.white,
                             borderRadius: BorderRadius.only(
                               topLeft: Radius.circular(
-                                  10), // (0,0) 위치의 셀의 왼쪽 위 모서리 둥글게
+                                  10),
                             ),
                           ),
                         ),
@@ -313,7 +313,7 @@ class _MemberSchedulePageState extends State<MemberSchedulePage> {
                               borderRadius: BorderRadius.only(
                                 topRight: i == 6
                                     ? Radius.circular(10)
-                                    : Radius.zero, // (8,0) 위치의 셀의 오른쪽 위 모서리 둥글게
+                                    : Radius.zero,
                               ),
                             ),
                             child: Center(
@@ -351,7 +351,7 @@ class _MemberSchedulePageState extends State<MemberSchedulePage> {
                                 bottomLeft: i == 23
                                     ? Radius.circular(10)
                                     : Radius
-                                        .zero, // (0,24) 위치의 셀의 왼쪽 아래 모서리 둥글게
+                                        .zero,
                               ),
                             ),
                             child: Center(
@@ -369,7 +369,6 @@ class _MemberSchedulePageState extends State<MemberSchedulePage> {
                       ],
                     ),
                   ),
-                  // 오른쪽 아래 모서리 둥글게
                   Positioned(
                     right: 0,
                     top: 36,
@@ -389,7 +388,7 @@ class _MemberSchedulePageState extends State<MemberSchedulePage> {
                                 bottomRight: i == 23
                                     ? Radius.circular(10)
                                     : Radius
-                                        .zero, // (8,24) 위치의 셀의 오른쪽 아래 모서리 둥글게
+                                        .zero,
                               ),
                             ),
                             child: Center(
