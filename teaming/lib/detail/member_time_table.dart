@@ -18,14 +18,62 @@ class _MemberSchedulePageState extends State<MemberSchedulePage> {
 
   final List<Map<String, dynamic>> availability = [
     // 김세아
-    {'name': '김세아', 'day': '월', 'startHour': 13, 'endHour': 16, 'title': '수업명A'},
-    {'name': '김세아', 'day': '화', 'startHour': 10, 'endHour': 11, 'title': '수업명B'},
-    {'name': '김세아', 'day': '화', 'startHour': 12, 'endHour': 13, 'title': '수업명C'},
-    {'name': '김세아', 'day': '수', 'startHour': 13, 'endHour': 16, 'title': '수업명D'},
-    {'name': '김세아', 'day': '목', 'startHour': 10, 'endHour': 11, 'title': '수업명E'},
-    {'name': '김세아', 'day': '목', 'startHour': 12, 'endHour': 13, 'title': '수업명F'},
-    {'name': '김세아', 'day': '금', 'startHour': 15, 'endHour': 19, 'title': '수업명G'},
-    {'name': '김세아', 'day': '토', 'startHour': 12, 'endHour': 20, 'title': '수업명H'},
+    {
+      'name': '김세아',
+      'day': '월',
+      'startHour': 13,
+      'endHour': 16,
+      'title': '수업명A'
+    },
+    {
+      'name': '김세아',
+      'day': '화',
+      'startHour': 10,
+      'endHour': 11,
+      'title': '수업명B'
+    },
+    {
+      'name': '김세아',
+      'day': '화',
+      'startHour': 12,
+      'endHour': 13,
+      'title': '수업명C'
+    },
+    {
+      'name': '김세아',
+      'day': '수',
+      'startHour': 13,
+      'endHour': 16,
+      'title': '수업명D'
+    },
+    {
+      'name': '김세아',
+      'day': '목',
+      'startHour': 10,
+      'endHour': 11,
+      'title': '수업명E'
+    },
+    {
+      'name': '김세아',
+      'day': '목',
+      'startHour': 12,
+      'endHour': 13,
+      'title': '수업명F'
+    },
+    {
+      'name': '김세아',
+      'day': '금',
+      'startHour': 15,
+      'endHour': 19,
+      'title': '수업명G'
+    },
+    {
+      'name': '김세아',
+      'day': '토',
+      'startHour': 12,
+      'endHour': 20,
+      'title': '수업명H'
+    },
     // 윤소윤
     {'name': '윤소윤', 'day': '월', 'startHour': 10, 'endHour': 11, 'title': '일정I'},
     {'name': '윤소윤', 'day': '월', 'startHour': 12, 'endHour': 13, 'title': '일정J'},
@@ -110,12 +158,17 @@ class _MemberSchedulePageState extends State<MemberSchedulePage> {
               height: 10,
             ),
             _buildMemberTabs(),
-            SizedBox(height: 15,),
+            SizedBox(
+              height: 15,
+            ),
             isSchedulePublic ? _buildScheduleTable() : _buildPrivateMessage(),
-            SizedBox(height: 55,),
+            SizedBox(
+              height: 55,
+            ),
           ],
         ),
-      ),bottomNavigationBar: DetailNavigationBar(
+      ),
+      bottomNavigationBar: DetailNavigationBar(
         currentIndex: 0,
         currentPage: MemberSchedulePage,
       ),
@@ -147,7 +200,8 @@ class _MemberSchedulePageState extends State<MemberSchedulePage> {
           border: Border(
             bottom: BorderSide(
               width: 2,
-              color: selectedMember == member ? Colors.black : Colors.transparent,
+              color:
+                  selectedMember == member ? Colors.black : Colors.transparent,
             ),
           ),
         ),
@@ -155,9 +209,12 @@ class _MemberSchedulePageState extends State<MemberSchedulePage> {
           member,
           style: TextStyle(
             fontFamily: 'Inter',
-            fontWeight: selectedMember == member ? FontWeight.w800 : FontWeight.w400,
+            fontWeight:
+                selectedMember == member ? FontWeight.w800 : FontWeight.w400,
             fontSize: 16,
-            color: selectedMember == member ? Color(0xFF404040) : Color(0xFFAAAAAA),
+            color: selectedMember == member
+                ? Color(0xFF404040)
+                : Color(0xFFAAAAAA),
           ),
         ),
       ),
@@ -165,20 +222,28 @@ class _MemberSchedulePageState extends State<MemberSchedulePage> {
   }
 
   Widget _buildScheduleTable() {
-    List<Map<String, dynamic>> filteredSchedule = availability.where((entry) => entry['name'] == selectedMember).toList();
+    List<Map<String, dynamic>> filteredSchedule =
+        availability.where((entry) => entry['name'] == selectedMember).toList();
 
     List<Widget> rows = [];
     for (var day in ['월', '화', '수', '목', '금', '토', '일']) {
       for (int hour = 0; hour < 24; hour++) {
-        bool isAvailable = filteredSchedule.any((entry) => entry['day'] == day && hour >= entry['startHour'] && hour < entry['endHour']);
+        bool isAvailable = filteredSchedule.any((entry) =>
+            entry['day'] == day &&
+            hour >= entry['startHour'] &&
+            hour < entry['endHour']);
         if (isAvailable) {
-          var schedule = filteredSchedule.firstWhere((entry) => entry['day'] == day && hour >= entry['startHour'] && hour < entry['endHour']);
+          var schedule = filteredSchedule.firstWhere((entry) =>
+              entry['day'] == day &&
+              hour >= entry['startHour'] &&
+              hour < entry['endHour']);
           if (hour == schedule['startHour']) {
             rows.add(Positioned(
               left: 47.75 * (dayIndex(day) + 1).toDouble(),
               top: (36 * (hour + 1)).toDouble(),
               width: 47.75.toDouble(),
-              height: (36 * (schedule['endHour'] - schedule['startHour'])).toDouble(),
+              height: (36 * (schedule['endHour'] - schedule['startHour']))
+                  .toDouble(),
               child: Container(
                 decoration: BoxDecoration(
                   color: Colors.grey.withOpacity(0.7),
@@ -203,144 +268,156 @@ class _MemberSchedulePageState extends State<MemberSchedulePage> {
     }
 
     return Expanded(
-  child: SingleChildScrollView(
-    controller: _scrollController,
-    child: Center(
-      child: ClipRRect(
-        borderRadius: BorderRadius.circular(10), // 가장자리를 둥글게 처리
-        child: Container(
-          width: 47.9 * 8, // 요일과 시간 포함한 너비
-          height: (25.05 * 36).toDouble(),
-          decoration: BoxDecoration(
-            border: Border.all(color: Colors.grey, width: 0.5),
+      child: SingleChildScrollView(
+        controller: _scrollController,
+        child: Center(
+          child: ClipRRect(
             borderRadius: BorderRadius.circular(10), // 가장자리를 둥글게 처리
-          ),
-          child: Stack(
-            children: [
-              // 요일 헤더
-              Positioned(
-                left: 0,
-                top: 0,
-                right: 0,
-                height: 36,
-                child: Row(
-                  children: [
-                    Container(
-                      width: 47.75,
-                      height: 36,
-                      decoration: BoxDecoration(
-                        border: Border.all(color: Colors.grey, width: 0.5),
-                        color: Colors.white,
-                        borderRadius: BorderRadius.only(
-                          topLeft: Radius.circular(10), // (0,0) 위치의 셀의 왼쪽 위 모서리 둥글게
+            child: Container(
+              width: 47.9 * 8, // 요일과 시간 포함한 너비
+              height: (25.05 * 36).toDouble(),
+              decoration: BoxDecoration(
+                border: Border.all(color: Colors.grey, width: 0.5),
+                borderRadius: BorderRadius.circular(10), // 가장자리를 둥글게 처리
+              ),
+              child: Stack(
+                children: [
+                  // 요일 헤더
+                  Positioned(
+                    left: 0,
+                    top: 0,
+                    right: 0,
+                    height: 36,
+                    child: Row(
+                      children: [
+                        Container(
+                          width: 47.75,
+                          height: 36,
+                          decoration: BoxDecoration(
+                            border: Border.all(color: Colors.grey, width: 0.5),
+                            color: Colors.white,
+                            borderRadius: BorderRadius.only(
+                              topLeft: Radius.circular(
+                                  10), // (0,0) 위치의 셀의 왼쪽 위 모서리 둥글게
+                            ),
+                          ),
                         ),
-                      ),
+                        for (int i = 0; i < 7; i++)
+                          Container(
+                            width: 47.75,
+                            height: 36,
+                            decoration: BoxDecoration(
+                              border:
+                                  Border.all(color: Colors.grey, width: 0.5),
+                              color: Colors.white,
+                              borderRadius: BorderRadius.only(
+                                topRight: i == 6
+                                    ? Radius.circular(10)
+                                    : Radius.zero, // (8,0) 위치의 셀의 오른쪽 위 모서리 둥글게
+                              ),
+                            ),
+                            child: Center(
+                              child: Text(
+                                ['월', '화', '수', '목', '금', '토', '일'][i],
+                                style: TextStyle(
+                                  fontFamily: 'Inter',
+                                  fontWeight: FontWeight.bold,
+                                  fontSize: 12,
+                                  color: Colors.black,
+                                ),
+                              ),
+                            ),
+                          ),
+                      ],
                     ),
-                    for (int i = 0; i < 7; i++)
-                      Container(
-                        width: 47.75,
-                        height: 36,
-                        decoration: BoxDecoration(
-                          border: Border.all(color: Colors.grey, width: 0.5),
-                          color: Colors.white,
-                          borderRadius: BorderRadius.only(
-                            topRight: i == 6 ? Radius.circular(10) : Radius.zero, // (8,0) 위치의 셀의 오른쪽 위 모서리 둥글게
-                          ),
-                        ),
-                        child: Center(
-                          child: Text(
-                            ['월', '화', '수', '목', '금', '토', '일'][i],
-                            style: TextStyle(
-                              fontFamily: 'Inter',
-                              fontWeight: FontWeight.bold,
-                              fontSize: 12,
-                              color: Colors.black,
+                  ),
+                  // 시간 표시
+                  Positioned(
+                    left: 0,
+                    top: 36,
+                    bottom: 0,
+                    width: 47.75,
+                    child: Column(
+                      children: [
+                        for (int i = 0; i < 24; i++)
+                          Container(
+                            width: 47.75,
+                            height: 36,
+                            decoration: BoxDecoration(
+                              border:
+                                  Border.all(color: Colors.grey, width: 0.5),
+                              color: Colors.white,
+                              borderRadius: BorderRadius.only(
+                                bottomLeft: i == 23
+                                    ? Radius.circular(10)
+                                    : Radius
+                                        .zero, // (0,24) 위치의 셀의 왼쪽 아래 모서리 둥글게
+                              ),
+                            ),
+                            child: Center(
+                              child: Text(
+                                '$i'.padLeft(2, '0'),
+                                style: TextStyle(
+                                  fontFamily: 'Inter',
+                                  fontWeight: FontWeight.bold,
+                                  fontSize: 12,
+                                  color: Colors.black,
+                                ),
+                              ),
                             ),
                           ),
-                        ),
-                      ),
-                  ],
-                ),
-              ),
-              // 시간 표시
-              Positioned(
-                left: 0,
-                top: 36,
-                bottom: 0,
-                width: 47.75,
-                child: Column(
-                  children: [
-                    for (int i = 0; i < 24; i++)
-                      Container(
-                        width: 47.75,
-                        height: 36,
-                        decoration: BoxDecoration(
-                          border: Border.all(color: Colors.grey, width: 0.5),
-                          color: Colors.white,
-                          borderRadius: BorderRadius.only(
-                            bottomLeft: i == 23 ? Radius.circular(10) : Radius.zero, // (0,24) 위치의 셀의 왼쪽 아래 모서리 둥글게
-                          ),
-                        ),
-                        child: Center(
-                          child: Text(
-                            '$i'.padLeft(2, '0'),
-                            style: TextStyle(
-                              fontFamily: 'Inter',
-                              fontWeight: FontWeight.bold,
-                              fontSize: 12,
-                              color: Colors.black,
+                      ],
+                    ),
+                  ),
+                  // 오른쪽 아래 모서리 둥글게
+                  Positioned(
+                    right: 0,
+                    top: 36,
+                    bottom: 0,
+                    width: 47.75,
+                    child: Column(
+                      children: [
+                        for (int i = 0; i < 24; i++)
+                          Container(
+                            width: 47.75,
+                            height: 36,
+                            decoration: BoxDecoration(
+                              border:
+                                  Border.all(color: Colors.grey, width: 0.5),
+                              color: Colors.white,
+                              borderRadius: BorderRadius.only(
+                                bottomRight: i == 23
+                                    ? Radius.circular(10)
+                                    : Radius
+                                        .zero, // (8,24) 위치의 셀의 오른쪽 아래 모서리 둥글게
+                              ),
+                            ),
+                            child: Center(
+                              child: Text(
+                                '',
+                                style: TextStyle(
+                                  fontFamily: 'Inter',
+                                  fontWeight: FontWeight.w400,
+                                  fontSize: 12,
+                                  color: Colors.black,
+                                ),
+                              ),
                             ),
                           ),
-                        ),
-                      ),
-                  ],
-                ),
+                      ],
+                    ),
+                  ),
+                  // 시간표의 빈 셀
+                  ..._buildEmptyCells(),
+                  // 일정이 있는 셀
+                  ...rows,
+                ],
               ),
-              // 오른쪽 아래 모서리 둥글게
-              Positioned(
-                right: 0,
-                top: 36,
-                bottom: 0,
-                width: 47.75,
-                child: Column(
-                  children: [
-                    for (int i = 0; i < 24; i++)
-                      Container(
-                        width: 47.75,
-                        height: 36,
-                        decoration: BoxDecoration(
-                          border: Border.all(color: Colors.grey, width: 0.5),
-                          color: Colors.white,
-                          borderRadius: BorderRadius.only(
-                            bottomRight: i == 23 ? Radius.circular(10) : Radius.zero, // (8,24) 위치의 셀의 오른쪽 아래 모서리 둥글게
-                          ),
-                        ),
-                        child: Center(
-                          child: Text(
-                            '',
-                            style: TextStyle(
-                              fontFamily: 'Inter',
-                              fontWeight: FontWeight.w400,
-                              fontSize: 12,
-                              color: Colors.black,
-                            ),
-                          ),
-                        ),
-                      ),
-                  ],
-                ),
-              ),
-              // 시간표의 빈 셀
-              ..._buildEmptyCells(),
-              // 일정이 있는 셀
-              ...rows,
-            ],
+            ),
           ),
         ),
       ),
-    ),
-  ),
-);
+    );
   }
 
   List<Widget> _buildEmptyCells() {
@@ -425,7 +502,9 @@ class _MemberSchedulePageState extends State<MemberSchedulePage> {
               ),
               textAlign: TextAlign.center,
             ),
-            SizedBox(height: 60,)
+            SizedBox(
+              height: 60,
+            )
           ],
         ),
       ),
