@@ -2,19 +2,19 @@ import 'dart:ui';
 
 import 'package:flutter/material.dart';
 
-class DeleteTaskPage extends StatefulWidget {
+class DeleteWorkPage extends StatefulWidget {
   final List<Map<String, dynamic>> tasks;
   final String view;
   final Function(List<Map<String, dynamic>>) onDelete;
 
-  DeleteTaskPage(
+  DeleteWorkPage(
       {required this.tasks, required this.view, required this.onDelete});
 
   @override
-  _DeleteTaskPageState createState() => _DeleteTaskPageState();
+  _DeleteWorkPageState createState() => _DeleteWorkPageState();
 }
 
-class _DeleteTaskPageState extends State<DeleteTaskPage> {
+class _DeleteWorkPageState extends State<DeleteWorkPage> {
   List<bool> _selectedTasks = [];
 
   @override
@@ -233,46 +233,34 @@ class _DeleteTaskPageState extends State<DeleteTaskPage> {
                             ),
                           ],
                         ),
-                        child: Expanded(
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              Text(
-                                task['title'],
-                                style: TextStyle(
-                                  fontSize: 18,
-                                  fontWeight: FontWeight.bold,
-                                  color: isCompleted
-                                      ? Colors.white
-                                      : Color(0xff404040),
-                                ),
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text(
+                              task['title'],
+                              style: TextStyle(
+                                fontSize: 18,
+                                fontWeight: FontWeight.bold,
+                                color: isCompleted
+                                    ? Colors.white
+                                    : Color(0xff404040),
                               ),
-                              SizedBox(height: 4),
-                              Text(
-                                '담당자: $displayMembers',
-                                style: TextStyle(
-                                  fontSize: 14,
-                                  color: isCompleted
-                                      ? Colors.white
-                                      : Color(0xff808080),
-                                ),
+                            ),
+                            SizedBox(height: 4),
+                            Text(
+                              '담당자: $displayMembers',
+                              style: TextStyle(
+                                fontSize: 14,
+                                color: isCompleted
+                                    ? Colors.white
+                                    : Color(0xff808080),
                               ),
-                              SizedBox(height: 2),
-                              SizedBox(
-                                width: 250,
-                                child: Text(
-                                  '설명: ${task['description']}',
-                                  style: TextStyle(
-                                    fontSize: 14,
-                                    color: isCompleted
-                                        ? Colors.white
-                                        : Color(0xff808080),
-                                  ),
-                                ),
-                              ),
-                              SizedBox(height: 8),
-                              Text(
-                                '기간: ${task['startDate']} ~ ${task['endDate']}',
+                            ),
+                            SizedBox(height: 2),
+                            SizedBox(
+                              width: 250,
+                              child: Text(
+                                '설명: ${task['description']}',
                                 style: TextStyle(
                                   fontSize: 14,
                                   color: isCompleted
@@ -280,8 +268,18 @@ class _DeleteTaskPageState extends State<DeleteTaskPage> {
                                       : Color(0xff808080),
                                 ),
                               ),
-                            ],
-                          ),
+                            ),
+                            SizedBox(height: 8),
+                            Text(
+                              '기간: ${task['startDate']} ~ ${task['endDate']}',
+                              style: TextStyle(
+                                fontSize: 14,
+                                color: isCompleted
+                                    ? Colors.white
+                                    : Color(0xff808080),
+                              ),
+                            ),
+                          ],
                         ),
                       ),
                     ],
@@ -444,6 +442,7 @@ class _DeleteTaskPageState extends State<DeleteTaskPage> {
               },
             ),
           ),
+          SizedBox(height: 50,)
         ],
       ),
     );

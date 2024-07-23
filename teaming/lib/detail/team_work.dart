@@ -1,6 +1,8 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:teaming/detail/add_work.dart';
 import 'package:teaming/detail/delete_work.dart';
+import 'package:teaming/detail/navigation_bar.dart';
 
 class TeamWorkPage extends StatefulWidget {
   @override
@@ -68,39 +70,39 @@ class _TeamWorkPageState extends State<TeamWorkPage> {
     showMenu(
       context: context,
       position: RelativeRect.fromLTRB(
-        (MediaQuery.of(context).size.width / 4*3),
+        (MediaQuery.of(context).size.width / 4 * 3),
         position.dy + kToolbarHeight + 70,
         0,
         0,
       ),
-      items: [(_selectedView == '타임라인 형태로 보기') ? 
-        PopupMenuItem(
-          child: 
-          Container(
-              alignment: Alignment.center,
-              child: Text(
-                '블록 형태로 보기',
-                textAlign: TextAlign.center,
-              )),
-          onTap: () {
-            setState(() {
-              _selectedView = '블록 형태로 보기';
-            });
-          },
-        ) :
-        PopupMenuItem(
-          child: Container(
-              alignment: Alignment.center,
-              child: Text(
-                '타임라인 형태로 보기',
-                textAlign: TextAlign.center,
-              )),
-          onTap: () {
-            setState(() {
-              _selectedView = '타임라인 형태로 보기';
-            });
-          },
-        ),
+      items: [
+        (_selectedView == '타임라인 형태로 보기')
+            ? PopupMenuItem(
+                child: Container(
+                    alignment: Alignment.center,
+                    child: Text(
+                      '블록 형태로 보기',
+                      textAlign: TextAlign.center,
+                    )),
+                onTap: () {
+                  setState(() {
+                    _selectedView = '블록 형태로 보기';
+                  });
+                },
+              )
+            : PopupMenuItem(
+                child: Container(
+                    alignment: Alignment.center,
+                    child: Text(
+                      '타임라인 형태로 보기',
+                      textAlign: TextAlign.center,
+                    )),
+                onTap: () {
+                  setState(() {
+                    _selectedView = '타임라인 형태로 보기';
+                  });
+                },
+              ),
       ],
       color: Colors.white,
     );
@@ -139,11 +141,11 @@ class _TeamWorkPageState extends State<TeamWorkPage> {
                     width: 33,
                     height: 33,
                   ),
-                   onPressed: () {
+                  onPressed: () {
                     Navigator.push(
                       context,
                       MaterialPageRoute(
-                        builder: (context) => DeleteTaskPage(
+                        builder: (context) => DeleteWorkPage(
                           tasks: tasks,
                           view: _selectedView,
                           onDelete: (updatedTasks) {
@@ -170,9 +172,31 @@ class _TeamWorkPageState extends State<TeamWorkPage> {
                   width: 33,
                   height: 33,
                 ),
-                onPressed: () {
-                  // 추가 로직 구현
-                },
+                onPressed: () async {
+  final newTask = await Navigator.push(
+    context,
+    MaterialPageRoute(
+      builder: (context) => AddWorkPage(
+        onAddProject: (task) {
+          task['progress'] = 0;
+          task['startDate'] = DateTime.now().toString().substring(0, 10).replaceAll('-', '.');
+          setState(() {
+            tasks.insert(0, task);
+          });
+        },
+        teamMembers: ['김세아', '오수진', '윤소윤'],
+      ),
+    ),
+  );
+
+  if (newTask != null) {
+    newTask['progress'] = 0;
+    newTask['startDate'] = DateTime.now().toString().substring(0, 10).replaceAll('-', '.');
+    setState(() {
+      tasks.insert(0, newTask);
+    });
+  }
+},
               ),
             ),
           ),
@@ -205,9 +229,17 @@ class _TeamWorkPageState extends State<TeamWorkPage> {
                 tasks.isEmpty
                     ? SizedBox()
                     : TextButton.icon(
-                        icon: Icon(Icons.keyboard_arrow_down_outlined, color: Colors.black),
+                        icon: Icon(Icons.keyboard_arrow_down_outlined,
+                            color: Colors.black),
                         onPressed: () => _showDropdownMenu(context),
-                        label: Text(_selectedView, style: TextStyle(fontFamily: 'Inter', fontWeight: FontWeight.w400, color: Colors.black, fontSize: 14),),
+                        label: Text(
+                          _selectedView,
+                          style: TextStyle(
+                              fontFamily: 'Inter',
+                              fontWeight: FontWeight.w400,
+                              color: Colors.black,
+                              fontSize: 14),
+                        ),
                         iconAlignment: IconAlignment.end,
                       ),
               ],
@@ -217,6 +249,10 @@ class _TeamWorkPageState extends State<TeamWorkPage> {
             ),
           ],
         ),
+      ),
+      bottomNavigationBar: DetailNavigationBar(
+        currentIndex: 1,
+        currentPage: TeamWorkPage,
       ),
     );
   }
@@ -250,14 +286,16 @@ class _TeamWorkPageState extends State<TeamWorkPage> {
   Widget _buildBlockView() {
     return SingleChildScrollView(
       child: Padding(
-        padding: const EdgeInsets.only(bottom: 20,),
+        padding: const EdgeInsets.only(
+          bottom: 20,
+        ),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.end,
           children: tasks.map((task) {
             var displayMembers = task['members'].length > 3
                 ? '${task['members'].take(3).join(', ')} 외 ${task['members'].length - 3}인'
                 : task['members'].join(', ');
-        
+
             return Padding(
               padding: const EdgeInsets.symmetric(horizontal: 10),
               child: Container(
@@ -265,8 +303,9 @@ class _TeamWorkPageState extends State<TeamWorkPage> {
                 margin: EdgeInsets.symmetric(vertical: 10),
                 padding: EdgeInsets.all(16),
                 decoration: BoxDecoration(
-                  color:
-                      task['progress'] == 100 ? Color(0xff737373) : Colors.white,
+                  color: task['progress'] == 100
+                      ? Color(0xff737373)
+                      : Colors.white,
                   borderRadius: BorderRadius.circular(8),
                   boxShadow: [
                     BoxShadow(
@@ -381,158 +420,170 @@ class _TeamWorkPageState extends State<TeamWorkPage> {
     );
   }
 
-Widget _buildTimelineView() {
-  List<Map<String, dynamic>> timelineItems = [];
+  Widget _buildTimelineView() {
+    List<Map<String, dynamic>> timelineItems = [];
 
-  for (var task in tasks) {
-    timelineItems.add({
-      'date': task['startDate'],
-      'title': '${task['title']} 시작',
-      'description': task['description'],
-      'members': task['members'],
-      'status': 'in-progress',
-    });
+    for (var task in tasks) {
+      timelineItems.add({
+        'date': task['startDate'],
+        'title': '${task['title']} 시작',
+        'description': task['description'],
+        'members': task['members'],
+        'status': 'in-progress',
+      });
 
-    if (task['progress'] == 100) {
-      timelineItems.add({
-        'date': task['endDate'],
-        'title': '${task['title']} 완료',
-        'description': '완료',
-        'members': task['members'],
-        'status': 'completed',
-      });
-    } else {
-      timelineItems.add({
-        'date': task['endDate'],
-        'title': '${task['title']} 완료 예정',
-        'description': '완료 예정',
-        'members': task['members'],
-        'status': 'pending',
-      });
+      if (task['progress'] == 100) {
+        timelineItems.add({
+          'date': task['endDate'],
+          'title': '${task['title']} 완료',
+          'description': '완료',
+          'members': task['members'],
+          'status': 'completed',
+        });
+      } else {
+        timelineItems.add({
+          'date': task['endDate'],
+          'title': '${task['title']} 완료 예정',
+          'description': '완료 예정',
+          'members': task['members'],
+          'status': 'pending',
+        });
+      }
     }
-  }
 
 // 날짜 내림차순 정렬
-  timelineItems.sort((a, b) => b['date'].compareTo(a['date'])); 
+    timelineItems.sort((a, b) => b['date'].compareTo(a['date']));
 
-  return SingleChildScrollView(
-    child: Column(
-      children: [
-        SizedBox(height: 25,),
-        ListView.builder(
-          padding: EdgeInsets.zero,
-          shrinkWrap: true,
-          physics: NeverScrollableScrollPhysics(),
-          itemCount: timelineItems.length,
-          itemBuilder: (context, index) {
-            var item = timelineItems[index];
-            var displayMembers = item['members'].length > 3
-                ? '${item['members'].take(3).join(', ')} 외 ${item['members'].length - 3}인'
-                : item['members'].join(', ');
-        
-            bool isPending = item['status'] == 'pending';
-            bool hasDetails = item['description'] != '완료' && item['description'] != '완료 예정';
-        
-            return Padding(
-              padding: EdgeInsets.only(bottom: hasDetails ? 20 : 10),
-              child: Row(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  SizedBox(width: 30,),
-                  Container(
-                    margin: EdgeInsets.only(top: hasDetails ? 4 : 0),
-                    child: Column(
+    return SingleChildScrollView(
+      child: Column(
+        children: [
+          SizedBox(
+            height: 25,
+          ),
+          ListView.builder(
+            padding: EdgeInsets.zero,
+            shrinkWrap: true,
+            physics: NeverScrollableScrollPhysics(),
+            itemCount: timelineItems.length,
+            itemBuilder: (context, index) {
+              var item = timelineItems[index];
+              var displayMembers = item['members'].length > 3
+                  ? '${item['members'].take(3).join(', ')} 외 ${item['members'].length - 3}인'
+                  : item['members'].join(', ');
+
+              bool isPending = item['status'] == 'pending';
+              bool hasDetails =
+                  item['description'] != '완료' && item['description'] != '완료 예정';
+
+              return Padding(
+                padding: EdgeInsets.only(bottom: hasDetails ? 20 : 10),
+                child: Row(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    SizedBox(
+                      width: 30,
+                    ),
+                    Container(
+                      margin: EdgeInsets.only(top: hasDetails ? 4 : 0),
+                      child: Column(
+                        children: [
+                          Text(
+                            item['date'],
+                            style: TextStyle(
+                              color: isPending
+                                  ? Color(0xffC1C1C1)
+                                  : Color(0xff5A5A5A),
+                              fontWeight: FontWeight.bold,
+                              fontSize: 14,
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                    SizedBox(width: 10),
+                    Column(
                       children: [
-                        Text(
-                          item['date'],
-                          style: TextStyle(
-                            color: isPending ? Color(0xffC1C1C1) : Color(0xff5A5A5A),
-                            fontWeight: FontWeight.bold,
-                            fontSize: 14,
+                        SizedBox(height: 7),
+                        Container(
+                          width: 8,
+                          height: 8,
+                          decoration: BoxDecoration(
+                            color: isPending ? Colors.white : Color(0xff737373),
+                            borderRadius: BorderRadius.circular(4),
+                            border: Border.all(
+                              color: isPending
+                                  ? Color(0xffC1C1C1)
+                                  : Color(0xff737373),
+                              width: 2,
+                            ),
                           ),
                         ),
+                        if (index != timelineItems.length - 1)
+                          SizedBox(
+                            width: 2,
+                            height: hasDetails ? 100 : 50,
+                            child: CustomPaint(
+                              painter: DashedLinePainter(
+                                color: isPending
+                                    ? Color(0xffC1C1C1)
+                                    : Color(0xff737373),
+                                isDashed: isPending,
+                              ),
+                            ),
+                          ),
                       ],
                     ),
-                  ),
-                  SizedBox(width: 10),
-                  Column(
-                    children: [
-                      SizedBox(height: 7),
-                      Container(
-                        width: 8,
-                        height: 8,
-                        decoration: BoxDecoration(
-                          color: isPending ? Colors.white : Color(0xff737373),
-                          borderRadius: BorderRadius.circular(4),
-                          border: Border.all(
-                            color: isPending ? Color(0xffC1C1C1) : Color(0xff737373),
-                            width: 2,
-                          ),
-                        ),
-                      ),
-                      if (index != timelineItems.length - 1)
-                        SizedBox(
-                          width: 2,
-                          height: hasDetails ? 100 : 50,
-                          child: CustomPaint(
-                            painter: DashedLinePainter(
-                              color: isPending ? Color(0xffC1C1C1) : Color(0xff737373),
-                              isDashed: isPending,
-                            ),
-                          ),
-                        ),
-                    ],
-                  ),
-                  SizedBox(width: 10),
-                  Expanded(
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Text(
-                          item['title'],
-                          style: TextStyle(
-                            fontSize: 16,
-                            fontFamily: 'Inter',
-                            fontWeight: FontWeight.bold,
-                            letterSpacing: -0.2,
-                            color: isPending ? Color(0xffC1C1C1) : Color(0xff5A5A5A),
-                          ),
-                        ),
-                        if (hasDetails) ...[
-                          SizedBox(height: 3),
+                    SizedBox(width: 10),
+                    Expanded(
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
                           Text(
-                            '담당자: $displayMembers',
+                            item['title'],
                             style: TextStyle(
-                              fontSize: 13,
-                              color: Color(0xff5A5A5A),
+                              fontSize: 16,
+                              fontFamily: 'Inter',
+                              fontWeight: FontWeight.bold,
+                              letterSpacing: -0.2,
+                              color: isPending
+                                  ? Color(0xffC1C1C1)
+                                  : Color(0xff5A5A5A),
                             ),
                           ),
-                          SizedBox(height: 2),
-                          SizedBox(
-                            width: 250,
-                            child: Text(
-                              '설명: ${item['description']}',
+                          if (hasDetails) ...[
+                            SizedBox(height: 3),
+                            Text(
+                              '담당자: $displayMembers',
                               style: TextStyle(
                                 fontSize: 13,
                                 color: Color(0xff5A5A5A),
                               ),
                             ),
-                          ),
+                            SizedBox(height: 2),
+                            SizedBox(
+                              width: 250,
+                              child: Text(
+                                '설명: ${item['description']}',
+                                style: TextStyle(
+                                  fontSize: 13,
+                                  color: Color(0xff5A5A5A),
+                                ),
+                              ),
+                            ),
+                          ],
                         ],
-                      ],
+                      ),
                     ),
-                  ),
-                ],
-              ),
-            );
-          },
-        ),
-        SizedBox(height: 30),
-      ],
-    ),
-  );
-}
-
+                  ],
+                ),
+              );
+            },
+          ),
+          SizedBox(height: 30),
+        ],
+      ),
+    );
+  }
 }
 
 class DashedLinePainter extends CustomPainter {
@@ -554,7 +605,8 @@ class DashedLinePainter extends CustomPainter {
       double startY = 0;
 
       while (startY < max) {
-        canvas.drawLine(Offset(1, startY), Offset(1, startY + dashWidth), paint);
+        canvas.drawLine(
+            Offset(1, startY), Offset(1, startY + dashWidth), paint);
         startY += dashWidth + dashSpace;
       }
     } else {

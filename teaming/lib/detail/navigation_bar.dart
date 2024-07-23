@@ -18,13 +18,23 @@ class DetailNavigationBar extends StatelessWidget {
       case 0:
         Navigator.pushReplacement(
           context,
-          MaterialPageRoute(builder: (context) => TeamSchedulePage()),
+          PageRouteBuilder(
+            pageBuilder: (_, __, ___) => TeamSchedulePage(),
+            transitionDuration: Duration(milliseconds: 500),
+            transitionsBuilder: (_, a, __, c) =>
+                FadeTransition(opacity: a, child: c),
+          ),
         );
         break;
       case 1:
         Navigator.pushReplacement(
           context,
-          MaterialPageRoute(builder: (context) => TeamWorkPage()),
+          PageRouteBuilder(
+            pageBuilder: (_, __, ___) => TeamWorkPage(),
+            transitionDuration: Duration(milliseconds: 500),
+            transitionsBuilder: (_, a, __, c) =>
+                FadeTransition(opacity: a, child: c),
+          ),
         );
         break;
       case 2:
@@ -34,9 +44,13 @@ class DetailNavigationBar extends StatelessWidget {
         // 아카이브 페이지
         break;
       case 4:
-        Navigator.pushReplacement(
-          context,
-          MaterialPageRoute(builder: (context) => ModifyProjectPage()),
+        Navigator.push(
+          context,PageRouteBuilder(
+            pageBuilder: (_, __, ___) => ModifyProjectPage(),
+            transitionDuration: Duration(milliseconds: 500),
+            transitionsBuilder: (_, a, __, c) =>
+                FadeTransition(opacity: a, child: c),
+          ),
         );
         break;
     }
@@ -44,7 +58,6 @@ class DetailNavigationBar extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    
     return ClipRect(
       child: BackdropFilter(
         filter: ImageFilter.blur(sigmaX: 4, sigmaY: 4),

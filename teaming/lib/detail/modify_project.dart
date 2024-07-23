@@ -554,9 +554,9 @@ class _ModifyProjectPageState extends State<ModifyProjectPage> {
                         'YYYY',
                         'MM',
                         'DD',
-                        endYearController,
-                        endMonthController,
-                        endDayController),
+                        controller1: endYearController,
+                        controller2: endMonthController,
+                        controller3: endDayController),
                     SizedBox(
                       height: 20,
                     ),

@@ -377,9 +377,9 @@ class _UserInfoModifyPageState extends State<UserInfoModifyPage> {
                       "YYYY",
                       "MM",
                       "DD",
-                      birthYearController,
-                      birthMonthController,
-                      birthDayController,
+                      controller1: birthYearController,
+                      controller2: birthMonthController,
+                      controller3: birthDayController,
                     ),
                   ),
                   SizedBox(

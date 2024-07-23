@@ -4,8 +4,12 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
 Widget buildTextField(
-    String label, String hint, {TextEditingController? controllerName, TextInputType keyboardType = TextInputType.text,
-  List<TextInputFormatter>? inputFormatters,}) {
+  String label,
+  String hint, {
+  TextEditingController? controllerName,
+  TextInputType keyboardType = TextInputType.text,
+  List<TextInputFormatter>? inputFormatters,
+}) {
   return Column(
     crossAxisAlignment: CrossAxisAlignment.start,
     children: [
@@ -22,8 +26,9 @@ Widget buildTextField(
         height: 30,
         child: TextField(
           obscureText: label.contains('비밀번호') ? true : false,
-          controller: controllerName, keyboardType: keyboardType,
-            inputFormatters: inputFormatters,
+          controller: controllerName,
+          keyboardType: keyboardType,
+          inputFormatters: inputFormatters,
           style: TextStyle(fontSize: 15, color: Colors.black),
           decoration: InputDecoration(
             hintText: hint,
@@ -122,10 +127,13 @@ Widget buildDivideTextField(
 }
 
 Widget buildShortTextField(
-  String hintText,
-  { TextEditingController? controllerName,
+  String hintText, {
+  TextEditingController? controllerName,
   TextInputType keyboardType = TextInputType.text,
   List<TextInputFormatter>? inputFormatters,
+  Function(String)? onChanged,
+  Function(String)? onSubmitted,
+  VoidCallback? onEditingComplete,
 }) {
   return Expanded(
     child: Column(
@@ -138,6 +146,9 @@ Widget buildShortTextField(
             textAlign: TextAlign.center,
             keyboardType: keyboardType,
             inputFormatters: inputFormatters,
+            onChanged: onChanged,
+            onSubmitted: onSubmitted,
+            onEditingComplete: onEditingComplete,
             decoration: InputDecoration(
               hintText: hintText,
               border: InputBorder.none,
@@ -178,7 +189,10 @@ Widget buildPhoneTextField(
       ),
       Row(
         children: [
-          buildShortTextField(num1, controllerName: controller1),
+          buildShortTextField(
+            num1,
+            controllerName: controller1,
+          ),
           SizedBox(width: 20),
           buildShortTextField(num2, controllerName: controller2),
           SizedBox(width: 20),
@@ -189,15 +203,24 @@ Widget buildPhoneTextField(
   );
 }
 
-// 생년월일 텍스트 필드 빌드 함수
+// 날짜 텍스트 필드 빌드 함수
 Widget buildDateTextField(
-    String label,
-    String num1,
-    String num2,
-    String num3,
-    TextEditingController? controller1,
-    TextEditingController? controller2,
-    TextEditingController? controller3) {
+  String label,
+  String num1,
+  String num2,
+  String num3, {
+  TextEditingController? controller1,
+  TextEditingController? controller2,
+  TextEditingController? controller3,
+  TextInputType keyboardType = TextInputType.text,
+  List<TextInputFormatter>? inputFormatters,
+  Function(String)? onChanged1,
+  Function(String)? onChanged2,
+  Function(String)? onChanged3,
+  Function(String)? onSubmitted1,
+  Function(String)? onSubmitted2,
+  Function(String)? onSubmitted3,
+}) {
   return Column(
     crossAxisAlignment: CrossAxisAlignment.start,
     children: [
@@ -210,20 +233,46 @@ Widget buildDateTextField(
           color: Color(0xFF484848),
         ),
       ),
+      SizedBox(height: 5),
       Row(
         children: [
-          buildShortTextField(num1, controllerName: controller1),
+          buildShortTextField(
+            num1,
+            controllerName: controller1,
+            inputFormatters: inputFormatters,
+            keyboardType: keyboardType,
+            onChanged: onChanged1,
+            onSubmitted: onSubmitted1,
+          ),
           SizedBox(width: 20),
-          buildShortTextField(num2, controllerName: controller2),
+          buildShortTextField(
+            num2,
+            controllerName: controller2,
+            inputFormatters: inputFormatters,
+            keyboardType: keyboardType,
+            onChanged: onChanged2,
+            onSubmitted: onSubmitted2,
+          ),
           SizedBox(width: 20),
-          buildShortTextField(num3, controllerName: controller3),
+          buildShortTextField(
+            num3,
+            controllerName: controller3,
+            inputFormatters: inputFormatters,
+            keyboardType: keyboardType,
+            onChanged: onChanged3,
+            onSubmitted: onSubmitted3,
+          ),
         ],
       ),
     ],
   );
 }
 
-Widget buildTextFieldOnly(String hint, {TextEditingController? controllerName, bool centerHintText = false,}) {
+Widget buildTextFieldOnly(
+  String hint, {
+  TextEditingController? controllerName,
+  bool centerHintText = false,
+}) {
   return Column(
     crossAxisAlignment: CrossAxisAlignment.start,
     children: [
@@ -232,7 +281,7 @@ Widget buildTextFieldOnly(String hint, {TextEditingController? controllerName, b
         child: TextField(
           controller: controllerName,
           style: TextStyle(fontSize: 15, color: Colors.black),
-          textAlign:  centerHintText ? TextAlign.center : TextAlign.start,
+          textAlign: centerHintText ? TextAlign.center : TextAlign.start,
           decoration: InputDecoration(
             hintText: hint,
             border: InputBorder.none,
