@@ -1,6 +1,7 @@
 import 'dart:ui';
 import 'package:flutter/material.dart';
 import 'package:teaming/detail/modify_project.dart';
+import 'package:teaming/detail/team_work.dart';
 import 'package:teaming/detail/time_table.dart';
 
 class DetailNavigationBar extends StatelessWidget {
@@ -21,16 +22,18 @@ class DetailNavigationBar extends StatelessWidget {
         );
         break;
       case 1:
-        // Add your navigation logic here
+        Navigator.pushReplacement(
+          context,
+          MaterialPageRoute(builder: (context) => TeamWorkPage()),
+        );
         break;
       case 2:
-        // Add your navigation logic here
+        // 참여도 페이지
         break;
       case 3:
-        // Add your navigation logic here
+        // 아카이브 페이지
         break;
       case 4:
-      
         Navigator.pushReplacement(
           context,
           MaterialPageRoute(builder: (context) => ModifyProjectPage()),
