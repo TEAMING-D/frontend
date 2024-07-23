@@ -221,7 +221,7 @@ class _DeleteProjectPageState extends State<DeleteProjectPage> {
                             }
                           });
                         },
-                        activeColor: Colors.grey[700], // 전체 선택 시 체크박스 색상 변경
+                        activeColor: Colors.grey[700],
                       ),
                       Text('전체 선택하기'),
                     ],

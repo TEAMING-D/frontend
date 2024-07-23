@@ -1,5 +1,6 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:teaming/detail/delete_work.dart';
 
 class TeamWorkPage extends StatefulWidget {
   @override
@@ -138,8 +139,21 @@ class _TeamWorkPageState extends State<TeamWorkPage> {
                     width: 33,
                     height: 33,
                   ),
-                  onPressed: () {
-                    // 삭제 로직 구현
+                   onPressed: () {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) => DeleteTaskPage(
+                          tasks: tasks,
+                          view: _selectedView,
+                          onDelete: (updatedTasks) {
+                            setState(() {
+                              tasks = updatedTasks;
+                            });
+                          },
+                        ),
+                      ),
+                    );
                   },
                 ),
               ),
@@ -235,131 +249,134 @@ class _TeamWorkPageState extends State<TeamWorkPage> {
 
   Widget _buildBlockView() {
     return SingleChildScrollView(
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.end,
-        children: tasks.map((task) {
-          var displayMembers = task['members'].length > 3
-              ? '${task['members'].take(3).join(', ')} 외 ${task['members'].length - 3}인'
-              : task['members'].join(', ');
-
-          return Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 10),
-            child: Container(
-              width: MediaQuery.of(context).size.width - 40,
-              margin: EdgeInsets.symmetric(vertical: 10),
-              padding: EdgeInsets.all(16),
-              decoration: BoxDecoration(
-                color:
-                    task['progress'] == 100 ? Color(0xff737373) : Colors.white,
-                borderRadius: BorderRadius.circular(8),
-                boxShadow: [
-                  BoxShadow(
-                    color: Colors.black.withOpacity(0.15),
-                    spreadRadius: 4,
-                    blurRadius: 6,
-                    offset: Offset(0, 3),
-                  ),
-                ],
-              ),
-              child: Stack(
-                children: [
-                  Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text(
-                        task['title'],
-                        style: TextStyle(
-                          fontSize: 20,
-                          fontFamily: 'Inter',
-                          fontWeight: FontWeight.bold,
-                          letterSpacing: -0.2,
-                          color: task['progress'] == 100
-                              ? Colors.white
-                              : Color(0xff5A5A5A),
-                        ),
-                      ),
-                      SizedBox(height: 3),
-                      Text(
-                        '담당자: $displayMembers',
-                        style: TextStyle(
-                          fontSize: 13,
-                          color: task['progress'] == 100
-                              ? Colors.white
-                              : Color(0xff5A5A5A),
-                        ),
-                      ),
-                      SizedBox(height: 2),
-                      Container(
-                        width: 220,
-                        child: Text(
-                          '설명: ${task['description']}',
+      child: Padding(
+        padding: const EdgeInsets.only(bottom: 20,),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.end,
+          children: tasks.map((task) {
+            var displayMembers = task['members'].length > 3
+                ? '${task['members'].take(3).join(', ')} 외 ${task['members'].length - 3}인'
+                : task['members'].join(', ');
+        
+            return Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 10),
+              child: Container(
+                width: MediaQuery.of(context).size.width - 40,
+                margin: EdgeInsets.symmetric(vertical: 10),
+                padding: EdgeInsets.all(16),
+                decoration: BoxDecoration(
+                  color:
+                      task['progress'] == 100 ? Color(0xff737373) : Colors.white,
+                  borderRadius: BorderRadius.circular(8),
+                  boxShadow: [
+                    BoxShadow(
+                      color: Colors.black.withOpacity(0.15),
+                      spreadRadius: 4,
+                      blurRadius: 6,
+                      offset: Offset(0, 3),
+                    ),
+                  ],
+                ),
+                child: Stack(
+                  children: [
+                    Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          task['title'],
                           style: TextStyle(
-                            fontSize: 13,
+                            fontSize: 20,
+                            fontFamily: 'Inter',
+                            fontWeight: FontWeight.bold,
                             letterSpacing: -0.2,
                             color: task['progress'] == 100
                                 ? Colors.white
                                 : Color(0xff5A5A5A),
                           ),
                         ),
-                      ),
-                      SizedBox(height: 10),
-                      Text(
-                        task['progress'] == 100
-                            ? '기간: ${task['startDate']} ~ ${task['endDate']}'
-                            : '기간: ${task['startDate']} ~',
-                        style: TextStyle(
-                          fontSize: 13,
-                          color: task['progress'] == 100
-                              ? Colors.white
-                              : Color(0xff5A5A5A),
-                          letterSpacing: 0,
+                        SizedBox(height: 3),
+                        Text(
+                          '담당자: $displayMembers',
+                          style: TextStyle(
+                            fontSize: 13,
+                            color: task['progress'] == 100
+                                ? Colors.white
+                                : Color(0xff5A5A5A),
+                          ),
                         ),
-                      ),
-                    ],
-                  ),
-                  Positioned(
-                    bottom: 0,
-                    right: 0,
-                    child: Text.rich(
-                      TextSpan(
-                        children: [
-                          TextSpan(
-                            text: '${task['progress']}%\n',
+                        SizedBox(height: 2),
+                        SizedBox(
+                          width: 220,
+                          child: Text(
+                            '설명: ${task['description']}',
                             style: TextStyle(
-                              fontSize: 38,
-                              fontWeight: FontWeight.bold,
-                              fontFamily: 'Leferi',
-                              color: task['progress'] == 100
-                                  ? Color(0xffEEEEEE)
-                                  : Color(0xffD6D6D6),
-                              letterSpacing: -1,
-                            ),
-                          ),
-                          TextSpan(
-                            text: task['progress'] == 100
-                                ? '완료된 업무입니다'
-                                : '${task['endDate']}까지',
-                            style: TextStyle(
-                              color: task['progress'] == 100
-                                  ? Color(0xffEEEEEE)
-                                  : Color(0xffD6D6D6),
-                              fontFamily: 'Inter',
-                              fontWeight: FontWeight.w400,
                               fontSize: 13,
-                              letterSpacing: -0.1,
+                              letterSpacing: -0.2,
+                              color: task['progress'] == 100
+                                  ? Colors.white
+                                  : Color(0xff5A5A5A),
                             ),
                           ),
-                        ],
-                      ),
-                      textAlign: TextAlign.end,
-                      style: TextStyle(height: 1.25),
+                        ),
+                        SizedBox(height: 10),
+                        Text(
+                          task['progress'] == 100
+                              ? '기간: ${task['startDate']} ~ ${task['endDate']}'
+                              : '기간: ${task['startDate']} ~',
+                          style: TextStyle(
+                            fontSize: 13,
+                            color: task['progress'] == 100
+                                ? Colors.white
+                                : Color(0xff5A5A5A),
+                            letterSpacing: 0,
+                          ),
+                        ),
+                      ],
                     ),
-                  ),
-                ],
+                    Positioned(
+                      bottom: 0,
+                      right: 0,
+                      child: Text.rich(
+                        TextSpan(
+                          children: [
+                            TextSpan(
+                              text: '${task['progress']}%\n',
+                              style: TextStyle(
+                                fontSize: 38,
+                                fontWeight: FontWeight.bold,
+                                fontFamily: 'Leferi',
+                                color: task['progress'] == 100
+                                    ? Color(0xffEEEEEE)
+                                    : Color(0xffD6D6D6),
+                                letterSpacing: -1,
+                              ),
+                            ),
+                            TextSpan(
+                              text: task['progress'] == 100
+                                  ? '완료된 업무입니다'
+                                  : '${task['endDate']}까지',
+                              style: TextStyle(
+                                color: task['progress'] == 100
+                                    ? Color(0xffEEEEEE)
+                                    : Color(0xffD6D6D6),
+                                fontFamily: 'Inter',
+                                fontWeight: FontWeight.w400,
+                                fontSize: 13,
+                                letterSpacing: -0.1,
+                              ),
+                            ),
+                          ],
+                        ),
+                        textAlign: TextAlign.end,
+                        style: TextStyle(height: 1.25),
+                      ),
+                    ),
+                  ],
+                ),
               ),
-            ),
-          );
-        }).toList(),
+            );
+          }).toList(),
+        ),
       ),
     );
   }
@@ -401,8 +418,9 @@ Widget _buildTimelineView() {
   return SingleChildScrollView(
     child: Column(
       children: [
-        SizedBox(height: 20),
+        SizedBox(height: 25,),
         ListView.builder(
+          padding: EdgeInsets.zero,
           shrinkWrap: true,
           physics: NeverScrollableScrollPhysics(),
           itemCount: timelineItems.length,
