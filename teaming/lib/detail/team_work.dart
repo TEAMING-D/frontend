@@ -2,9 +2,14 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:teaming/detail/add_work.dart';
 import 'package:teaming/detail/delete_work.dart';
+import 'package:teaming/detail/detail_work.dart';
 import 'package:teaming/detail/navigation_bar.dart';
 
 class TeamWorkPage extends StatefulWidget {
+final Map<String, dynamic>? updatedTask;
+
+TeamWorkPage({this.updatedTask});
+
   @override
   _TeamWorkPageState createState() => _TeamWorkPageState();
 }
@@ -52,6 +57,20 @@ class _TeamWorkPageState extends State<TeamWorkPage> {
       'progress': 100,
     },
   ];
+
+ @override
+  void initState() {
+    super.initState();
+    if (widget.updatedTask != null) {
+      int index = tasks.indexWhere((t) => t['title'] == widget.updatedTask!['title']);
+      if (index != -1) {
+        setState(() {
+          tasks[index] = widget.updatedTask!;
+        });
+      }
+    }
+  }
+
 
   String _selectedView = '블록 형태로 보기';
 
@@ -173,30 +192,36 @@ class _TeamWorkPageState extends State<TeamWorkPage> {
                   height: 33,
                 ),
                 onPressed: () async {
-  final newTask = await Navigator.push(
-    context,
-    MaterialPageRoute(
-      builder: (context) => AddWorkPage(
-        onAddProject: (task) {
-          task['progress'] = 0;
-          task['startDate'] = DateTime.now().toString().substring(0, 10).replaceAll('-', '.');
-          setState(() {
-            tasks.insert(0, task);
-          });
-        },
-        teamMembers: ['김세아', '오수진', '윤소윤'],
-      ),
-    ),
-  );
+                  final newTask = await Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) => AddWorkPage(
+                        onAddProject: (task) {
+                          task['progress'] = 0;
+                          task['startDate'] = DateTime.now()
+                              .toString()
+                              .substring(0, 10)
+                              .replaceAll('-', '.');
+                          setState(() {
+                            tasks.insert(0, task);
+                          });
+                        },
+                        teamMembers: ['김세아', '오수진', '윤소윤'],
+                      ),
+                    ),
+                  );
 
-  if (newTask != null) {
-    newTask['progress'] = 0;
-    newTask['startDate'] = DateTime.now().toString().substring(0, 10).replaceAll('-', '.');
-    setState(() {
-      tasks.insert(0, newTask);
-    });
-  }
-},
+                  if (newTask != null) {
+                    newTask['progress'] = 0;
+                    newTask['startDate'] = DateTime.now()
+                        .toString()
+                        .substring(0, 10)
+                        .replaceAll('-', '.');
+                    setState(() {
+                      tasks.insert(0, newTask);
+                    });
+                  }
+                },
               ),
             ),
           ),
@@ -296,121 +321,140 @@ class _TeamWorkPageState extends State<TeamWorkPage> {
                 ? '${task['members'].take(3).join(', ')} 외 ${task['members'].length - 3}인'
                 : task['members'].join(', ');
 
-            return Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 10),
-              child: Container(
-                width: MediaQuery.of(context).size.width - 40,
-                margin: EdgeInsets.symmetric(vertical: 10),
-                padding: EdgeInsets.all(16),
-                decoration: BoxDecoration(
-                  color: task['progress'] == 100
-                      ? Color(0xff737373)
-                      : Colors.white,
-                  borderRadius: BorderRadius.circular(8),
-                  boxShadow: [
-                    BoxShadow(
-                      color: Colors.black.withOpacity(0.15),
-                      spreadRadius: 4,
-                      blurRadius: 6,
-                      offset: Offset(0, 3),
+            return GestureDetector(
+              onTap: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => WorkDetailPage(
+                      task: task,
+                      onUpdate: (updatedTask) {
+                        setState(() {
+                          int index = tasks.indexOf(task);
+                          tasks[index] = updatedTask;
+                        });
+                      }, // 샘플로 작업
+                      teamMembers: ['오수진', '윤소윤', '김세아'],
                     ),
-                  ],
-                ),
-                child: Stack(
-                  children: [
-                    Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Text(
-                          task['title'],
-                          style: TextStyle(
-                            fontSize: 20,
-                            fontFamily: 'Inter',
-                            fontWeight: FontWeight.bold,
-                            letterSpacing: -0.2,
-                            color: task['progress'] == 100
-                                ? Colors.white
-                                : Color(0xff5A5A5A),
-                          ),
-                        ),
-                        SizedBox(height: 3),
-                        Text(
-                          '담당자: $displayMembers',
-                          style: TextStyle(
-                            fontSize: 13,
-                            color: task['progress'] == 100
-                                ? Colors.white
-                                : Color(0xff5A5A5A),
-                          ),
-                        ),
-                        SizedBox(height: 2),
-                        SizedBox(
-                          width: 220,
-                          child: Text(
-                            '설명: ${task['description']}',
+                  ),
+                );
+              },
+              child: Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 10),
+                child: Container(
+                  width: MediaQuery.of(context).size.width - 40,
+                  margin: EdgeInsets.symmetric(vertical: 10),
+                  padding: EdgeInsets.all(16),
+                  decoration: BoxDecoration(
+                    color: task['progress'] == 100
+                        ? Color(0xff737373)
+                        : Colors.white,
+                    borderRadius: BorderRadius.circular(8),
+                    boxShadow: [
+                      BoxShadow(
+                        color: Colors.black.withOpacity(0.15),
+                        spreadRadius: 4,
+                        blurRadius: 6,
+                        offset: Offset(0, 3),
+                      ),
+                    ],
+                  ),
+                  child: Stack(
+                    children: [
+                      Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(
+                            task['title'],
                             style: TextStyle(
-                              fontSize: 13,
+                              fontSize: 20,
+                              fontFamily: 'Inter',
+                              fontWeight: FontWeight.bold,
                               letterSpacing: -0.2,
                               color: task['progress'] == 100
                                   ? Colors.white
                                   : Color(0xff5A5A5A),
                             ),
                           ),
-                        ),
-                        SizedBox(height: 10),
-                        Text(
-                          task['progress'] == 100
-                              ? '기간: ${task['startDate']} ~ ${task['endDate']}'
-                              : '기간: ${task['startDate']} ~',
-                          style: TextStyle(
-                            fontSize: 13,
-                            color: task['progress'] == 100
-                                ? Colors.white
-                                : Color(0xff5A5A5A),
-                            letterSpacing: 0,
+                          SizedBox(height: 3),
+                          Text(
+                            '담당자: $displayMembers',
+                            style: TextStyle(
+                              fontSize: 13,
+                              color: task['progress'] == 100
+                                  ? Colors.white
+                                  : Color(0xff5A5A5A),
+                            ),
                           ),
-                        ),
-                      ],
-                    ),
-                    Positioned(
-                      bottom: 0,
-                      right: 0,
-                      child: Text.rich(
-                        TextSpan(
-                          children: [
-                            TextSpan(
-                              text: '${task['progress']}%\n',
+                          SizedBox(height: 2),
+                          SizedBox(
+                            width: 220,
+                            child: Text(
+                              '설명: ${task['description']}',
                               style: TextStyle(
-                                fontSize: 38,
-                                fontWeight: FontWeight.bold,
-                                fontFamily: 'Leferi',
-                                color: task['progress'] == 100
-                                    ? Color(0xffEEEEEE)
-                                    : Color(0xffD6D6D6),
-                                letterSpacing: -1,
-                              ),
-                            ),
-                            TextSpan(
-                              text: task['progress'] == 100
-                                  ? '완료된 업무입니다'
-                                  : '${task['endDate']}까지',
-                              style: TextStyle(
-                                color: task['progress'] == 100
-                                    ? Color(0xffEEEEEE)
-                                    : Color(0xffD6D6D6),
-                                fontFamily: 'Inter',
-                                fontWeight: FontWeight.w400,
                                 fontSize: 13,
-                                letterSpacing: -0.1,
+                                letterSpacing: -0.2,
+                                color: task['progress'] == 100
+                                    ? Colors.white
+                                    : Color(0xff5A5A5A),
                               ),
                             ),
-                          ],
-                        ),
-                        textAlign: TextAlign.end,
-                        style: TextStyle(height: 1.25),
+                          ),
+                          SizedBox(height: 10),
+                          Text(
+                            task['progress'] == 100
+                                ? '기간: ${task['startDate']} ~ ${task['endDate']}'
+                                : '기간: ${task['startDate']} ~',
+                            style: TextStyle(
+                              fontSize: 13,
+                              color: task['progress'] == 100
+                                  ? Colors.white
+                                  : Color(0xff5A5A5A),
+                              letterSpacing: 0,
+                            ),
+                          ),
+                        ],
                       ),
-                    ),
-                  ],
+                      Positioned(
+                        bottom: 0,
+                        right: 0,
+                        child: Text.rich(
+                          TextSpan(
+                            children: [
+                              TextSpan(
+                                text: '${task['progress']}%\n',
+                                style: TextStyle(
+                                  fontSize: 38,
+                                  fontWeight: FontWeight.bold,
+                                  fontFamily: 'Leferi',
+                                  color: task['progress'] == 100
+                                      ? Color(0xffEEEEEE)
+                                      : Color(0xffD6D6D6),
+                                  letterSpacing: -1,
+                                ),
+                              ),
+                              TextSpan(
+                                text: task['progress'] == 100
+                                    ? '완료된 업무입니다'
+                                    : '${task['endDate']}까지',
+                                style: TextStyle(
+                                  color: task['progress'] == 100
+                                      ? Color(0xffEEEEEE)
+                                      : Color(0xffD6D6D6),
+                                  fontFamily: 'Inter',
+                                  fontWeight: FontWeight.w400,
+                                  fontSize: 13,
+                                  letterSpacing: -0.1,
+                                ),
+                              ),
+                            ],
+                          ),
+                          textAlign: TextAlign.end,
+                          style: TextStyle(height: 1.25),
+                        ),
+                      ),
+                    ],
+                  ),
                 ),
               ),
             );
@@ -475,106 +519,129 @@ class _TeamWorkPageState extends State<TeamWorkPage> {
               bool hasDetails =
                   item['description'] != '완료' && item['description'] != '완료 예정';
 
-              return Padding(
-                padding: EdgeInsets.only(bottom: hasDetails ? 20 : 10),
-                child: Row(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    SizedBox(
-                      width: 30,
-                    ),
-                    Container(
-                      margin: EdgeInsets.only(top: hasDetails ? 4 : 0),
-                      child: Column(
-                        children: [
-                          Text(
-                            item['date'],
-                            style: TextStyle(
-                              color: isPending
-                                  ? Color(0xffC1C1C1)
-                                  : Color(0xff5A5A5A),
-                              fontWeight: FontWeight.bold,
-                              fontSize: 14,
-                            ),
-                          ),
-                        ],
+              return GestureDetector(
+                onTap: () {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) => WorkDetailPage(
+                        task: tasks.firstWhere(
+                            (t) => t['title'] == item['title'].split(' ')[0]),
+                        onUpdate: (updatedTask) {
+                          setState(() {
+                            int taskIndex = tasks.indexWhere(
+                                (t) => t['title'] == updatedTask['title']);
+                            tasks[taskIndex] = updatedTask;
+                          });
+                        },
+                        // 샘플로 작업
+                        teamMembers: ['오수진', '윤소윤', '김세아'],
                       ),
                     ),
-                    SizedBox(width: 10),
-                    Column(
-                      children: [
-                        SizedBox(height: 7),
-                        Container(
-                          width: 8,
-                          height: 8,
-                          decoration: BoxDecoration(
-                            color: isPending ? Colors.white : Color(0xff737373),
-                            borderRadius: BorderRadius.circular(4),
-                            border: Border.all(
-                              color: isPending
-                                  ? Color(0xffC1C1C1)
-                                  : Color(0xff737373),
-                              width: 2,
+                  );
+                },
+                child: Padding(
+                  padding: EdgeInsets.only(bottom: hasDetails ? 20 : 10),
+                  child: Row(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      SizedBox(
+                        width: 30,
+                      ),
+                      Container(
+                        margin: EdgeInsets.only(top: hasDetails ? 4 : 0),
+                        child: Column(
+                          children: [
+                            Text(
+                              item['date'],
+                              style: TextStyle(
+                                color: isPending
+                                    ? Color(0xffC1C1C1)
+                                    : Color(0xff5A5A5A),
+                                fontWeight: FontWeight.bold,
+                                fontSize: 14,
+                              ),
                             ),
-                          ),
+                          ],
                         ),
-                        if (index != timelineItems.length - 1)
-                          SizedBox(
-                            width: 2,
-                            height: hasDetails ? 100 : 50,
-                            child: CustomPaint(
-                              painter: DashedLinePainter(
+                      ),
+                      SizedBox(width: 10),
+                      Column(
+                        children: [
+                          SizedBox(height: 7),
+                          Container(
+                            width: 8,
+                            height: 8,
+                            decoration: BoxDecoration(
+                              color:
+                                  isPending ? Colors.white : Color(0xff737373),
+                              borderRadius: BorderRadius.circular(4),
+                              border: Border.all(
                                 color: isPending
                                     ? Color(0xffC1C1C1)
                                     : Color(0xff737373),
-                                isDashed: isPending,
+                                width: 2,
                               ),
                             ),
                           ),
-                      ],
-                    ),
-                    SizedBox(width: 10),
-                    Expanded(
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Text(
-                            item['title'],
-                            style: TextStyle(
-                              fontSize: 16,
-                              fontFamily: 'Inter',
-                              fontWeight: FontWeight.bold,
-                              letterSpacing: -0.2,
-                              color: isPending
-                                  ? Color(0xffC1C1C1)
-                                  : Color(0xff5A5A5A),
-                            ),
-                          ),
-                          if (hasDetails) ...[
-                            SizedBox(height: 3),
-                            Text(
-                              '담당자: $displayMembers',
-                              style: TextStyle(
-                                fontSize: 13,
-                                color: Color(0xff5A5A5A),
-                              ),
-                            ),
-                            SizedBox(height: 2),
+                          if (index != timelineItems.length - 1)
                             SizedBox(
-                              width: 250,
-                              child: Text(
-                                '설명: ${item['description']}',
+                              width: 2,
+                              height: hasDetails ? 100 : 50,
+                              child: CustomPaint(
+                                painter: DashedLinePainter(
+                                  color: isPending
+                                      ? Color(0xffC1C1C1)
+                                      : Color(0xff737373),
+                                  isDashed: isPending,
+                                ),
+                              ),
+                            ),
+                        ],
+                      ),
+                      SizedBox(width: 10),
+                      Expanded(
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text(
+                              item['title'],
+                              style: TextStyle(
+                                fontSize: 16,
+                                fontFamily: 'Inter',
+                                fontWeight: FontWeight.bold,
+                                letterSpacing: -0.2,
+                                color: isPending
+                                    ? Color(0xffC1C1C1)
+                                    : Color(0xff5A5A5A),
+                              ),
+                            ),
+                            if (hasDetails) ...[
+                              SizedBox(height: 3),
+                              Text(
+                                '담당자: $displayMembers',
                                 style: TextStyle(
                                   fontSize: 13,
                                   color: Color(0xff5A5A5A),
                                 ),
                               ),
-                            ),
+                              SizedBox(height: 2),
+                              SizedBox(
+                                width: 250,
+                                child: Text(
+                                  '설명: ${item['description']}',
+                                  style: TextStyle(
+                                    fontSize: 13,
+                                    color: Color(0xff5A5A5A),
+                                  ),
+                                ),
+                              ),
+                            ],
                           ],
-                        ],
+                        ),
                       ),
-                    ),
-                  ],
+                    ],
+                  ),
                 ),
               );
             },
