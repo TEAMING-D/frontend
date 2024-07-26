@@ -2,6 +2,7 @@ import 'dart:ui';
 
 import 'package:flutter/material.dart';
 import 'package:fl_chart/fl_chart.dart';
+import 'package:teaming/detail/navigation_bar.dart';
 
 class ParticipationAnalysisPage extends StatefulWidget {
   final List<Map<String, dynamic>> tasks;
@@ -20,13 +21,29 @@ class _ParticipationAnalysisPageState extends State<ParticipationAnalysisPage> {
   Map<String, Map<String, int>> memberWeights = {};
   String selectedMember = '';
   bool showBalloon = false;
+  Offset touchPosition = Offset.zero;
 
-  @override
-  void initState() {
-    super.initState();
-    _initializeWeights();
-    _calculateScores();
-  }
+ScrollController _scrollController = ScrollController();
+
+@override
+void initState() {
+  super.initState();
+  _initializeWeights();
+  _calculateScores();
+  _scrollController.addListener(() {
+    if (showBalloon) {
+      setState(() {
+        showBalloon = false;
+      });
+    }
+  });
+}
+
+@override
+void dispose() {
+  _scrollController.dispose();
+  super.dispose();
+}
 
   void _initializeWeights() {
     for (var task in widget.tasks) {
@@ -86,6 +103,17 @@ class _ParticipationAnalysisPageState extends State<ParticipationAnalysisPage> {
       _calculateScores();
     });
   }
+
+    List<String> _getMemberTasks(String member) {
+    List<String> tasks = [];
+    for (var task in widget.tasks) {
+      if (task['members'].contains(member)) {
+        tasks.add(task['title']);
+      }
+    }
+    return tasks;
+  }
+
 
   @override
   Widget build(BuildContext context) {
@@ -151,7 +179,16 @@ class _ParticipationAnalysisPageState extends State<ParticipationAnalysisPage> {
         centerTitle: true,
       ),
       extendBodyBehindAppBar: true,
-      body: Container(
+      body: GestureDetector(
+  onTap: () => setState(() => showBalloon = false),
+  onTapDown: (TapDownDetails details) {
+    setState(() {
+      touchPosition = details.globalPosition;
+    });
+  },
+  child: Stack( // Stack으로 변경
+    children: [
+      Container(
         padding: EdgeInsets.symmetric(horizontal: 20),
         width: MediaQuery.of(context).size.width,
         decoration: BoxDecoration(
@@ -165,12 +202,11 @@ class _ParticipationAnalysisPageState extends State<ParticipationAnalysisPage> {
           ),
         ),
         child: SingleChildScrollView(
+          controller: _scrollController,
           padding: EdgeInsets.all(16),
           child: Column(
             children: [
-              SizedBox(
-                height: 70,
-              ),
+              SizedBox(height: 70),
               Center(
                 child: Text(
                   '업무 수행 기간과 담당자 인원을 고려해 평가합니다\n그래프를 터치하여 어떤 업무를 수행했는지 확인할 수 있습니다.',
@@ -195,38 +231,24 @@ class _ParticipationAnalysisPageState extends State<ParticipationAnalysisPage> {
                         centerSpaceRadius: 0,
                         sectionsSpace: 0,
                         pieTouchData: PieTouchData(
-                          touchCallback:
-                              (FlTouchEvent event, pieTouchResponse) {
-                            setState(() {
-                              if (event is FlTapUpEvent) {
-                                final desiredSection =
-                                    pieTouchResponse?.touchedSection;
-                                if (desiredSection != null) {
-                                  selectedMember = memberScores.keys.toList()[
-                                      desiredSection.touchedSectionIndex];
-                                  showBalloon = true;
-                                }
-                              } else {
-                                showBalloon = false;
-                              }
-                            });
-                          },
-                        ),
+  touchCallback: (FlTouchEvent event, pieTouchResponse) {
+    setState(() {
+      if (event is FlTapUpEvent) {
+        final desiredSection = pieTouchResponse?.touchedSection;
+        if (desiredSection != null && desiredSection.touchedSectionIndex != -1 && desiredSection.touchedSectionIndex < memberScores.length) {
+          selectedMember = memberScores.keys.toList()[desiredSection.touchedSectionIndex];
+          showBalloon = true;
+          touchPosition = event.localPosition;
+        }
+      } else {
+        showBalloon = false;
+      }
+    });
+  },
+),
                       ),
                     ),
                   ),
-                  if (showBalloon)
-                    GestureDetector(
-                      onTap: () => setState(() => showBalloon = false),
-                      child: Center(
-                        child: Card(
-                          child: Padding(
-                            padding: const EdgeInsets.all(8.0),
-                            child: Text('$selectedMember의 업무: ...'),
-                          ),
-                        ),
-                      ),
-                    ),
                   SizedBox(height: 50),
                   Text(
                     '가중치 설정',
@@ -238,9 +260,7 @@ class _ParticipationAnalysisPageState extends State<ParticipationAnalysisPage> {
                       letterSpacing: -0.4,
                     ),
                   ),
-                  SizedBox(
-                    height: 3,
-                  ),
+                  SizedBox(height: 3),
                   Text(
                     '업무 및 담당 팀원의 가중치 설정이 가능합니다.\n1~9 사이에서 가중치 비율을 설정해주세요.',
                     style: TextStyle(
@@ -250,9 +270,7 @@ class _ParticipationAnalysisPageState extends State<ParticipationAnalysisPage> {
                       letterSpacing: -0.4,
                     ),
                   ),
-                  SizedBox(
-                    height: 10,
-                  ),
+                  SizedBox(height: 10),
                   ListView.builder(
                     padding: EdgeInsets.zero,
                     shrinkWrap: true,
@@ -260,8 +278,7 @@ class _ParticipationAnalysisPageState extends State<ParticipationAnalysisPage> {
                     itemCount: widget.tasks.length,
                     itemBuilder: (context, index) {
                       String taskTitle = widget.tasks[index]['title'];
-                      String taskDescription =
-                          widget.tasks[index]['description'];
+                      String taskDescription = widget.tasks[index]['description'];
                       List<String> members = widget.tasks[index]['members'];
                       return Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
@@ -279,8 +296,7 @@ class _ParticipationAnalysisPageState extends State<ParticipationAnalysisPage> {
                                 SizedBox(width: 8),
                                 Expanded(
                                   child: Column(
-                                    crossAxisAlignment:
-                                        CrossAxisAlignment.start,
+                                    crossAxisAlignment: CrossAxisAlignment.start,
                                     children: [
                                       Text(taskTitle,
                                           style: TextStyle(
@@ -290,9 +306,7 @@ class _ParticipationAnalysisPageState extends State<ParticipationAnalysisPage> {
                                             color: Color(0xff5A5A5A),
                                             letterSpacing: -0.3,
                                           )),
-                                      SizedBox(
-                                        height: 4,
-                                      ),
+                                      SizedBox(height: 4),
                                       SizedBox(
                                         width: 210,
                                         child: Text(taskDescription,
@@ -302,63 +316,45 @@ class _ParticipationAnalysisPageState extends State<ParticipationAnalysisPage> {
                                               letterSpacing: -0.3,
                                             )),
                                       ),
-                                      SizedBox(
-                                        height: 10,
-                                      ),
+                                      SizedBox(height: 10),
                                       for (var member in members)
                                         members.length > 1
                                             ? SizedBox(
                                                 height: 30,
                                                 child: Row(
-                                                  mainAxisAlignment:
-                                                      MainAxisAlignment.start,
+                                                  mainAxisAlignment: MainAxisAlignment.start,
                                                   children: [
                                                     Text('$member  · · ·  ',
                                                         style: TextStyle(
-                                                          color:
-                                                              Color(0xff5A5A5A),
+                                                          color: Color(0xff5A5A5A),
                                                           fontSize: 13,
                                                           letterSpacing: -0.3,
-                                                          fontWeight:
-                                                              FontWeight.bold,
+                                                          fontWeight: FontWeight.bold,
                                                         )),
                                                     DropdownButton<int>(
-                                                      value: memberWeights[
-                                                                  taskTitle]
-                                                              ?[member] ??
-                                                          1,
+                                                      value: memberWeights[taskTitle]?[member] ?? 1,
                                                       items: List.generate(
                                                         9,
-                                                        (i) => DropdownMenuItem<
-                                                            int>(
+                                                        (i) => DropdownMenuItem<int>(
                                                           value: i + 1,
-                                                          child: Text((i + 1)
-                                                              .toString()),
+                                                          child: Text((i + 1).toString()),
                                                         ),
                                                       ),
                                                       onChanged: (value) {
                                                         if (value != null) {
-                                                          _updateMemberWeight(
-                                                              taskTitle,
-                                                              member,
-                                                              value);
+                                                          _updateMemberWeight(taskTitle, member, value);
                                                         }
                                                       },
                                                       underline: SizedBox(),
                                                       icon: Icon(
-                                                        Icons
-                                                            .keyboard_arrow_down_outlined,
-                                                        color:
-                                                            Color(0xff5A5A5A),
+                                                        Icons.keyboard_arrow_down_outlined,
+                                                        color: Color(0xff5A5A5A),
                                                       ),
-                                                      dropdownColor:
-                                                          Colors.white,
+                                                      dropdownColor: Colors.white,
                                                       style: TextStyle(
-                                                        color:
-                                                            Color(0xff5A5A5A),
+                                                        color: Color(0xff5A5A5A),
                                                         fontSize: 13,
-                                                        fontWeight:
-                                                            FontWeight.bold,
+                                                        fontWeight: FontWeight.bold,
                                                       ),
                                                       menuMaxHeight: 250,
                                                     ),
@@ -376,7 +372,8 @@ class _ParticipationAnalysisPageState extends State<ParticipationAnalysisPage> {
                                   ),
                                 ),
                                 Column(
-                                  children: [SizedBox(height: 10,),
+                                  children: [
+                                    SizedBox(height: 10),
                                     SizedBox(
                                       height: 30,
                                       width: 83,
@@ -386,25 +383,22 @@ class _ParticipationAnalysisPageState extends State<ParticipationAnalysisPage> {
                                           Container(
                                             decoration: BoxDecoration(
                                               color: Color(0xff5F5F5F),
-                                              borderRadius:
-                                                  BorderRadius.circular(30),
+                                              borderRadius: BorderRadius.circular(30),
                                             ),
                                             child: Row(
                                               children: [
-                                                SizedBox(width: 25,height: 25,
+                                                SizedBox(
+                                                  width: 25,
+                                                  height: 25,
                                                   child: IconButton(
-                                                    icon: Icon(Icons.remove,
-                                                        color: Colors.white, size: 13,),
+                                                    icon: Icon(Icons.remove, color: Colors.white, size: 13),
                                                     onPressed: () {
-                                                      int currentWeight =
-                                                          taskWeights[taskTitle] ?? 1;
+                                                      int currentWeight = taskWeights[taskTitle] ?? 1;
                                                       if (currentWeight > 1) {
-                                                        _updateTaskWeight(taskTitle,
-                                                            currentWeight - 1);
+                                                        _updateTaskWeight(taskTitle, currentWeight - 1);
                                                       }
                                                     },
-                                                    padding:
-                                                        EdgeInsets.all(0),
+                                                    padding: EdgeInsets.all(0),
                                                     constraints: BoxConstraints(),
                                                   ),
                                                 ),
@@ -412,15 +406,13 @@ class _ParticipationAnalysisPageState extends State<ParticipationAnalysisPage> {
                                                   width: 33,
                                                   height: 33,
                                                   alignment: Alignment.center,
-                                                  padding: EdgeInsets.symmetric(
-                                                      horizontal: 12),
+                                                  padding: EdgeInsets.symmetric(horizontal: 12),
                                                   decoration: BoxDecoration(
                                                     color: Color(0xffD9D9D9),
                                                     shape: BoxShape.circle,
                                                   ),
                                                   child: Text(
-                                                    taskWeights[taskTitle]
-                                                        .toString(),
+                                                    taskWeights[taskTitle].toString(),
                                                     style: TextStyle(
                                                       color: Color(0xff5A5A5A),
                                                       fontSize: 14,
@@ -431,20 +423,17 @@ class _ParticipationAnalysisPageState extends State<ParticipationAnalysisPage> {
                                                   ),
                                                 ),
                                                 SizedBox(
-                                                  width: 25,height: 25,
+                                                  width: 25,
+                                                  height: 25,
                                                   child: IconButton(
-                                                    icon: Icon(Icons.add,
-                                                        color: Colors.white, size: 13,),
+                                                    icon: Icon(Icons.add, color: Colors.white, size: 13),
                                                     onPressed: () {
-                                                      int currentWeight =
-                                                          taskWeights[taskTitle] ?? 1;
+                                                      int currentWeight = taskWeights[taskTitle] ?? 1;
                                                       if (currentWeight < 9) {
-                                                        _updateTaskWeight(taskTitle,
-                                                            currentWeight + 1);
+                                                        _updateTaskWeight(taskTitle, currentWeight + 1);
                                                       }
                                                     },
-                                                    padding:
-                                                        EdgeInsets.all(0),
+                                                    padding: EdgeInsets.all(0),
                                                     constraints: BoxConstraints(),
                                                   ),
                                                 ),
@@ -459,9 +448,7 @@ class _ParticipationAnalysisPageState extends State<ParticipationAnalysisPage> {
                               ],
                             ),
                           ),
-                          SizedBox(
-                            height: 20,
-                          )
+                          SizedBox(height: 20),
                         ],
                       );
                     },
@@ -472,7 +459,44 @@ class _ParticipationAnalysisPageState extends State<ParticipationAnalysisPage> {
           ),
         ),
       ),
-    );
+        if (showBalloon)
+          Positioned(
+            // 터치 위치 오프셋 조정
+            left: touchPosition.dx + 30,
+            top: touchPosition.dy + 80,
+            child: GestureDetector(
+              onTap: () => setState(() => showBalloon = false),
+              child: Center(
+                child: Card(color: Colors.white,
+                elevation: 4,
+                  child: Padding(
+                    padding: const EdgeInsets.all(10),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: _getMemberTasks(selectedMember)
+                          .map((task) => Text( task,
+                        style: TextStyle(
+                          fontFamily: 'Inter',
+                          color: Color(0xff585454),
+                          fontSize: 10,
+                          fontWeight: FontWeight.w400,
+                        ),
+                      ))
+                          .toList(),
+                    ),
+                  ),
+                ),
+              ),
+            ),
+          ),
+      ],
+    ),
+  ), bottomNavigationBar: DetailNavigationBar(
+        currentIndex: 1,
+        currentPage: ParticipationAnalysisPage,
+      ),
+);
+
   }
 }
 

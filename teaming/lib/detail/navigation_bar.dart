@@ -1,5 +1,6 @@
 import 'dart:ui';
 import 'package:flutter/material.dart';
+import 'package:teaming/detail/member_information.dart';
 import 'package:teaming/detail/modify_project.dart';
 import 'package:teaming/detail/participation.dart';
 import 'package:teaming/detail/team_work.dart';
@@ -92,7 +93,13 @@ class DetailNavigationBar extends StatelessWidget {
         );
         break;
       case 3:
-        // 아카이브 페이지
+        Navigator.pushReplacement(context,
+          PageRouteBuilder(
+            pageBuilder: (_, __, ___) => MemberInfoPage(),
+            transitionDuration: Duration(milliseconds: 500),
+            transitionsBuilder: (_, a, __, c) =>
+                FadeTransition(opacity: a, child: c),),
+        );
         break;
       case 4:
         Navigator.push(
