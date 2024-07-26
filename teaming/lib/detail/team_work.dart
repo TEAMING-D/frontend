@@ -335,6 +335,7 @@ class _TeamWorkPageState extends State<TeamWorkPage> {
                         });
                       }, // 샘플로 작업
                       teamMembers: ['오수진', '윤소윤', '김세아'],
+                      currentUser: '김세아',
                     ),
                   ),
                 );
@@ -536,6 +537,7 @@ class _TeamWorkPageState extends State<TeamWorkPage> {
                         },
                         // 샘플로 작업
                         teamMembers: ['오수진', '윤소윤', '김세아'],
+                        currentUser: '김세아',
                       ),
                     ),
                   );

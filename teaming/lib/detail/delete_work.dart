@@ -87,6 +87,7 @@ class _DeleteWorkPageState extends State<DeleteWorkPage> {
                         fontFamily: 'Inter',
                         fontSize: 14,
                         color: Color(0xff404040),
+                        letterSpacing: -0.4,
                       ),
                     ),
                     SizedBox(
@@ -97,7 +98,7 @@ class _DeleteWorkPageState extends State<DeleteWorkPage> {
                       style: TextStyle(
                         fontFamily: 'Inter',
                         fontSize: 14,
-                        color: Color(0xff404040),
+                        color: Color(0xff404040),letterSpacing: -0.4,
                       ),
                     ),
                   ],

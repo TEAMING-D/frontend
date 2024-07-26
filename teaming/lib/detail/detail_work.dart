@@ -6,9 +6,13 @@ class WorkDetailPage extends StatefulWidget {
   final Map<String, dynamic> task;
   final Function(Map<String, dynamic>) onUpdate;
   final List<String> teamMembers;
+  final String currentUser;
 
   WorkDetailPage(
-      {required this.task, required this.onUpdate, required this.teamMembers});
+      {required this.task,
+      required this.onUpdate,
+      required this.teamMembers,
+      required this.currentUser});
 
   @override
   _WorkDetailPageState createState() => _WorkDetailPageState();
@@ -16,11 +20,13 @@ class WorkDetailPage extends StatefulWidget {
 
 class _WorkDetailPageState extends State<WorkDetailPage> {
   late Map<String, dynamic> task;
+  late bool isTaskOwner;
 
   @override
   void initState() {
     super.initState();
     task = Map<String, dynamic>.from(widget.task);
+    isTaskOwner = task['members'].contains(widget.currentUser);
   }
 
   void _updateProgress(int progress) {
@@ -70,7 +76,10 @@ class _WorkDetailPageState extends State<WorkDetailPage> {
           backgroundColor: Colors.transparent,
           elevation: 0,
           leading: IconButton(
-            icon: Icon(Icons.arrow_back, color: Color(0xff585858),),
+            icon: Icon(
+              Icons.arrow_back,
+              color: Color(0xff585858),
+            ),
             onPressed: () {
               widget.onUpdate(task);
               Navigator.pop(context, task);
@@ -87,13 +96,18 @@ class _WorkDetailPageState extends State<WorkDetailPage> {
           ),
           centerTitle: true,
           actions: [
-            Padding(
-              padding: const EdgeInsets.only(right: 3),
-              child: CupertinoButton(
-                onPressed: _navigateToEditTask,
-                child: Image.asset('assets/icon/pen_modify_icon.png', height: 25, width: 25,),
+            if (isTaskOwner)
+              Padding(
+                padding: const EdgeInsets.only(right: 3),
+                child: CupertinoButton(
+                  onPressed: _navigateToEditTask,
+                  child: Image.asset(
+                    'assets/icon/pen_modify_icon.png',
+                    height: 25,
+                    width: 25,
+                  ),
+                ),
               ),
-            ),
           ],
         ),
         body: Container(
@@ -184,12 +198,12 @@ class _WorkDetailPageState extends State<WorkDetailPage> {
                           letterSpacing: -0.4,
                           color: Color(0xff5A5A5A))),
                 ),
-                SizedBox(height: 70),
+                SizedBox(height: 60),
                 Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text(
-                      '진행도 표시',
+                      isTaskOwner ? '진행도 표시' : '업무 진행도',
                       style: TextStyle(
                           fontFamily: 'Inter',
                           fontSize: 20,
@@ -197,20 +211,20 @@ class _WorkDetailPageState extends State<WorkDetailPage> {
                           color: Color(0xff5A5A5A),
                           letterSpacing: -0.7),
                     ),
-                    Text(
-                      '업무 관리 탭에서 보여지는 진행도입니다',
-                      style: TextStyle(
-                          fontFamily: 'Inter',
-                          fontSize: 11,
-                          fontWeight: FontWeight.w400,
-                          color: Color(0xff7C7C7C),
-                          letterSpacing: -0.3),
-                    ),
+                      Text(
+                         isTaskOwner ? '업무 관리 탭에서 보여지는 진행도입니다' : '담당자가 설정한 현재 업무의 진행도입니다',
+                        style: TextStyle(
+                            fontFamily: 'Inter',
+                            fontSize: 11,
+                            fontWeight: FontWeight.w400,
+                            color: Color(0xff7C7C7C),
+                            letterSpacing: -0.3),
+                      ),
                     SizedBox(height: 10),
                     Text(
                       '${task['progress']}%',
                       style: TextStyle(
-                        fontSize: 40,
+                        fontSize: isTaskOwner ? 40 : 48,
                         fontFamily: 'Leferi',
                         fontWeight: FontWeight.bold,
                         color: Color(0xff5A5A5A),
@@ -220,29 +234,30 @@ class _WorkDetailPageState extends State<WorkDetailPage> {
                     SizedBox(
                       height: 10,
                     ),
-                    SliderTheme(
-                      data: SliderThemeData(
-                        overlayShape: SliderComponentShape.noOverlay,
-                        trackHeight: 5,
-                        thumbShape:
-                            RoundSliderThumbShape(enabledThumbRadius: 7),
-                        activeTrackColor: Color(0xff484848),
-                        inactiveTrackColor: Color(0xffD2D2D2),
-                        thumbColor: Color(0xff484848),
+                    if (isTaskOwner)
+                      SliderTheme(
+                        data: SliderThemeData(
+                          overlayShape: SliderComponentShape.noOverlay,
+                          trackHeight: 5,
+                          thumbShape:
+                              RoundSliderThumbShape(enabledThumbRadius: 7),
+                          activeTrackColor: Color(0xff484848),
+                          inactiveTrackColor: Color(0xffD2D2D2),
+                          thumbColor: Color(0xff484848),
+                        ),
+                        child: Slider(
+                          value: task['progress'].toDouble(),
+                          min: 0,
+                          max: 100,
+                          divisions: 100,
+                          onChanged: (value) {
+                            _updateProgress(value.toInt());
+                          },
+                        ),
                       ),
-                      child: Slider(
-                        value: task['progress'].toDouble(),
-                        min: 0,
-                        max: 100,
-                        divisions: 100,
-                        onChanged: (value) {
-                          _updateProgress(value.toInt());
-                        },
-                      ),
-                    ),
                   ],
                 ),
-                SizedBox(height: 70),
+                SizedBox(height: 60),
                 SizedBox(
                   height: 30,
                   child: Row(
@@ -257,7 +272,16 @@ class _WorkDetailPageState extends State<WorkDetailPage> {
                             color: Color(0xff5A5A5A),
                             letterSpacing: -0.7),
                       ),
-                      IconButton(onPressed: (){}, icon: Image.asset('assets/icon/plus_icon.png', height: 30, width: 30,), constraints: BoxConstraints(),  padding: EdgeInsets.zero,)
+                      if (isTaskOwner) IconButton(
+                        onPressed: () {},
+                        icon: Image.asset(
+                          'assets/icon/plus_icon.png',
+                          height: 30,
+                          width: 30,
+                        ),
+                        constraints: BoxConstraints(),
+                        padding: EdgeInsets.zero,
+                      )
                     ],
                   ),
                 ),
@@ -273,7 +297,7 @@ class _WorkDetailPageState extends State<WorkDetailPage> {
                 SizedBox(height: 13),
                 Text(
                   '업무와 관련된 자료가 없습니다',
-                   style: TextStyle(
+                  style: TextStyle(
                       fontFamily: 'Inter',
                       fontSize: 14,
                       fontWeight: FontWeight.w400,
@@ -288,7 +312,7 @@ class _WorkDetailPageState extends State<WorkDetailPage> {
           ),
         ),
       ),
-      Positioned(
+      if (isTaskOwner) Positioned(
         left: 50,
         right: 50,
         bottom: 53,

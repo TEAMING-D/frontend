@@ -1,6 +1,7 @@
 import 'dart:ui';
 import 'package:flutter/material.dart';
 import 'package:teaming/detail/modify_project.dart';
+import 'package:teaming/detail/participation.dart';
 import 'package:teaming/detail/team_work.dart';
 import 'package:teaming/detail/time_table.dart';
 
@@ -8,7 +9,51 @@ class DetailNavigationBar extends StatelessWidget {
   final int currentIndex;
   final Type currentPage;
 
-  const DetailNavigationBar({
+  List<Map<String, dynamic>> tasks = [
+  {
+    'title': 'PPT 제작',
+    'members': ['김세아'],
+    'description': 'PPT 디자인 및 내용 정리',
+    'startDate': '2024.05.01',
+    'endDate': '2024.05.04',
+    'progress': 50,
+  },
+  {
+    'title': '자료조사',
+    'members': ['오수진', '윤소윤'],
+    'description': '지정 주제 관련 기사 및 논문 조사',
+    'startDate': '2024.04.30',
+    'endDate': '2024.05.02',
+    'progress': 90,
+  },
+  {
+    'title': '주제 선정',
+    'members': ['김세아', '오수진', '윤소윤'],
+    'description': '수업 내용에 맞는 적절한 주제 선정',
+    'startDate': '2024.04.03',
+    'endDate': '2024.04.25',
+    'progress': 100,
+  },
+  {
+    'title': '교수님 피드백 정리',
+    'members': ['김세아', '오수진', '윤소윤'],
+    'description': '회의하면서 주제 아이디어안도 생각',
+    'startDate': '2024.04.01',
+    'endDate': '2024.04.20',
+    'progress': 100,
+  },
+  {
+    'title': '수업 사전조사',
+    'members': ['김세아', '오수진', '윤소윤'],
+    'description': '수업 내용에 맞는 논문 및 기사 조사하고 노션에 따로 정리하기',
+    'startDate': '2024.04.01',
+    'endDate': '2024.04.18',
+    'progress': 100,
+  },
+];
+
+
+  DetailNavigationBar({
     super.key,
     required this.currentIndex,
     required this.currentPage,
@@ -38,7 +83,13 @@ class DetailNavigationBar extends StatelessWidget {
         );
         break;
       case 2:
-        // 참여도 페이지
+        Navigator.pushReplacement(context,
+          PageRouteBuilder(
+            pageBuilder: (_, __, ___) => ParticipationAnalysisPage(tasks: tasks, teamMembers: ['윤소윤', '오수진', '김세아'],),
+            transitionDuration: Duration(milliseconds: 500),
+            transitionsBuilder: (_, a, __, c) =>
+                FadeTransition(opacity: a, child: c),),
+        );
         break;
       case 3:
         // 아카이브 페이지
