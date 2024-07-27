@@ -40,6 +40,7 @@ class PopupWidget extends StatelessWidget {
                         Navigator.of(context).pop();
                       },
                       style: ElevatedButton.styleFrom(
+                        foregroundColor: Colors.white,
                         backgroundColor: Color.fromRGBO(84, 84, 84, 1),
                         shape: RoundedRectangleBorder(
                           borderRadius: BorderRadius.circular(10),

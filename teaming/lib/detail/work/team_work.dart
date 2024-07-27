@@ -1,8 +1,8 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:teaming/detail/add_work.dart';
-import 'package:teaming/detail/delete_work.dart';
-import 'package:teaming/detail/detail_work.dart';
+import 'package:teaming/detail/work/add_work.dart';
+import 'package:teaming/detail/work/delete_work.dart';
+import 'package:teaming/detail/work/detail_work.dart';
 import 'package:teaming/detail/navigation_bar.dart';
 
 class TeamWorkPage extends StatefulWidget {

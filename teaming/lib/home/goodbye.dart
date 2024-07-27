@@ -165,7 +165,7 @@ class _GoodbyePageState extends State<GoodbyePage> {
           onPressed: () {
             // 계정 탈퇴 로직 추가
           },
-          style: ElevatedButton.styleFrom(
+          style: ElevatedButton.styleFrom(foregroundColor: Colors.grey,
             backgroundColor: Colors.white,
             minimumSize: Size(double.infinity, 50),
             shape: RoundedRectangleBorder(

@@ -1,10 +1,10 @@
 import 'dart:ui';
 import 'package:flutter/material.dart';
-import 'package:teaming/detail/member_information.dart';
-import 'package:teaming/detail/modify_project.dart';
-import 'package:teaming/detail/participation.dart';
-import 'package:teaming/detail/team_work.dart';
-import 'package:teaming/detail/time_table.dart';
+import 'package:teaming/detail/archive/member_information.dart';
+import 'package:teaming/detail/modify/modify_project.dart';
+import 'package:teaming/detail/participation/participation.dart';
+import 'package:teaming/detail/work/team_work.dart';
+import 'package:teaming/detail/time_table/time_table.dart';
 
 class DetailNavigationBar extends StatelessWidget {
   final int currentIndex;

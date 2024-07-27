@@ -9,9 +9,10 @@ void main() {
     MaterialApp(
       debugShowCheckedModeBanner: false, // 디버그 바 제거
       theme: ThemeData(
-        primarySwatch: Colors.blue,
+        primarySwatch: Colors.grey,
         textSelectionTheme: TextSelectionThemeData(
           cursorColor: Color.fromRGBO(84, 84, 84, 1), // 기본 커서 색상
+          selectionHandleColor: Color.fromRGBO(84, 84, 84, 1),
         ),
       ),
       locale: Locale('ko', 'KR'),

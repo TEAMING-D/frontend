@@ -61,7 +61,7 @@ class _SchoolInfoPageState extends State<SchoolInfoPage> {
                           onPressed: () {
                             Navigator.of(context).pop();
                           },
-                          style: ElevatedButton.styleFrom(
+                          style: ElevatedButton.styleFrom(foregroundColor: Colors.white,
                             backgroundColor: Color.fromRGBO(84, 84, 84, 1),
                             shape: RoundedRectangleBorder(
                               borderRadius: BorderRadius.circular(10),
@@ -233,7 +233,7 @@ class _SchoolInfoPageState extends State<SchoolInfoPage> {
               _showPopup(context);
             }
           },
-          style: ElevatedButton.styleFrom(
+          style: ElevatedButton.styleFrom(foregroundColor: Colors.white,
             backgroundColor: Color.fromRGBO(84, 84, 84, 1),
             minimumSize: Size(double.infinity, 50),
             shape: RoundedRectangleBorder(

@@ -1,7 +1,8 @@
 import 'dart:ui';
 import 'package:flutter/material.dart';
-import 'package:teaming/detail/meeting_time.dart';
-import 'package:teaming/detail/member_time_table.dart';
+import 'package:teaming/detail/time_table/meeting_schedule.dart';
+import 'package:teaming/detail/time_table/meeting_time_table.dart';
+import 'package:teaming/detail/time_table/member_time_table.dart';
 import 'package:teaming/detail/navigation_bar.dart';
 
 class TeamSchedulePage extends StatefulWidget {
@@ -429,6 +430,20 @@ class _TeamSchedulePageState extends State<TeamSchedulePage> {
               context,
               MaterialPageRoute(
                   builder: (context) => MeetingTimePage()),
+            );
+          },
+        ),PopupMenuItem(
+          child: Container(
+              alignment: Alignment.center,
+              child: Text(
+                '팀 회의 일정 조회',
+                textAlign: TextAlign.center,
+              )),
+          onTap: () {
+            Navigator.pushReplacement(
+              context,
+              MaterialPageRoute(
+                  builder: (context) => MeetingSchedulePage()),
             );
           },
         ),

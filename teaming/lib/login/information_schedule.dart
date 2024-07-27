@@ -78,7 +78,7 @@ class _GetSchedulePageState extends State<GetSchedulePage> {
                             onPressed: () {
                               Navigator.of(context).pop();
                             },
-                            style: ElevatedButton.styleFrom(
+                            style: ElevatedButton.styleFrom(foregroundColor: Colors.grey,
                               backgroundColor: Color(0xffD8D8D8),
                               shape: RoundedRectangleBorder(
                                 borderRadius: BorderRadius.circular(10),
@@ -118,7 +118,7 @@ class _GetSchedulePageState extends State<GetSchedulePage> {
                           (Route<dynamic> route) => false, // 이전의 모든 화면을 제거합니다.
                         );
                             },
-                            style: ElevatedButton.styleFrom(
+                            style: ElevatedButton.styleFrom(foregroundColor: Colors.white,
                               backgroundColor: Color.fromRGBO(84, 84, 84, 1),
                               shape: RoundedRectangleBorder(
                                 borderRadius: BorderRadius.circular(10),
@@ -300,7 +300,7 @@ class _GetSchedulePageState extends State<GetSchedulePage> {
               _showPopup(context);
             }
           },
-          style: ElevatedButton.styleFrom(
+          style: ElevatedButton.styleFrom(foregroundColor: Colors.white,
             backgroundColor: Color.fromRGBO(84, 84, 84, 1),
             minimumSize: Size(double.infinity, 50),
             shape: RoundedRectangleBorder(

@@ -219,7 +219,7 @@ class _CollabInfoPageState extends State<CollabInfoPage> {
                               ),
                             );
                           },
-                          style: ElevatedButton.styleFrom(
+                          style: ElevatedButton.styleFrom(foregroundColor: Colors.white,
                             backgroundColor: Color.fromRGBO(84, 84, 84, 1),
                             minimumSize: Size(double.infinity, 50),
                             shape: RoundedRectangleBorder(

@@ -261,7 +261,7 @@ class _ScheduleEditPageState extends State<ScheduleEditPage> {
                                 onPressed: () {
                                   Navigator.of(context).pop();
                                 },
-                                style: ElevatedButton.styleFrom(
+                                style: ElevatedButton.styleFrom(foregroundColor: Colors.grey,
                                   backgroundColor: Color(0xffD8D8D8),
                                   shape: RoundedRectangleBorder(
                                     borderRadius: BorderRadius.circular(10),
@@ -329,7 +329,7 @@ class _ScheduleEditPageState extends State<ScheduleEditPage> {
                                     } 
                                   }
                                 },
-                                style: ElevatedButton.styleFrom(
+                                style: ElevatedButton.styleFrom(foregroundColor: Colors.white,
                                   backgroundColor:
                                       Color.fromRGBO(84, 84, 84, 1),
                                   shape: RoundedRectangleBorder(

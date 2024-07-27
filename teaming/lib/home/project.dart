@@ -1,6 +1,6 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:teaming/detail/time_table.dart';
+import 'package:teaming/detail/time_table/time_table.dart';
 import 'package:teaming/home/add_project.dart';
 import 'package:teaming/home/delete_project.dart';
 import 'package:teaming/home/notice.dart';

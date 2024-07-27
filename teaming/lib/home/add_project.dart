@@ -105,7 +105,7 @@ class _AddProjectPageState extends State<AddProjectPage> {
                               onPressed: () {
                                 Navigator.of(context).pop();
                               },
-                              style: ElevatedButton.styleFrom(
+                              style: ElevatedButton.styleFrom(foregroundColor: Colors.grey,
                                 backgroundColor: Color(0xffD8D8D8),
                                 shape: RoundedRectangleBorder(
                                   borderRadius: BorderRadius.circular(10),
@@ -183,7 +183,7 @@ class _AddProjectPageState extends State<AddProjectPage> {
                                 Navigator.pop(context);
                                 Navigator.pop(context);
                               },
-                              style: ElevatedButton.styleFrom(
+                              style: ElevatedButton.styleFrom(foregroundColor: Colors.white,
                                 backgroundColor: Color.fromRGBO(84, 84, 84, 1),
                                 shape: RoundedRectangleBorder(
                                   borderRadius: BorderRadius.circular(10),
@@ -257,7 +257,7 @@ class _AddProjectPageState extends State<AddProjectPage> {
                             onPressed: () {
                               Navigator.of(context).pop();
                             },
-                            style: ElevatedButton.styleFrom(
+                            style: ElevatedButton.styleFrom(foregroundColor: Colors.white,
                               backgroundColor: Color.fromRGBO(84, 84, 84, 1),
                               shape: RoundedRectangleBorder(
                                 borderRadius: BorderRadius.circular(10),
@@ -705,7 +705,7 @@ class _AddProjectPageState extends State<AddProjectPage> {
         bottom: 53,
         child: ElevatedButton(
           onPressed: _createProject,
-          style: ElevatedButton.styleFrom(
+          style: ElevatedButton.styleFrom(foregroundColor: Colors.white,
             backgroundColor: Color.fromRGBO(84, 84, 84, 1),
             minimumSize: Size(double.infinity, 50),
             shape: RoundedRectangleBorder(

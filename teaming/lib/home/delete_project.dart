@@ -74,7 +74,7 @@ class _DeleteProjectPageState extends State<DeleteProjectPage> {
                             onPressed: () {
                               Navigator.of(context).pop();
                             },
-                            style: ElevatedButton.styleFrom(
+                            style: ElevatedButton.styleFrom(foregroundColor: Colors.grey,
                               backgroundColor: Color(0xffD8D8D8),
                               shape: RoundedRectangleBorder(
                                 borderRadius: BorderRadius.circular(10),
@@ -99,7 +99,7 @@ class _DeleteProjectPageState extends State<DeleteProjectPage> {
                             onPressed: () {
                               _deleteProjects();
                             },
-                            style: ElevatedButton.styleFrom(
+                            style: ElevatedButton.styleFrom(foregroundColor: Colors.white,
                               backgroundColor: Color.fromRGBO(84, 84, 84, 1),
                               shape: RoundedRectangleBorder(
                                 borderRadius: BorderRadius.circular(10),

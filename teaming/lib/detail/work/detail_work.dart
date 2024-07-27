@@ -1,6 +1,6 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:teaming/detail/modify_work.dart';
+import 'package:teaming/detail/work/modify_work.dart';
 
 class WorkDetailPage extends StatefulWidget {
   final Map<String, dynamic> task;
@@ -318,7 +318,7 @@ class _WorkDetailPageState extends State<WorkDetailPage> {
         bottom: 53,
         child: ElevatedButton(
           onPressed: _completeTask,
-          style: ElevatedButton.styleFrom(
+          style: ElevatedButton.styleFrom(foregroundColor: Colors.white,
             backgroundColor: Color.fromRGBO(84, 84, 84, 1),
             minimumSize: Size(double.infinity, 50),
             shape: RoundedRectangleBorder(

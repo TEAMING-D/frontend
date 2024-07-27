@@ -104,7 +104,7 @@ class NotificationDrawer extends StatelessWidget {
                                         shape: RoundedRectangleBorder(
                                           borderRadius:
                                               BorderRadius.circular(10),
-                                        ),
+                                        ),foregroundColor: Colors.grey,
                                         backgroundColor: Colors.white,
                                         side: BorderSide(
                                             color: Color(0xff5a5a5a)),
@@ -127,7 +127,7 @@ class NotificationDrawer extends StatelessWidget {
                                     style: ElevatedButton.styleFrom(
                                       shape: RoundedRectangleBorder(
                                         borderRadius: BorderRadius.circular(10),
-                                      ),
+                                      ),foregroundColor: Colors.grey,
                                       backgroundColor: Colors.white,
                                       side:
                                           BorderSide(color: Color(0xff5a5a5a)),

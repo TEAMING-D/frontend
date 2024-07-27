@@ -1,8 +1,9 @@
 import 'dart:ui';
 import 'package:flutter/material.dart';
-import 'package:teaming/detail/member_time_table.dart';
+import 'package:teaming/detail/time_table/meeting_schedule.dart';
+import 'package:teaming/detail/time_table/member_time_table.dart';
 import 'package:teaming/detail/navigation_bar.dart';
-import 'package:teaming/detail/time_table.dart';
+import 'package:teaming/detail/time_table/time_table.dart';
 import 'package:teaming/popup_widget.dart';
 
 class MeetingTimePage extends StatefulWidget {
@@ -170,7 +171,7 @@ void _selectEndDate(BuildContext context) async {
                       SizedBox(
                         width: double.infinity,
                         child: ElevatedButton(
-                          style: ElevatedButton.styleFrom(
+                          style: ElevatedButton.styleFrom(foregroundColor: Colors.white,
                             backgroundColor: Colors.grey,
                             shape: RoundedRectangleBorder(
                               borderRadius: BorderRadius.circular(8.0),
@@ -410,7 +411,7 @@ void showAlertDialog(BuildContext context, String message) {
                     ),
                     SizedBox(height: 10),
                     Text(
-                      '최대 일주일까지 조회할 수 있습니다',
+                      '최대 일주일까지 조회할 수 있습니다\n',
                       style: TextStyle(
                         fontFamily: 'Inter',
                         fontWeight: FontWeight.w400,
@@ -818,6 +819,19 @@ TableRow _buildTableRow(int hour, int totalHours) {
             Navigator.pushReplacement(
               context,
               MaterialPageRoute(builder: (context) => MemberSchedulePage()),
+            );
+          },
+        ),PopupMenuItem(
+          child: Container(
+              alignment: Alignment.center,
+              child: Text(
+                '팀 회의 일정 조회',
+                textAlign: TextAlign.center,
+              )),
+          onTap: () {
+            Navigator.pushReplacement(
+              context,
+              MaterialPageRoute(builder: (context) => MeetingSchedulePage()),
             );
           },
         ),
