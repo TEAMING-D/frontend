@@ -16,7 +16,7 @@ class _TeamSchedulePageState extends State<TeamSchedulePage> {
   OverlayEntry? _balloonOverlay;
   final ScrollController _scrollController = ScrollController();
 
-  List<Map<String, dynamic>> availability = [ 
+  List<Map<String, dynamic>> availability = [
     // 김세아
     {'name': '김세아', 'day': '월', 'startHour': 0, 'endHour': 13},
     {'name': '김세아', 'day': '월', 'startHour': 16, 'endHour': 24},
@@ -172,13 +172,15 @@ class _TeamSchedulePageState extends State<TeamSchedulePage> {
                 ),
                 SizedBox(height: 30),
                 _buildScheduleTable(),
-                SizedBox(height: 50,)
+                SizedBox(
+                  height: 50,
+                )
               ],
             ),
           ),
         ),
       ),
-       bottomNavigationBar: DetailNavigationBar(
+      bottomNavigationBar: DetailNavigationBar(
         currentIndex: 0,
         currentPage: TeamSchedulePage,
       ),
@@ -285,7 +287,8 @@ class _TeamSchedulePageState extends State<TeamSchedulePage> {
   TableRow _buildTableRow(int hour, int totalHours) {
     return TableRow(
       children: [
-        _buildTableCell('$hour'.padLeft(2, '0'), isBottomLeft: hour == totalHours - 1),
+        _buildTableCell('$hour'.padLeft(2, '0'),
+            isBottomLeft: hour == totalHours - 1),
         for (int day = 0; day < 7; day++)
           _buildTableCell(
             '',
@@ -323,7 +326,8 @@ class _TeamSchedulePageState extends State<TeamSchedulePage> {
     }
   }
 
-  void _showBalloon(BuildContext context, TapUpDetails details, List<String> members) {
+  void _showBalloon(
+      BuildContext context, TapUpDetails details, List<String> members) {
     _removeBalloon();
 
     final position = details.globalPosition;
@@ -372,7 +376,13 @@ class _TeamSchedulePageState extends State<TeamSchedulePage> {
     double scrollOffset = _scrollController.offset;
 
     int day = ((localPosition.dx - 65) / 47.75).floor();
-    int hour = ((localPosition.dy + scrollOffset - kToolbarHeight - MediaQuery.of(context).padding.top) / 36 - 5).floor();
+    int hour = ((localPosition.dy +
+                    scrollOffset -
+                    kToolbarHeight -
+                    MediaQuery.of(context).padding.top) /
+                36 -
+            5)
+        .floor();
 
     String dayString = _getDayString(day);
     List<String> members = availability
@@ -414,7 +424,12 @@ class _TeamSchedulePageState extends State<TeamSchedulePage> {
           onTap: () {
             Navigator.pushReplacement(
               context,
-              MaterialPageRoute(builder: (context) => MemberSchedulePage()),
+              PageRouteBuilder(
+                pageBuilder: (_, __, ___) => MemberSchedulePage(),
+                transitionDuration: Duration(milliseconds: 500),
+                transitionsBuilder: (_, a, __, c) =>
+                    FadeTransition(opacity: a, child: c),
+              ),
             );
           },
         ),
@@ -428,11 +443,16 @@ class _TeamSchedulePageState extends State<TeamSchedulePage> {
           onTap: () {
             Navigator.pushReplacement(
               context,
-              MaterialPageRoute(
-                  builder: (context) => MeetingTimePage()),
+              PageRouteBuilder(
+                pageBuilder: (_, __, ___) => MeetingTimePage(),
+                transitionDuration: Duration(milliseconds: 500),
+                transitionsBuilder: (_, a, __, c) =>
+                    FadeTransition(opacity: a, child: c),
+              ),
             );
           },
-        ),PopupMenuItem(
+        ),
+        PopupMenuItem(
           child: Container(
               alignment: Alignment.center,
               child: Text(
@@ -442,8 +462,12 @@ class _TeamSchedulePageState extends State<TeamSchedulePage> {
           onTap: () {
             Navigator.pushReplacement(
               context,
-              MaterialPageRoute(
-                  builder: (context) => MeetingSchedulePage()),
+              PageRouteBuilder(
+                pageBuilder: (_, __, ___) => MeetingSchedulePage(),
+                transitionDuration: Duration(milliseconds: 500),
+                transitionsBuilder: (_, a, __, c) =>
+                    FadeTransition(opacity: a, child: c),
+              ),
             );
           },
         ),
@@ -452,8 +476,6 @@ class _TeamSchedulePageState extends State<TeamSchedulePage> {
     );
   }
 }
-
-
 
 class Balloon extends StatelessWidget {
   final String text;

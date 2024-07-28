@@ -298,8 +298,7 @@ class _MemberSchedulePageState extends State<MemberSchedulePage> {
                             border: Border.all(color: Colors.grey, width: 0.5),
                             color: Colors.white,
                             borderRadius: BorderRadius.only(
-                              topLeft: Radius.circular(
-                                  10),
+                              topLeft: Radius.circular(10),
                             ),
                           ),
                         ),
@@ -312,9 +311,8 @@ class _MemberSchedulePageState extends State<MemberSchedulePage> {
                                   Border.all(color: Colors.grey, width: 0.5),
                               color: Colors.white,
                               borderRadius: BorderRadius.only(
-                                topRight: i == 6
-                                    ? Radius.circular(10)
-                                    : Radius.zero,
+                                topRight:
+                                    i == 6 ? Radius.circular(10) : Radius.zero,
                               ),
                             ),
                             child: Center(
@@ -349,10 +347,8 @@ class _MemberSchedulePageState extends State<MemberSchedulePage> {
                                   Border.all(color: Colors.grey, width: 0.5),
                               color: Colors.white,
                               borderRadius: BorderRadius.only(
-                                bottomLeft: i == 23
-                                    ? Radius.circular(10)
-                                    : Radius
-                                        .zero,
+                                bottomLeft:
+                                    i == 23 ? Radius.circular(10) : Radius.zero,
                               ),
                             ),
                             child: Center(
@@ -386,10 +382,8 @@ class _MemberSchedulePageState extends State<MemberSchedulePage> {
                                   Border.all(color: Colors.grey, width: 0.5),
                               color: Colors.white,
                               borderRadius: BorderRadius.only(
-                                bottomRight: i == 23
-                                    ? Radius.circular(10)
-                                    : Radius
-                                        .zero,
+                                bottomRight:
+                                    i == 23 ? Radius.circular(10) : Radius.zero,
                               ),
                             ),
                             child: Center(
@@ -534,7 +528,12 @@ class _MemberSchedulePageState extends State<MemberSchedulePage> {
           onTap: () {
             Navigator.pushReplacement(
               context,
-              MaterialPageRoute(builder: (context) => TeamSchedulePage()),
+              PageRouteBuilder(
+                pageBuilder: (_, __, ___) => TeamSchedulePage(),
+                transitionDuration: Duration(milliseconds: 500),
+                transitionsBuilder: (_, a, __, c) =>
+                    FadeTransition(opacity: a, child: c),
+              ),
             );
           },
         ),
@@ -548,10 +547,16 @@ class _MemberSchedulePageState extends State<MemberSchedulePage> {
           onTap: () {
             Navigator.pushReplacement(
               context,
-              MaterialPageRoute(builder: (context) => MeetingTimePage()),
+              PageRouteBuilder(
+                pageBuilder: (_, __, ___) => MeetingTimePage(),
+                transitionDuration: Duration(milliseconds: 500),
+                transitionsBuilder: (_, a, __, c) =>
+                    FadeTransition(opacity: a, child: c),
+              ),
             );
           },
-        ),PopupMenuItem(
+        ),
+        PopupMenuItem(
           child: Container(
               alignment: Alignment.center,
               child: Text(
@@ -561,8 +566,12 @@ class _MemberSchedulePageState extends State<MemberSchedulePage> {
           onTap: () {
             Navigator.pushReplacement(
               context,
-              MaterialPageRoute(
-                  builder: (context) => MeetingSchedulePage()),
+              PageRouteBuilder(
+                pageBuilder: (_, __, ___) => MeetingSchedulePage(),
+                transitionDuration: Duration(milliseconds: 500),
+                transitionsBuilder: (_, a, __, c) =>
+                    FadeTransition(opacity: a, child: c),
+              ),
             );
           },
         ),

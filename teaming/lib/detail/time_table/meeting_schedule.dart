@@ -90,7 +90,12 @@ class _MeetingSchedulePageState extends State<MeetingSchedulePage> {
           onTap: () {
             Navigator.pushReplacement(
               context,
-              MaterialPageRoute(builder: (context) => TeamSchedulePage()),
+              PageRouteBuilder(
+                pageBuilder: (_, __, ___) => TeamSchedulePage(),
+                transitionDuration: Duration(milliseconds: 500),
+                transitionsBuilder: (_, a, __, c) =>
+                    FadeTransition(opacity: a, child: c),
+              ),
             );
           },
         ),
@@ -104,7 +109,12 @@ class _MeetingSchedulePageState extends State<MeetingSchedulePage> {
           onTap: () {
             Navigator.pushReplacement(
               context,
-              MaterialPageRoute(builder: (context) => MemberSchedulePage()),
+              PageRouteBuilder(
+                pageBuilder: (_, __, ___) => MemberSchedulePage(),
+                transitionDuration: Duration(milliseconds: 500),
+                transitionsBuilder: (_, a, __, c) =>
+                    FadeTransition(opacity: a, child: c),
+              ),
             );
           },
         ),
@@ -118,7 +128,12 @@ class _MeetingSchedulePageState extends State<MeetingSchedulePage> {
           onTap: () {
             Navigator.pushReplacement(
               context,
-              MaterialPageRoute(builder: (context) => MeetingTimePage()),
+              PageRouteBuilder(
+                pageBuilder: (_, __, ___) => MeetingTimePage(),
+                transitionDuration: Duration(milliseconds: 500),
+                transitionsBuilder: (_, a, __, c) =>
+                    FadeTransition(opacity: a, child: c),
+              ),
             );
           },
         ),

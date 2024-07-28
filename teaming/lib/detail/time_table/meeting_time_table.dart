@@ -802,9 +802,15 @@ TableRow _buildTableRow(int hour, int totalHours) {
                 textAlign: TextAlign.center,
               )),
           onTap: () {
+
             Navigator.pushReplacement(
               context,
-              MaterialPageRoute(builder: (context) => TeamSchedulePage()),
+              PageRouteBuilder(
+                pageBuilder: (_, __, ___) => TeamSchedulePage(),
+                transitionDuration: Duration(milliseconds: 500),
+                transitionsBuilder: (_, a, __, c) =>
+                    FadeTransition(opacity: a, child: c),
+              ),
             );
           },
         ),
@@ -816,9 +822,15 @@ TableRow _buildTableRow(int hour, int totalHours) {
                 textAlign: TextAlign.center,
               )),
           onTap: () {
+
             Navigator.pushReplacement(
               context,
-              MaterialPageRoute(builder: (context) => MemberSchedulePage()),
+              PageRouteBuilder(
+                pageBuilder: (_, __, ___) => MemberSchedulePage(),
+                transitionDuration: Duration(milliseconds: 500),
+                transitionsBuilder: (_, a, __, c) =>
+                    FadeTransition(opacity: a, child: c),
+              ),
             );
           },
         ),PopupMenuItem(
@@ -829,9 +841,14 @@ TableRow _buildTableRow(int hour, int totalHours) {
                 textAlign: TextAlign.center,
               )),
           onTap: () {
-            Navigator.pushReplacement(
+             Navigator.pushReplacement(
               context,
-              MaterialPageRoute(builder: (context) => MeetingSchedulePage()),
+              PageRouteBuilder(
+                pageBuilder: (_, __, ___) => MeetingSchedulePage(),
+                transitionDuration: Duration(milliseconds: 500),
+                transitionsBuilder: (_, a, __, c) =>
+                    FadeTransition(opacity: a, child: c),
+              ),
             );
           },
         ),

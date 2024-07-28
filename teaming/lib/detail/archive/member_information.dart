@@ -1,6 +1,7 @@
 import 'dart:ui';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:teaming/detail/navigation_bar.dart';
 
 class MemberInfoPage extends StatefulWidget {
   const MemberInfoPage({super.key});
@@ -425,6 +426,9 @@ class _MemberInfoPageState extends State<MemberInfoPage> {
             ),
           ],
         ),
+      ), bottomNavigationBar: DetailNavigationBar(
+        currentIndex: 1,
+        currentPage: MemberInfoPage,
       ),
     );
   }
