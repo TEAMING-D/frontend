@@ -1,7 +1,112 @@
 import 'package:flutter/material.dart';
+import 'package:teaming/service/api_service.dart';
+import 'package:teaming/model/sign_up_dto.dart';
 
 class WelcomePage extends StatelessWidget {
-  const WelcomePage({super.key});
+  final SignUpRequest signUpRequest;
+
+  const WelcomePage({super.key, required this.signUpRequest});
+
+  Future<void> _completeSignUp(BuildContext context) async {
+    final ApiService apiService = ApiService();
+
+    try {
+      final response = await apiService.signUp(signUpRequest);
+      // 회원가입 성공 시 메인 페이지로 이동
+      Navigator.pushNamedAndRemoveUntil(
+        context,
+        '/teamProjects',
+        (Route<dynamic> route) => false, // 모든 이전 화면 제거
+        arguments: {
+          // 샘플 데이터이므로 API 연결 시 제거
+          'projects': [
+            {
+              'name': '프로젝트명A',
+              'members': ['김세아', '오수진', '윤소윤'],
+              'class': '수업명A',
+              'progress': 80,
+              'startDate': '2024.03.04',
+              'endDate': '2024.08.15',
+            },
+            {
+              'name': '프로젝트명B',
+              'members': [
+                '김세아',
+                '오수진',
+                '윤소윤',
+                '황익명',
+                '박익명',
+                '김익명',
+                '이익명',
+                '장익명'
+              ],
+              'class': '수업명B',
+              'progress': 45,
+              'startDate': '2024.01.13',
+              'endDate': '2024.07.20',
+            },
+            {
+              'name': '프로젝트명C',
+              'members': ['김세아', '박익명', '최익명'],
+              'class': '대회명A',
+              'progress': 100,
+              'startDate': '2023.12.13',
+              'endDate': '2024.05.23',
+            },
+            {
+              'name': '프로젝트명D',
+              'members': ['김세아', '이익명'],
+              'class': '수업명C ',
+              'progress': 20,
+              'startDate': '2023.08.15',
+              'endDate': '2024.02.21',
+            },
+            {
+              'name': '프로젝트명E',
+              'members': ['김세아', '이익명', '박익명'],
+              'class': '대회명B',
+              'progress': 95,
+              'startDate': '2023.08.15',
+              'endDate': '2023.12.21',
+            },
+            {
+              'name': '프로젝트명F',
+              'members': ['김세아', '박익명'],
+              'class': '봉사명A',
+              'progress': 20,
+              'startDate': '2023.06.25',
+              'endDate': '2023.08.10',
+            },
+          ],
+          'hasNotification': true,
+        },
+      );
+    } catch (e) {
+      // 에러 처리
+      print('Error: $e');
+      _showPopup(context, '회원가입에 실패했습니다.\n네트워크 연결을 확인해주세요.');
+    }
+  }
+
+  void _showPopup(BuildContext context, String message) {
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: Text('Error'),
+          content: Text(message),
+          actions: [
+            ElevatedButton(
+              onPressed: () {
+                Navigator.of(context).pop();
+              },
+              child: Text('OK'),
+            ),
+          ],
+        );
+      },
+    );
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -20,8 +125,7 @@ class WelcomePage extends StatelessWidget {
                   decoration: BoxDecoration(
                     image: DecorationImage(
                       fit: BoxFit.cover,
-                      image:
-                          AssetImage('assets/welcome_background.png'), // 배경 이미지
+                      image: AssetImage('assets/welcome_background.png'), // 배경 이미지
                     ),
                   ),
                   child: Center(
@@ -59,12 +163,9 @@ class WelcomePage extends StatelessWidget {
                         SizedBox(height: 30),
                         SizedBox(
                           width: 33,
-                          child:
-                              Divider(color: Color(0xFF858585), thickness: 1),
+                          child: Divider(color: Color(0xFF858585), thickness: 1),
                         ),
-                        SizedBox(
-                          height: 25,
-                        ),
+                        SizedBox(height: 25),
                         Text(
                           "기본적인 정보 입력과\n시간표 설정이 완료되었습니다",
                           style: TextStyle(
@@ -75,9 +176,7 @@ class WelcomePage extends StatelessWidget {
                           ),
                           textAlign: TextAlign.center,
                         ),
-                        SizedBox(
-                          height: 10,
-                        ),
+                        SizedBox(height: 10),
                         Text(
                           "앞으로 티밍과 함께 대학 팀플을\n쉽고 빠르게 관리해보세요!",
                           style: TextStyle(
@@ -102,77 +201,9 @@ class WelcomePage extends StatelessWidget {
         right: 50,
         bottom: 53,
         child: ElevatedButton(
-          onPressed: () {
-            // 메인 페이지 이동 로직 추가
-            Navigator.pushNamedAndRemoveUntil(
-              context,
-              '/teamProjects',
-              (Route<dynamic> route) => false, // 모든 이전 화면 제거
-              arguments: {
-                // 샘플 데이터이므로 API 연결 시 제거
-                'projects': [
-                  {
-                    'name': '프로젝트명A',
-                    'members': ['김세아', '오수진', '윤소윤'],
-                    'class': '수업명A',
-                    'progress': 80,
-                    'startDate': '2024.03.04',
-                    'endDate': '2024.08.15',
-                  },
-                  {
-                    'name': '프로젝트명B',
-                    'members': [
-                      '김세아',
-                      '오수진',
-                      '윤소윤',
-                      '황익명',
-                      '박익명',
-                      '김익명',
-                      '이익명',
-                      '장익명'
-                    ],
-                    'class': '수업명B',
-                    'progress': 45,
-                    'startDate': '2024.01.13',
-                    'endDate': '2024.07.20',
-                  },
-                  {
-                    'name': '프로젝트명C',
-                    'members': ['김세아', '박익명', '최익명'],
-                    'class': '대회명A',
-                    'progress': 100,
-                    'startDate': '2023.12.13',
-                    'endDate': '2024.05.23',
-                  },
-                  {
-                    'name': '프로젝트명D',
-                    'members': ['김세아', '이익명'],
-                    'class': '수업명C ',
-                    'progress': 20,
-                    'startDate': '2023.08.15',
-                    'endDate': '2024.02.21',
-                  },
-                  {
-                    'name': '프로젝트명E',
-                    'members': ['김세아', '이익명', '박익명'],
-                    'class': '대회명B',
-                    'progress': 95,
-                    'startDate': '2023.08.15',
-                    'endDate': '2023.12.21',
-                  },
-                  {
-                    'name': '프로젝트명F',
-                    'members': ['김세아', '박익명'],
-                    'class': '봉사명A',
-                    'progress': 20,
-                    'startDate': '2023.06.25',
-                    'endDate': '2023.08.10',
-                  }, 
-                ],'hasNotification': true,
-              },
-            );
-          },
-          style: ElevatedButton.styleFrom(foregroundColor: Colors.white,
+          onPressed: () => _completeSignUp(context),
+          style: ElevatedButton.styleFrom(
+            foregroundColor: Colors.white,
             backgroundColor: Color.fromRGBO(84, 84, 84, 1),
             minimumSize: Size(double.infinity, 50),
             shape: RoundedRectangleBorder(

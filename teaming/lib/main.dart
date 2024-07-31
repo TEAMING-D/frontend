@@ -23,7 +23,7 @@ void main() {
       ],
       supportedLocales: [
         const Locale('ko', 'KR'),
-        const Locale('en', 'US'), // 다른 언어 추가 가능
+        const Locale('en', 'US'),
       ],
       home: JoinPage(),
       onGenerateRoute: (settings) {

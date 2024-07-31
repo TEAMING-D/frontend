@@ -1,5 +1,7 @@
 import 'dart:ui';
 import 'package:flutter/material.dart';
+import 'package:teaming/detail/archive/file_archive.dart';
+import 'package:teaming/detail/archive/file_item.dart';
 import 'package:teaming/detail/archive/member_information.dart';
 import 'package:teaming/detail/modify/modify_project.dart';
 import 'package:teaming/detail/participation/participation.dart';
@@ -53,6 +55,39 @@ class DetailNavigationBar extends StatelessWidget {
   },
 ];
 
+  List<FileItem> sampleFiles = [
+      FileItem(
+        name: '최종 보고서.pptx',
+        uploader: '김세아',
+        uploadDate: DateTime(2024, 7, 28),
+        size: '98MB',
+      ),
+      FileItem(
+        name: '보고서 초안_수정.pptx',
+        uploader: '김세아',
+        uploadDate: DateTime(2024, 7, 2),
+        size: '34MB',
+      ),
+      FileItem(
+        name: '논문 파일 모음.zip',
+        uploader: '윤소윤',
+        uploadDate: DateTime(2024, 7, 1),
+        size: '1GB',
+      ),
+      FileItem(
+        name: '주제 조사 내용.pdf',
+        uploader: '오수진',
+        uploadDate: DateTime(2024, 6, 23),
+        size: '5MB',
+      ),
+      FileItem(
+        name: '수업 중 발표에 대한 안내문.pdf',
+        uploader: '오수진',
+        uploadDate: DateTime(2024, 6, 15),
+        size: '1MB',
+      ),
+    ];
+
 
   DetailNavigationBar({
     super.key,
@@ -95,7 +130,7 @@ class DetailNavigationBar extends StatelessWidget {
       case 3:
         Navigator.pushReplacement(context,
           PageRouteBuilder(
-            pageBuilder: (_, __, ___) => MemberInfoPage(),
+            pageBuilder: (_, __, ___) => FileArchivePage(files: sampleFiles,),
             transitionDuration: Duration(milliseconds: 500),
             transitionsBuilder: (_, a, __, c) =>
                 FadeTransition(opacity: a, child: c),),

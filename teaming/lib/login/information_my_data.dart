@@ -2,9 +2,12 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:teaming/login/information_schedule.dart';
 import 'package:teaming/login/information_widget.dart';
+import '../model/sign_up_dto.dart';
 
 class MyInfoPage extends StatefulWidget {
-  const MyInfoPage({super.key});
+  final SignUpRequest signUpRequest;
+
+  const MyInfoPage({super.key, required this.signUpRequest});
 
   @override
   State<MyInfoPage> createState() => _MyInfoPageState();
@@ -65,7 +68,8 @@ class _MyInfoPageState extends State<MyInfoPage> {
                           onPressed: () {
                             Navigator.of(context).pop();
                           },
-                          style: ElevatedButton.styleFrom(foregroundColor: Colors.white,
+                          style: ElevatedButton.styleFrom(
+                            foregroundColor: Colors.white,
                             backgroundColor: Color.fromRGBO(84, 84, 84, 1),
                             shape: RoundedRectangleBorder(
                               borderRadius: BorderRadius.circular(10),
@@ -306,12 +310,16 @@ class _MyInfoPageState extends State<MyInfoPage> {
         child: ElevatedButton(
           onPressed: () {
             if (_areFieldsFilled(context)) {
-              // 다음 페이지로 이동하는 로직 추가
+              widget.signUpRequest.username = nameController.text;
+              widget.signUpRequest.phone = '${phonePart1Controller.text}-${phonePart2Controller.text}-${phonePart3Controller.text}';
+              widget.signUpRequest.birth = '${birthYearController.text}-${birthMonthController.text}-${birthDayController.text}';
+              widget.signUpRequest.sns = '${snsNameController.text} @${snsIdController.text}';
+              
               Navigator.push(
                 context,
                 PageRouteBuilder(
                   pageBuilder: (context, animation, secondaryAnimation) =>
-                      GetSchedulePage(),
+                      GetSchedulePage(signUpRequest: widget.signUpRequest),
                   transitionsBuilder:
                       (context, animation, secondaryAnimation, child) {
                     return FadeTransition(
@@ -325,7 +333,8 @@ class _MyInfoPageState extends State<MyInfoPage> {
               _showPopup(context);
             }
           },
-          style: ElevatedButton.styleFrom(foregroundColor: Colors.white,
+          style: ElevatedButton.styleFrom(
+            foregroundColor: Colors.white,
             backgroundColor: Color.fromRGBO(84, 84, 84, 1),
             minimumSize: Size(double.infinity, 50),
             shape: RoundedRectangleBorder(

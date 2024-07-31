@@ -1,6 +1,7 @@
 import 'dart:ui';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:teaming/detail/archive/file_archive.dart';
 import 'package:teaming/detail/navigation_bar.dart';
 
 class MemberInfoPage extends StatefulWidget {
@@ -47,6 +48,43 @@ class _MemberInfoPageState extends State<MemberInfoPage> {
       'notion': 'notion.so/username',
     },
   ];
+
+  void _showDropdownMenu(BuildContext context) {
+    final RenderBox renderBox = context.findRenderObject() as RenderBox;
+    final position = renderBox.localToGlobal(Offset.zero);
+
+    showMenu(
+      context: context,
+      position: RelativeRect.fromLTRB(
+        (MediaQuery.of(context).size.width / 2.8),
+        position.dy + kToolbarHeight + 20,
+        (MediaQuery.of(context).size.width / 2.8),
+        0,
+      ),
+      items: [
+        PopupMenuItem(
+          child: Container(
+              alignment: Alignment.center,
+              child: Text(
+                '자료 아카이브',
+                textAlign: TextAlign.center,
+              )),
+          onTap: () {
+            Navigator.pushReplacement(
+              context,
+              PageRouteBuilder(
+                pageBuilder: (_, __, ___) => FileArchivePage(files: [],),
+                transitionDuration: Duration(milliseconds: 500),
+                transitionsBuilder: (_, a, __, c) =>
+                    FadeTransition(opacity: a, child: c),
+              ),
+            );
+          },
+        ),
+      ],
+      color: Colors.white,
+    );
+  }
 
   Widget _buildMemberTab() {
     return Row(
@@ -347,7 +385,7 @@ class _MemberInfoPageState extends State<MemberInfoPage> {
         ),
         scrolledUnderElevation: 0,
         title: GestureDetector(
-          onTap: () {},
+          onTap: () => _showDropdownMenu(context),
           child: Row(
             mainAxisSize: MainAxisSize.min,
             children: [
@@ -427,7 +465,7 @@ class _MemberInfoPageState extends State<MemberInfoPage> {
           ],
         ),
       ), bottomNavigationBar: DetailNavigationBar(
-        currentIndex: 1,
+        currentIndex: 3,
         currentPage: MemberInfoPage,
       ),
     );

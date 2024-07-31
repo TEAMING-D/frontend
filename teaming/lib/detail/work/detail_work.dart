@@ -1,5 +1,8 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
+import 'package:teaming/detail/archive/file_item.dart';
+import 'package:teaming/detail/work/detail_work_assign_file.dart';
 import 'package:teaming/detail/work/modify_work.dart';
 
 class WorkDetailPage extends StatefulWidget {
@@ -21,6 +24,83 @@ class WorkDetailPage extends StatefulWidget {
 class _WorkDetailPageState extends State<WorkDetailPage> {
   late Map<String, dynamic> task;
   late bool isTaskOwner;
+  List<FileItem> selectedFiles = []; // 추가된 부분
+
+  List<Map<String, dynamic>> tasks = [
+    {
+      'title': 'PPT 제작',
+      'members': ['김세아'],
+      'description': 'PPT 디자인 및 내용 정리',
+      'startDate': '2024.05.01',
+      'endDate': '2024.05.04',
+      'progress': 50,
+    },
+    {
+      'title': '자료조사',
+      'members': ['오수진', '윤소윤'],
+      'description': '지정 주제 관련 기사 및 논문 조사',
+      'startDate': '2024.04.30',
+      'endDate': '2024.05.02',
+      'progress': 90,
+    },
+    {
+      'title': '주제 선정',
+      'members': ['김세아', '오수진', '윤소윤'],
+      'description': '수업 내용에 맞는 적절한 주제 선정',
+      'startDate': '2024.04.03',
+      'endDate': '2024.04.25',
+      'progress': 100,
+    },
+    {
+      'title': '교수님 피드백 정리',
+      'members': ['김세아', '오수진', '윤소윤'],
+      'description': '회의하면서 주제 아이디어안도 생각',
+      'startDate': '2024.04.01',
+      'endDate': '2024.04.20',
+      'progress': 100,
+    },
+    {
+      'title': '수업 사전조사',
+      'members': ['김세아', '오수진', '윤소윤'],
+      'description': '수업 내용에 맞는 논문 및 기사 조사하고 노션에 따로 정리하기',
+      'startDate': '2024.04.01',
+      'endDate': '2024.04.18',
+      'progress': 100,
+    },
+  ];
+
+  List<FileItem> sampleFiles = [
+    FileItem(
+      name: '최종 보고서.pptx',
+      uploader: '김세아',
+      uploadDate: DateTime(2024, 7, 28),
+      size: '98MB',
+    ),
+    FileItem(
+      name: '보고서 초안_수정.pptx',
+      uploader: '김세아',
+      uploadDate: DateTime(2024, 7, 2),
+      size: '34MB',
+    ),
+    FileItem(
+      name: '논문 파일 모음.zip',
+      uploader: '윤소윤',
+      uploadDate: DateTime(2024, 7, 1),
+      size: '1GB',
+    ),
+    FileItem(
+      name: '주제 조사 내용.pdf',
+      uploader: '오수진',
+      uploadDate: DateTime(2024, 6, 23),
+      size: '5MB',
+    ),
+    FileItem(
+      name: '수업 중 발표에 대한 안내문.pdf',
+      uploader: '오수진',
+      uploadDate: DateTime(2024, 6, 15),
+      size: '1MB',
+    ),
+  ];
 
   @override
   void initState() {
@@ -65,6 +145,26 @@ class _WorkDetailPageState extends State<WorkDetailPage> {
       });
       widget.onUpdate(task);
     }
+  }
+
+  void _navigateToAssignFiles() async {
+    final selectedFilesFromPage = await Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (context) => AssignWorkFilePage(files: sampleFiles),
+      ),
+    );
+
+    if (selectedFilesFromPage != null) {
+      setState(() {
+        selectedFiles = selectedFilesFromPage;
+      });
+    }
+  }
+
+  Future<void> _downloadFile(String fileName) async {
+    // 파일 다운로드 로직 구현
+    print('Downloading $fileName');
   }
 
   @override
@@ -125,8 +225,7 @@ class _WorkDetailPageState extends State<WorkDetailPage> {
             ),
           ),
           child: SingleChildScrollView(
-            padding:
-                const EdgeInsets.symmetric(horizontal: 30.0, vertical: 20.0),
+            padding: const EdgeInsets.symmetric(horizontal: 30.0, vertical: 20.0),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
@@ -211,15 +310,17 @@ class _WorkDetailPageState extends State<WorkDetailPage> {
                           color: Color(0xff5A5A5A),
                           letterSpacing: -0.7),
                     ),
-                      Text(
-                         isTaskOwner ? '업무 관리 탭에서 보여지는 진행도입니다' : '담당자가 설정한 현재 업무의 진행도입니다',
-                        style: TextStyle(
-                            fontFamily: 'Inter',
-                            fontSize: 11,
-                            fontWeight: FontWeight.w400,
-                            color: Color(0xff7C7C7C),
-                            letterSpacing: -0.3),
-                      ),
+                    Text(
+                      isTaskOwner
+                          ? '업무 관리 탭에서 보여지는 진행도입니다'
+                          : '담당자가 설정한 현재 업무의 진행도입니다',
+                      style: TextStyle(
+                          fontFamily: 'Inter',
+                          fontSize: 11,
+                          fontWeight: FontWeight.w400,
+                          color: Color(0xff7C7C7C),
+                          letterSpacing: -0.3),
+                    ),
                     SizedBox(height: 10),
                     Text(
                       '${task['progress']}%',
@@ -272,16 +373,17 @@ class _WorkDetailPageState extends State<WorkDetailPage> {
                             color: Color(0xff5A5A5A),
                             letterSpacing: -0.7),
                       ),
-                      if (isTaskOwner) IconButton(
-                        onPressed: () {},
-                        icon: Image.asset(
-                          'assets/icon/plus_icon.png',
-                          height: 30,
-                          width: 30,
-                        ),
-                        constraints: BoxConstraints(),
-                        padding: EdgeInsets.zero,
-                      )
+                      if (isTaskOwner)
+                        IconButton(
+                          onPressed: _navigateToAssignFiles,
+                          icon: Image.asset(
+                            'assets/icon/plus_icon.png',
+                            height: 30,
+                            width: 30,
+                          ),
+                          constraints: BoxConstraints(),
+                          padding: EdgeInsets.zero,
+                        )
                     ],
                   ),
                 ),
@@ -295,15 +397,69 @@ class _WorkDetailPageState extends State<WorkDetailPage> {
                       letterSpacing: -0.3),
                 ),
                 SizedBox(height: 13),
-                Text(
-                  '업무와 관련된 자료가 없습니다',
-                  style: TextStyle(
-                      fontFamily: 'Inter',
-                      fontSize: 14,
-                      fontWeight: FontWeight.w400,
-                      color: Color(0xff484848),
-                      letterSpacing: -0.3),
-                ),
+                if (selectedFiles.isEmpty)
+                  Text(
+                    '업무와 관련된 자료가 없습니다',
+                    style: TextStyle(
+                        fontFamily: 'Inter',
+                        fontSize: 14,
+                        fontWeight: FontWeight.w400,
+                        color: Color(0xff484848),
+                        letterSpacing: -0.3),
+                  )
+                else
+                  Column(
+                    children: selectedFiles.map((file) {
+                      bool isExpired = file.uploadDate.isBefore(
+                          DateTime.now().subtract(Duration(days: 30)));
+                      return GestureDetector(
+                        onTap: () => _downloadFile(file.name),
+                        child: Row(
+                          children: [
+                            Container(
+                              height: 30,
+                              width: 300,
+                              margin: EdgeInsets.symmetric(vertical: 5),
+                              padding: EdgeInsets.symmetric(horizontal: 10),
+                              decoration: BoxDecoration(
+                                border: Border.all(color: Color(0xFFCCCCCC)),
+                                borderRadius: BorderRadius.circular(5),
+                              ),
+                              child: Row(
+                                children: [
+                                  Text(
+                                    '${file.uploader}  ${DateFormat('yyyy.MM.dd').format(file.uploadDate)}  ${file.name}',
+                                    style: TextStyle(
+                                      fontFamily: 'Inter',
+                                      fontWeight: FontWeight.w400,
+                                      fontSize: 12,
+                                      letterSpacing: -0.2,
+                                      color: Color(0xFF585454),
+                                      decoration: isExpired
+                                          ? TextDecoration.lineThrough
+                                          : null,
+                                    ),
+                                  ),
+                                  SizedBox(width: 10),
+                                  Text(
+                                    isExpired ? '' : file.size,
+                                    style: TextStyle(
+                                      fontFamily: 'Inter',
+                                      fontWeight: FontWeight.w400,
+                                      fontSize: 11,
+                                      color: isExpired
+                                          ? Color(0xFF585454)
+                                          : Color(0xFFBBBBBB),
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            ),
+                          ],
+                        ),
+                      );
+                    }).toList(),
+                  ),
                 SizedBox(
                   height: 100,
                 )
@@ -312,30 +468,32 @@ class _WorkDetailPageState extends State<WorkDetailPage> {
           ),
         ),
       ),
-      if (isTaskOwner) Positioned(
-        left: 50,
-        right: 50,
-        bottom: 53,
-        child: ElevatedButton(
-          onPressed: _completeTask,
-          style: ElevatedButton.styleFrom(foregroundColor: Colors.white,
-            backgroundColor: Color.fromRGBO(84, 84, 84, 1),
-            minimumSize: Size(double.infinity, 50),
-            shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(30),
+      if (isTaskOwner)
+        Positioned(
+          left: 50,
+          right: 50,
+          bottom: 53,
+          child: ElevatedButton(
+            onPressed: _completeTask,
+            style: ElevatedButton.styleFrom(
+              foregroundColor: Colors.white,
+              backgroundColor: Color.fromRGBO(84, 84, 84, 1),
+              minimumSize: Size(double.infinity, 50),
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(30),
+              ),
             ),
-          ),
-          child: Text(
-            '완료 처리하기',
-            style: TextStyle(
-              fontSize: 18,
-              fontFamily: 'Inter',
-              fontWeight: FontWeight.bold,
-              color: Colors.white,
+            child: Text(
+              '완료 처리하기',
+              style: TextStyle(
+                fontSize: 18,
+                fontFamily: 'Inter',
+                fontWeight: FontWeight.bold,
+                color: Colors.white,
+              ),
             ),
           ),
         ),
-      ),
     ]);
   }
 }

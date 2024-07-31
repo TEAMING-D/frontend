@@ -492,7 +492,7 @@ void dispose() {
       ],
     ),
   ), bottomNavigationBar: DetailNavigationBar(
-        currentIndex: 1,
+        currentIndex: 2,
         currentPage: ParticipationAnalysisPage,
       ),
 );

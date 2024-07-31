@@ -1,17 +1,19 @@
 import 'package:flutter/material.dart';
 import 'package:teaming/login/information_school.dart';
 import 'package:teaming/login/information_widget.dart';
+import '../model/sign_up_dto.dart';
 
 class CollabInfoPage extends StatefulWidget {
-  const CollabInfoPage({super.key});
+  final SignUpRequest signUpRequest;
+
+  const CollabInfoPage({Key? key, required this.signUpRequest}) : super(key: key);
 
   @override
   State<CollabInfoPage> createState() => _CollabInfoPageState();
 }
 
 class _CollabInfoPageState extends State<CollabInfoPage> {
-  List<Widget> additionalFields = [];
-
+  List<Map<String, TextEditingController>> additionalFieldsControllers = [];
   final TextEditingController notionController = TextEditingController();
   final TextEditingController githubController = TextEditingController();
   final TextEditingController eMailController = TextEditingController();
@@ -19,6 +21,20 @@ class _CollabInfoPageState extends State<CollabInfoPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      appBar: AppBar(
+        leading: IconButton(
+          onPressed: () {
+            Navigator.pop(context);
+          },
+          icon: Icon(
+            Icons.arrow_back_rounded,
+            color: Color(0xff585858),
+          ),
+        ),
+        backgroundColor: Colors.transparent,
+        elevation: 0,
+      ),
+      extendBodyBehindAppBar: true,
       body: LayoutBuilder(
         builder: (context, constraints) {
           return SingleChildScrollView(
@@ -29,11 +45,11 @@ class _CollabInfoPageState extends State<CollabInfoPage> {
                 width: MediaQuery.of(context).size.width,
                 decoration: BoxDecoration(
                   gradient: LinearGradient(
-                    begin: Alignment.center,
-                    end: Alignment.bottomRight,
+                     begin: Alignment.center,
+                          end: Alignment.bottomRight,
                     colors: [
                       Colors.white,
-                      Color.fromRGBO(138, 138, 138, 100),
+                      Color.fromRGBO(138, 138, 138, 1),
                     ],
                   ),
                 ),
@@ -74,8 +90,7 @@ class _CollabInfoPageState extends State<CollabInfoPage> {
                         SizedBox(height: 30),
                         SizedBox(
                           width: 33,
-                          child:
-                              Divider(color: Color(0xFF858585), thickness: 1),
+                          child: Divider(color: Color(0xFF858585), thickness: 1),
                         ),
                         SizedBox(height: 33),
                         Text(
@@ -100,14 +115,14 @@ class _CollabInfoPageState extends State<CollabInfoPage> {
                           ),
                         ),
                         SizedBox(height: 40),
-                        buildTextField(
-                            'Notion', '계정 이메일을 입력해주세요', controllerName: notionController),
+                        buildTextField('Notion', '계정 이메일을 입력해주세요',
+                            controllerName: notionController),
                         SizedBox(height: 10),
-                        buildTextField(
-                            'Github', '계정 이메일을 입력해주세요', controllerName: githubController),
+                        buildTextField('Github', '계정 아이디를 입력해주세요',
+                            controllerName: githubController),
                         SizedBox(height: 10),
-                        buildTextField(
-                            'E-mail', '추가로 사용할 이메일을 입력해주세요', controllerName: eMailController),
+                        buildTextField('E-mail', '추가로 사용할 이메일을 입력해주세요',
+                            controllerName: eMailController),
                         SizedBox(height: 30),
                         Row(
                           children: [
@@ -128,89 +143,90 @@ class _CollabInfoPageState extends State<CollabInfoPage> {
                           ],
                         ),
                         Column(
-                          children: [
-                            Row(
-                              children: [
-                                SizedBox(
-                                  width: 82,
-                                  child: Column(
-                                    children: [
-                                      SizedBox(
-                                        height: 30,
-                                        child: TextField(
-                                          style: TextStyle(
-                                              fontSize: 15,
-                                              color: Colors.black),
-                                          textAlign: TextAlign.center,
-                                          decoration: InputDecoration(
-                                            hintText: '도구명',
-                                            border: InputBorder.none,
-                                            contentPadding:
-                                                EdgeInsets.symmetric(
-                                                    vertical: 5),
-                                            hintStyle: TextStyle(
-                                                fontFamily: 'Inter',
-                                                fontWeight: FontWeight.w400,
-                                                fontSize: 15,
-                                                color: Color(0xFF828282)),
+                          children: additionalFieldsControllers.map((controllers) {
+                            return Padding(
+                              padding: const EdgeInsets.only(top: 10),
+                              child: Row(
+                                children: [
+                                  SizedBox(
+                                    width: 82,
+                                    child: Column(
+                                      children: [
+                                        SizedBox(
+                                          height: 30,
+                                          child: TextField(
+                                            controller: controllers['toolName'],
+                                            style: TextStyle(fontSize: 15, color: Colors.black),
+                                            textAlign: TextAlign.center,
+                                            decoration: InputDecoration(
+                                              hintText: '도구명',
+                                              border: InputBorder.none,
+                                              contentPadding: EdgeInsets.symmetric(vertical: 5),
+                                              hintStyle: TextStyle(
+                                                  fontFamily: 'Inter',
+                                                  fontWeight: FontWeight.w400,
+                                                  fontSize: 15,
+                                                  color: Color(0xFF828282)),
+                                            ),
                                           ),
                                         ),
-                                      ),
-                                      Divider(
-                                          color: Color(0xFF828282),
-                                          thickness: 1),
-                                    ],
+                                        Divider(color: Color(0xFF828282), thickness: 1),
+                                      ],
+                                    ),
                                   ),
-                                ),
-                                SizedBox(width: 20),
-                                Expanded(
-                                  child: Column(
-                                    children: [
-                                      SizedBox(
-                                        height: 30,
-                                        child: TextField(
-                                          style: TextStyle(
-                                              fontSize: 15,
-                                              color: Colors.black),
-                                          decoration: InputDecoration(
-                                            hintText: '계정 이메일을 입력해주세요',
-                                            border: InputBorder.none,
-                                            contentPadding:
-                                                EdgeInsets.symmetric(
-                                                    vertical: 5),
-                                            hintStyle: TextStyle(
-                                                fontFamily: 'Inter',
-                                                fontWeight: FontWeight.w400,
-                                                fontSize: 15,
-                                                color: Color(0xFF828282)),
+                                  SizedBox(width: 20),
+                                  Expanded(
+                                    child: Column(
+                                      children: [
+                                        SizedBox(
+                                          height: 30,
+                                          child: TextField(
+                                            controller: controllers['toolEmail'],
+                                            style: TextStyle(fontSize: 15, color: Colors.black),
+                                            decoration: InputDecoration(
+                                              hintText: '계정 이메일을 입력해주세요',
+                                              border: InputBorder.none,
+                                              contentPadding: EdgeInsets.symmetric(vertical: 5),
+                                              hintStyle: TextStyle(
+                                                  fontFamily: 'Inter',
+                                                  fontWeight: FontWeight.w400,
+                                                  fontSize: 15,
+                                                  color: Color(0xFF828282)),
+                                            ),
                                           ),
                                         ),
-                                      ),
-                                      Divider(
-                                          color: Color(0xFF828282),
-                                          thickness: 1),
-                                    ],
+                                        Divider(color: Color(0xFF828282), thickness: 1),
+                                      ],
+                                    ),
                                   ),
-                                ),
-                              ],
-                            ),
-                            Column(
-                              children: additionalFields,
-                            ),
-                          ],
+                                ],
+                              ),
+                            );
+                          }).toList(),
                         ),
                         SizedBox(height: 58),
                         ElevatedButton(
                           onPressed: () {
+                            widget.signUpRequest.gitId = githubController.text;
+                            widget.signUpRequest.notionMail = notionController.text;
+                            widget.signUpRequest.plusMail = eMailController.text;
+
+                            // 기타 협업 툴 데이터 저장
+                            additionalFieldsControllers.forEach((controllers) {
+                              String toolName = controllers['toolName']!.text;
+                              String toolEmail = controllers['toolEmail']!.text;
+                              if (toolName.isNotEmpty && toolEmail.isNotEmpty) {
+                                widget.signUpRequest.collabTools[toolName] = toolEmail;
+                              }
+                            });
+
                             // 다음 정보 입력란 페이지로 전환
                             Navigator.push(
                               context,
                               PageRouteBuilder(
-                                pageBuilder:
-                                    (context, animation, secondaryAnimation) =>
-                                        SchoolInfoPage(),
-                                transitionsBuilder: (context, animation,
-                                    secondaryAnimation, child) {
+                                pageBuilder: (context, animation, secondaryAnimation) =>
+                                    SchoolInfoPage(signUpRequest: widget.signUpRequest),
+                                transitionsBuilder: (context, animation, secondaryAnimation, child) {
                                   return FadeTransition(
                                     opacity: animation,
                                     child: child,
@@ -219,7 +235,8 @@ class _CollabInfoPageState extends State<CollabInfoPage> {
                               ),
                             );
                           },
-                          style: ElevatedButton.styleFrom(foregroundColor: Colors.white,
+                          style: ElevatedButton.styleFrom(
+                            foregroundColor: Colors.white,
                             backgroundColor: Color.fromRGBO(84, 84, 84, 1),
                             minimumSize: Size(double.infinity, 50),
                             shape: RoundedRectangleBorder(
@@ -252,68 +269,12 @@ class _CollabInfoPageState extends State<CollabInfoPage> {
   }
 
   void addFields() {
-    int addFieldsLength = additionalFields.length;
-
-    if (addFieldsLength < 4) {
+    if (additionalFieldsControllers.length < 5) {
       setState(() {
-        additionalFields.add(
-          Padding(
-            padding: const EdgeInsets.only(top: 10),
-            child: Row(
-              children: [
-                SizedBox(
-                  width: 82,
-                  child: Column(
-                    children: [
-                      SizedBox(
-                        height: 30,
-                        child: TextField(
-                          style: TextStyle(fontSize: 15, color: Colors.black),
-                          textAlign: TextAlign.center,
-                          decoration: InputDecoration(
-                            hintText: '도구명',
-                            border: InputBorder.none,
-                            contentPadding: EdgeInsets.symmetric(vertical: 5),
-                            hintStyle: TextStyle(
-                                fontFamily: 'Inter',
-                                fontWeight: FontWeight.w400,
-                                fontSize: 15,
-                                color: Color(0xFF828282)),
-                          ),
-                        ),
-                      ),
-                      Divider(color: Color(0xFF828282), thickness: 1),
-                    ],
-                  ),
-                ),
-                SizedBox(width: 20),
-                Expanded(
-                  child: Column(
-                    children: [
-                      SizedBox(
-                        height: 30,
-                        child: TextField(
-                          style: TextStyle(fontSize: 15, color: Colors.black),
-                          decoration: InputDecoration(
-                            hintText: '계정 이메일을 입력해주세요',
-                            border: InputBorder.none,
-                            contentPadding: EdgeInsets.symmetric(vertical: 5),
-                            hintStyle: TextStyle(
-                                fontFamily: 'Inter',
-                                fontWeight: FontWeight.w400,
-                                fontSize: 15,
-                                color: Color(0xFF828282)),
-                          ),
-                        ),
-                      ),
-                      Divider(color: Color(0xFF828282), thickness: 1),
-                    ],
-                  ),
-                ),
-              ],
-            ),
-          ),
-        );
+        additionalFieldsControllers.add({
+          'toolName': TextEditingController(),
+          'toolEmail': TextEditingController(),
+        });
       });
     }
   }

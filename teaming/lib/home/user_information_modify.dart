@@ -61,6 +61,8 @@ class _UserInfoModifyPageState extends State<UserInfoModifyPage> {
   bool isBirthDateVisible = false;
   bool isSNSAccountVisible = false;
 
+  List<AdditionalField> additionalFields = [];
+
   Widget buildToggleTextField(
       String label,
       String hintText,
@@ -91,6 +93,95 @@ class _UserInfoModifyPageState extends State<UserInfoModifyPage> {
             ],
           ),
           buildTextFieldOnly(hintText, controllerName: controller),
+        ],
+      ),
+    );
+  }
+
+  void addFields() {
+    if (additionalFields.length < 4) {
+      setState(() {
+        additionalFields.add(
+          AdditionalField(
+            toolNameController: TextEditingController(),
+            emailController: TextEditingController(),
+          ),
+        );
+      });
+    }
+  }
+
+  Widget buildAdditionalField(int index) {
+    final field = additionalFields[index];
+    return Padding(
+      padding: const EdgeInsets.only(top: 10),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              SizedBox(
+                width: 82,
+                child: Column(
+                  children: [
+                    Padding(
+                      padding: const EdgeInsets.only(left: 3),
+                      child: SizedBox(
+                        height: 30,
+                        child: TextField(
+                          controller: field.toolNameController,
+                          style: TextStyle(fontSize: 15, color: Colors.black),
+                          textAlign: TextAlign.start,
+                          decoration: InputDecoration(
+                            hintText: '도구명',
+                            border: InputBorder.none,
+                            contentPadding: EdgeInsets.symmetric(vertical: 5),
+                            hintStyle: TextStyle(
+                                fontFamily: 'Inter',
+                                fontWeight: FontWeight.w400,
+                                fontSize: 16,
+                                color: Color(0xFF828282)),
+                          ),
+                        ),
+                      ),
+                    ),
+                    Divider(color: Color(0xFF828282), thickness: 1),
+                  ],
+                ),
+              ),
+              CustomSwitch(
+                value: field.isFieldVisible,
+                onChanged: (value) {
+                  setState(() {
+                    field.isFieldVisible = value;
+                  });
+                },
+              ),
+            ],
+          ),
+          SizedBox(height: 5),
+          Padding(
+            padding: const EdgeInsets.only(left: 3),
+            child: SizedBox(
+              height: 30,
+              child: TextField(
+                controller: field.emailController,
+                style: TextStyle(fontSize: 15, color: Colors.black),
+                decoration: InputDecoration(
+                  hintText: '계정 이메일을 입력해주세요',
+                  border: InputBorder.none,
+                  contentPadding: EdgeInsets.symmetric(vertical: 5),
+                  hintStyle: TextStyle(
+                      fontFamily: 'Inter',
+                      fontWeight: FontWeight.w400,
+                      fontSize: 15,
+                      color: Color(0xFF828282)),
+                ),
+              ),
+            ),
+          ),
+          Divider(color: Color(0xFF828282), thickness: 1),
         ],
       ),
     );
@@ -245,8 +336,8 @@ class _UserInfoModifyPageState extends State<UserInfoModifyPage> {
                   Padding(
                     padding:
                         const EdgeInsets.symmetric(horizontal: 50, vertical: 5),
-                    child: buildTextField(
-                        "계정 비밀번호", "변경 비밀번호를 입력하세요", controllerName: passwordController),
+                    child: buildTextField("계정 비밀번호", "변경 비밀번호를 입력하세요",
+                        controllerName: passwordController),
                   ),
                   Padding(
                     padding:
@@ -284,12 +375,47 @@ class _UserInfoModifyPageState extends State<UserInfoModifyPage> {
                   SizedBox(
                     height: 10,
                   ),
+                   Padding(
+                     padding: const EdgeInsets.symmetric(horizontal: 48),
+                     child: Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        Text(
+                          '기타 협업 툴',
+                          style: TextStyle(
+                            fontFamily: 'Inter',
+                            fontWeight: FontWeight.w500,
+                            fontSize: 16,
+                            color: Color(0xFF484848),
+                          ),
+                        ),
+                        IconButton(
+                          icon: Icon(Icons.add_circle_outline,
+                              color: Color(0xFF7D7D7D)),
+                          onPressed: addFields,
+                        ),
+                      ],
+                                       ),
+                   ),SizedBox(
+                    height: 10,
+                  ),
                   buildToggleTextField("Discord", "계정 이메일을 입력해주세요",
                       discordController, isDiscordVisible, (value) {
                     setState(() {
                       isDiscordVisible = value;
                     });
                   }),
+                 
+                  Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 48),
+                    child: Column(
+                      children: additionalFields
+                          .asMap()
+                          .entries
+                          .map((entry) => buildAdditionalField(entry.key))
+                          .toList(),
+                    ),
+                  ),
                   SizedBox(
                     height: 65,
                   ),
@@ -298,16 +424,16 @@ class _UserInfoModifyPageState extends State<UserInfoModifyPage> {
                       horizontal: 50,
                       vertical: 5,
                     ),
-                    child: buildTextField(
-                        "학교명", "학교명을 입력해주세요", controllerName: schoolNameController),
+                    child: buildTextField("학교명", "학교명을 입력해주세요",
+                        controllerName: schoolNameController),
                   ),
                   Padding(
                     padding: const EdgeInsets.symmetric(
                       horizontal: 50,
                       vertical: 5,
                     ),
-                    child:
-                        buildTextField("학번", "학번을 입력해주세요", controllerName: studentIdController),
+                    child: buildTextField("학번", "학번을 입력해주세요",
+                        controllerName: studentIdController),
                   ),
                   buildToggleTextField(
                       "전공", "주전공을 입력해주세요", majorController, isMajorVisible,
@@ -443,6 +569,18 @@ class _UserInfoModifyPageState extends State<UserInfoModifyPage> {
       ],
     );
   }
+}
+
+class AdditionalField {
+  final TextEditingController toolNameController;
+  final TextEditingController emailController;
+  bool isFieldVisible;
+
+  AdditionalField({
+    required this.toolNameController,
+    required this.emailController,
+    this.isFieldVisible = false,
+  });
 }
 
 class CustomSwitch extends StatelessWidget {

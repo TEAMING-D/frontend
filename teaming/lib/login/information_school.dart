@@ -2,9 +2,12 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:teaming/login/information_my_data.dart';
 import 'package:teaming/login/information_widget.dart';
+import '../model/sign_up_dto.dart';
 
 class SchoolInfoPage extends StatefulWidget {
-  const SchoolInfoPage({super.key});
+  final SignUpRequest signUpRequest;
+
+  const SchoolInfoPage({Key? key, required this.signUpRequest}) : super(key: key);
 
   @override
   State<SchoolInfoPage> createState() => _SchoolInfoPageState();
@@ -61,7 +64,8 @@ class _SchoolInfoPageState extends State<SchoolInfoPage> {
                           onPressed: () {
                             Navigator.of(context).pop();
                           },
-                          style: ElevatedButton.styleFrom(foregroundColor: Colors.white,
+                          style: ElevatedButton.styleFrom(
+                            foregroundColor: Colors.white,
                             backgroundColor: Color.fromRGBO(84, 84, 84, 1),
                             shape: RoundedRectangleBorder(
                               borderRadius: BorderRadius.circular(10),
@@ -214,12 +218,16 @@ class _SchoolInfoPageState extends State<SchoolInfoPage> {
         child: ElevatedButton(
           onPressed: () {
             if (_areFieldsFilled(context)) {
+              widget.signUpRequest.schoolName = schoolNameController.text;
+              widget.signUpRequest.schoolId = int.parse(schoolNumController.text);
+              widget.signUpRequest.major = majorController.text;
+
               // 다음 페이지로 이동하는 로직 추가
               Navigator.push(
                 context,
                 PageRouteBuilder(
                   pageBuilder: (context, animation, secondaryAnimation) =>
-                      MyInfoPage(),
+                      MyInfoPage(signUpRequest: widget.signUpRequest),
                   transitionsBuilder:
                       (context, animation, secondaryAnimation, child) {
                     return FadeTransition(
@@ -233,7 +241,8 @@ class _SchoolInfoPageState extends State<SchoolInfoPage> {
               _showPopup(context);
             }
           },
-          style: ElevatedButton.styleFrom(foregroundColor: Colors.white,
+          style: ElevatedButton.styleFrom(
+            foregroundColor: Colors.white,
             backgroundColor: Color.fromRGBO(84, 84, 84, 1),
             minimumSize: Size(double.infinity, 50),
             shape: RoundedRectangleBorder(

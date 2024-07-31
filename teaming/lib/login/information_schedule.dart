@@ -1,10 +1,12 @@
 import 'package:flutter/material.dart';
-import 'package:teaming/login/information_my_data.dart';
 import 'package:teaming/login/information_widget.dart';
 import 'package:teaming/login/welcome.dart';
+import 'package:teaming/model/sign_up_dto.dart';
 
 class GetSchedulePage extends StatefulWidget {
-  const GetSchedulePage({super.key});
+  final SignUpRequest signUpRequest;
+
+  const GetSchedulePage({super.key, required this.signUpRequest});
 
   @override
   State<GetSchedulePage> createState() => _GetSchedulePageState();
@@ -51,9 +53,7 @@ class _GetSchedulePageState extends State<GetSchedulePage> {
                             height: 1.2,
                           ),
                         ),
-                        SizedBox(
-                          height: 8,
-                        ),
+                        SizedBox(height: 8),
                         Text(
                           "시간표를 불러오지 않는 경우\n추후 설정에서 추가할 수 있습니다",
                           textAlign: TextAlign.center,
@@ -78,7 +78,8 @@ class _GetSchedulePageState extends State<GetSchedulePage> {
                             onPressed: () {
                               Navigator.of(context).pop();
                             },
-                            style: ElevatedButton.styleFrom(foregroundColor: Colors.grey,
+                            style: ElevatedButton.styleFrom(
+                              foregroundColor: Colors.grey,
                               backgroundColor: Color(0xffD8D8D8),
                               shape: RoundedRectangleBorder(
                                 borderRadius: BorderRadius.circular(10),
@@ -95,30 +96,23 @@ class _GetSchedulePageState extends State<GetSchedulePage> {
                             ),
                           ),
                         ),
-                        SizedBox(
-                          width: 10,
-                        ),
+                        SizedBox(width: 10),
                         Expanded(
                           child: ElevatedButton(
                             onPressed: () {
                               Navigator.pushAndRemoveUntil(
-                          context,
-                          PageRouteBuilder(
-                            pageBuilder:
-                                (context, animation, secondaryAnimation) =>
-                                    WelcomePage(),
-                            transitionsBuilder:
-                                (context, animation, secondaryAnimation, child) {
-                              return FadeTransition(
-                                opacity: animation,
-                                child: child,
+                                context,
+                                PageRouteBuilder(
+                                  pageBuilder: (context, animation, secondaryAnimation) => WelcomePage(signUpRequest: widget.signUpRequest),
+                                  transitionsBuilder: (context, animation, secondaryAnimation, child) {
+                                    return FadeTransition(opacity: animation, child: child);
+                                  },
+                                ),
+                                (Route<dynamic> route) => false,
                               );
                             },
-                          ),
-                          (Route<dynamic> route) => false, // 이전의 모든 화면을 제거합니다.
-                        );
-                            },
-                            style: ElevatedButton.styleFrom(foregroundColor: Colors.white,
+                            style: ElevatedButton.styleFrom(
+                              foregroundColor: Colors.white,
                               backgroundColor: Color.fromRGBO(84, 84, 84, 1),
                               shape: RoundedRectangleBorder(
                                 borderRadius: BorderRadius.circular(10),
@@ -145,10 +139,7 @@ class _GetSchedulePageState extends State<GetSchedulePage> {
         );
       },
       transitionBuilder: (context, anim1, anim2, child) {
-        return FadeTransition(
-          opacity: anim1,
-          child: child,
-        );
+        return FadeTransition(opacity: anim1, child: child);
       },
     );
   }
@@ -225,8 +216,7 @@ class _GetSchedulePageState extends State<GetSchedulePage> {
                         SizedBox(height: 30),
                         SizedBox(
                           width: 33,
-                          child:
-                              Divider(color: Color(0xFF858585), thickness: 1),
+                          child: Divider(color: Color(0xFF858585), thickness: 1),
                         ),
                         SizedBox(height: 20),
                         Text(
@@ -239,9 +229,7 @@ class _GetSchedulePageState extends State<GetSchedulePage> {
                             letterSpacing: -0.3,
                           ),
                         ),
-                        SizedBox(
-                          height: 8,
-                        ),
+                        SizedBox(height: 8),
                         Text(
                           '아래 사진을 참고해 진행해주세요',
                           style: TextStyle(
@@ -254,7 +242,10 @@ class _GetSchedulePageState extends State<GetSchedulePage> {
                         ),
                         SizedBox(height: 50),
                         buildTextField(
-                            '시간표 URL', 'URL을 입력해 주세요', controllerName: scheduleURLController),
+                          '시간표 URL',
+                          'URL을 입력해 주세요',
+                          controllerName: scheduleURLController,
+                        ),
                         SizedBox(height: 50),
                         Row(
                           children: [
@@ -279,28 +270,23 @@ class _GetSchedulePageState extends State<GetSchedulePage> {
         child: ElevatedButton(
           onPressed: () {
             if (_areFieldsFilled(context)) {
-              // 다음 페이지로 이동하는 로직 추가
+              // Move to WelcomePage
               Navigator.pushAndRemoveUntil(
-                          context,
-                          PageRouteBuilder(
-                            pageBuilder:
-                                (context, animation, secondaryAnimation) =>
-                                    WelcomePage(),
-                            transitionsBuilder:
-                                (context, animation, secondaryAnimation, child) {
-                              return FadeTransition(
-                                opacity: animation,
-                                child: child,
-                              );
-                            },
-                          ),
-                          (Route<dynamic> route) => false, // 이전의 모든 화면을 제거합니다.
-                        );
+                context,
+                PageRouteBuilder(
+                  pageBuilder: (context, animation, secondaryAnimation) => WelcomePage(signUpRequest: widget.signUpRequest),
+                  transitionsBuilder: (context, animation, secondaryAnimation, child) {
+                    return FadeTransition(opacity: animation, child: child);
+                  },
+                ),
+                (Route<dynamic> route) => false,
+              );
             } else {
               _showPopup(context);
             }
           },
-          style: ElevatedButton.styleFrom(foregroundColor: Colors.white,
+          style: ElevatedButton.styleFrom(
+            foregroundColor: Colors.white,
             backgroundColor: Color.fromRGBO(84, 84, 84, 1),
             minimumSize: Size(double.infinity, 50),
             shape: RoundedRectangleBorder(
