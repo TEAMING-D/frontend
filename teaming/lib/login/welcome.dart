@@ -84,8 +84,7 @@ class WelcomePage extends StatelessWidget {
       );
     } catch (e) {
       // 에러 처리
-      print('Error: $e');
-      _showPopup(context, '$e');
+      _showPopup(context, '로그인 실패: \n''$e');
     }
   }
 

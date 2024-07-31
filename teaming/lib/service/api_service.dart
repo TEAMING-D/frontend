@@ -10,44 +10,43 @@ class ApiService {
   final FlutterSecureStorage secureStorage = const FlutterSecureStorage();
 
  Future<LoginResponse> login(String email, String password) async {
-    final url = Uri.parse('http://ec2-54-180-157-117.ap-northeast-2.compute.amazonaws.com:8080/login');
-    final headers = {
-      'Content-Type': 'application/json',
-    };
-    final Map<String, dynamic> body = {
-      'email': email,
-      'password': password,
-    };
+  final url = Uri.parse('http://ec2-54-180-157-117.ap-northeast-2.compute.amazonaws.com:8080/login');
+  final headers = {
+    'Content-Type': 'application/json',
+  };
+  final Map<String, dynamic> body = {
+    'email': email,
+    'password': password,
+  };
 
-    print("Request URL: $url");
-    print("Request headers: $headers");
-    print("Request body: $body");
+  print("Request URL: $url");
+  print("Request headers: $headers");
+  print("Request body: $body");
 
-    final response = await http.post(url, headers: headers, body: utf8.encode(jsonEncode(body)));
-    print('Response status: ${response.statusCode}');
-    print('Response headers: ${response.headers}');
-    final decodedBody = utf8.decode(response.bodyBytes);
-    print('Decoded response body: $decodedBody');
+  final response = await http.post(url, headers: headers, body: utf8.encode(jsonEncode(body)));
+  print('Response status: ${response.statusCode}');
+  print('Response headers: ${response.headers}');
+  final decodedBody = utf8.decode(response.bodyBytes);
+  print('Decoded response body: $decodedBody');
 
-    if (response.statusCode == 200) {
-      if (response.headers.containsKey('authorization')) {
-        print("토큰 있음");
-        await secureStorage.write(
-            key: 'accessToken', value: response.headers['authorization']);
-        return LoginResponse(token: response.headers['authorization']!);
-      } else {
-        throw Exception('Authorization header not found');
-      }
+  if (response.statusCode == 200) {
+    if (response.headers.containsKey('authorization')) {
+      print("토큰 있음");
+      await secureStorage.write(
+          key: 'accessToken', value: response.headers['authorization']);
+      return LoginResponse(token: response.headers['authorization']!);
     } else {
-      print('Error response body: $decodedBody');
-      throw Exception(
-        decodedBody.isNotEmpty
-            ? LoginErrorResponse.fromJson(jsonDecode(decodedBody)).message
-            : 'Empty response body',
-      );
+      throw Exception('Authorization header not found');
     }
+  } else {
+    print('Error response body: $decodedBody');
+    throw Exception(
+      decodedBody.isNotEmpty
+          ? LoginErrorResponse.fromJson(jsonDecode(decodedBody)).message
+          : 'Empty response body',
+    );
   }
-
+}
   Future<String?> getToken() async {
     return await secureStorage.read(key: 'accessToken');
   }
@@ -94,6 +93,22 @@ class ApiService {
     }
   }
 
+
+  Future<void> logout() async {
+    await secureStorage.delete(key: 'accessToken');
+    print('Logged out and token deleted.');
+  }
+
+  Future<bool> validateToken(String token) async {
+    final url = Uri.parse('$baseUrl/validateToken');
+    final headers = {
+      'Content-Type': 'application/json',
+      'Authorization': 'Bearer $token',
+    };
+
+    final response = await http.get(url, headers: headers);
+    return response.statusCode == 200;
+  }
 
 }
 

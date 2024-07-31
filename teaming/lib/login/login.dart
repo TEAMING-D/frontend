@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:teaming/login/join.dart';
 import 'package:teaming/popup_widget.dart';
+import 'package:flutter_secure_storage/flutter_secure_storage.dart';
+
 import '../model/login_dto.dart';
 import '../service/api_service.dart';
 
@@ -16,94 +18,100 @@ class _LoginPageState extends State<LoginPage> {
   final ApiService apiService = ApiService();
   final TextEditingController emailController = TextEditingController();
   final TextEditingController passwordController = TextEditingController();
+  final FlutterSecureStorage secureStorage = const FlutterSecureStorage();
   bool isChecked = false;
   bool _isPasswordVisible = false;
 
   Future<void> _login() async {
-    final email = emailController.text;
-    final password = passwordController.text;
+  final email = emailController.text;
+  final password = passwordController.text;
 
-    print("Login Email: $email");
-    print("Login Password: $password");
+  print("Login Email: $email");
+  print("Login Password: $password");
 
-    try {
-      final response = await apiService.login(email, password);
-      // 로그인 성공 처리
-
-      Navigator.pushNamedAndRemoveUntil(
-        context,
-        '/teamProjects',
-        (Route<dynamic> route) => false, // 모든 이전 화면 제거
-        arguments: {
-          // 샘플 데이터이므로 API 연결 시 제거
-          'projects': [
-            {
-              'name': '프로젝트명A',
-              'members': ['김세아', '오수진', '윤소윤'],
-              'class': '수업명A',
-              'progress': 80,
-              'startDate': '2024.03.04',
-              'endDate': '2024.08.15',
-            },
-            {
-              'name': '프로젝트명B',
-              'members': [
-                '김세아',
-                '오수진',
-                '윤소윤',
-                '황익명',
-                '박익명',
-                '김익명',
-                '이익명',
-                '장익명'
-              ],
-              'class': '수업명B',
-              'progress': 45,
-              'startDate': '2024.01.13',
-              'endDate': '2024.07.20',
-            },
-            {
-              'name': '프로젝트명C',
-              'members': ['김세아', '박익명', '최익명'],
-              'class': '대회명A',
-              'progress': 100,
-              'startDate': '2023.12.13',
-              'endDate': '2024.05.23',
-            },
-            {
-              'name': '프로젝트명D',
-              'members': ['김세아', '이익명'],
-              'class': '수업명C ',
-              'progress': 20,
-              'startDate': '2023.08.15',
-              'endDate': '2024.02.21',
-            },
-            {
-              'name': '프로젝트명E',
-              'members': ['김세아', '이익명', '박익명'],
-              'class': '대회명B',
-              'progress': 95,
-              'startDate': '2023.08.15',
-              'endDate': '2023.12.21',
-            },
-            {
-              'name': '프로젝트명F',
-              'members': ['김세아', '박익명'],
-              'class': '봉사명A',
-              'progress': 20,
-              'startDate': '2023.06.25',
-              'endDate': '2023.08.10',
-            },
-          ],
-          'hasNotification': true,
-        },
-      );
-    } catch (e) {
-      // 에러 처리(알림 문구로 변환)
-      print('Error: $e');
-      _showPopup('로그인에 실패했습니다.\n네트워크 연결을 확인해주세요.');
+  try {
+    final response = await apiService.login(email, password);
+    
+    // 로그인 상태 유지 체크박스가 체크된 경우 토큰 저장
+    if (isChecked) {
+      await secureStorage.write(key: 'accessToken', value: response.token);
+      await secureStorage.write(key: 'tokenDate', value: DateTime.now().toIso8601String());
     }
+
+    // 로그인 성공 처리
+    Navigator.pushNamedAndRemoveUntil(
+      context,
+      '/teamProjects',
+      (Route<dynamic> route) => false,
+      arguments: {
+        'projects': [
+          {
+            'name': '프로젝트명A',
+            'members': ['김세아', '오수진', '윤소윤'],
+            'class': '수업명A',
+            'progress': 80,
+            'startDate': '2024.03.04',
+            'endDate': '2024.08.15',
+          },
+          {
+            'name': '프로젝트명B',
+            'members': [
+              '김세아',
+              '오수진',
+              '윤소윤',
+              '황익명',
+              '박익명',
+              '김익명',
+              '이익명',
+              '장익명'
+            ],
+            'class': '수업명B',
+            'progress': 45,
+            'startDate': '2024.01.13',
+            'endDate': '2024.07.20',
+          },
+          {
+            'name': '프로젝트명C',
+            'members': ['김세아', '박익명', '최익명'],
+            'class': '대회명A',
+            'progress': 100,
+            'startDate': '2023.12.13',
+            'endDate': '2024.05.23',
+          },
+          {
+            'name': '프로젝트명D',
+            'members': ['김세아', '이익명'],
+            'class': '수업명C ',
+            'progress': 20,
+            'startDate': '2023.08.15',
+            'endDate': '2024.02.21',
+          },
+          {
+            'name': '프로젝트명E',
+            'members': ['김세아', '이익명', '박익명'],
+            'class': '대회명B',
+            'progress': 95,
+            'startDate': '2023.08.15',
+            'endDate': '2023.12.21',
+          },
+          {
+            'name': '프로젝트명F',
+            'members': ['김세아', '박익명'],
+            'class': '봉사명A',
+            'progress': 20,
+            'startDate': '2023.06.25',
+            'endDate': '2023.08.10',
+          },
+        ],
+        'hasNotification': true,
+      },
+    );
+  } catch (e) {
+    // 에러 처리(알림 문구로 변환)
+    print('Error: $e');
+    _showPopup('로그인에 실패했습니다.\n네트워크 연결을 확인해주세요.');
   }
+}
 
   void _showPopup(String message) {
     showDialog(

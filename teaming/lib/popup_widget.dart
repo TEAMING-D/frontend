@@ -2,8 +2,9 @@ import 'package:flutter/material.dart';
 
 class PopupWidget extends StatelessWidget {
   final String message;
+  final VoidCallback? onConfirm;
 
-  PopupWidget({required this.message});
+  PopupWidget({required this.message, this.onConfirm});
 
   @override
   Widget build(BuildContext context) {
@@ -38,6 +39,9 @@ class PopupWidget extends StatelessWidget {
                     child: ElevatedButton(
                       onPressed: () {
                         Navigator.of(context).pop();
+                        if (onConfirm != null) {
+                          onConfirm!();
+                        }
                       },
                       style: ElevatedButton.styleFrom(
                         foregroundColor: Colors.white,
