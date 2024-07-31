@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:teaming/popup_widget.dart';
 import 'package:teaming/service/api_service.dart';
 import 'package:teaming/model/sign_up_dto.dart';
 
@@ -16,7 +17,7 @@ class WelcomePage extends StatelessWidget {
       Navigator.pushNamedAndRemoveUntil(
         context,
         '/teamProjects',
-        (Route<dynamic> route) => false, // 모든 이전 화면 제거
+        (Route<dynamic> route) => false,
         arguments: {
           // 샘플 데이터이므로 API 연결 시 제거
           'projects': [
@@ -84,26 +85,15 @@ class WelcomePage extends StatelessWidget {
     } catch (e) {
       // 에러 처리
       print('Error: $e');
-      _showPopup(context, '회원가입에 실패했습니다.\n네트워크 연결을 확인해주세요.');
+      _showPopup(context, '$e');
     }
   }
 
   void _showPopup(BuildContext context, String message) {
-    showDialog(
+   showDialog(
       context: context,
       builder: (BuildContext context) {
-        return AlertDialog(
-          title: Text('Error'),
-          content: Text(message),
-          actions: [
-            ElevatedButton(
-              onPressed: () {
-                Navigator.of(context).pop();
-              },
-              child: Text('OK'),
-            ),
-          ],
-        );
+        return PopupWidget(message: message);
       },
     );
   }

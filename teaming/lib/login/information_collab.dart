@@ -1,3 +1,5 @@
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
 import 'package:teaming/login/information_school.dart';
 import 'package:teaming/login/information_widget.dart';
@@ -6,7 +8,8 @@ import '../model/sign_up_dto.dart';
 class CollabInfoPage extends StatefulWidget {
   final SignUpRequest signUpRequest;
 
-  const CollabInfoPage({Key? key, required this.signUpRequest}) : super(key: key);
+  const CollabInfoPage({Key? key, required this.signUpRequest})
+      : super(key: key);
 
   @override
   State<CollabInfoPage> createState() => _CollabInfoPageState();
@@ -45,8 +48,8 @@ class _CollabInfoPageState extends State<CollabInfoPage> {
                 width: MediaQuery.of(context).size.width,
                 decoration: BoxDecoration(
                   gradient: LinearGradient(
-                     begin: Alignment.center,
-                          end: Alignment.bottomRight,
+                    begin: Alignment.center,
+                    end: Alignment.bottomRight,
                     colors: [
                       Colors.white,
                       Color.fromRGBO(138, 138, 138, 1),
@@ -90,7 +93,8 @@ class _CollabInfoPageState extends State<CollabInfoPage> {
                         SizedBox(height: 30),
                         SizedBox(
                           width: 33,
-                          child: Divider(color: Color(0xFF858585), thickness: 1),
+                          child:
+                              Divider(color: Color(0xFF858585), thickness: 1),
                         ),
                         SizedBox(height: 33),
                         Text(
@@ -143,7 +147,8 @@ class _CollabInfoPageState extends State<CollabInfoPage> {
                           ],
                         ),
                         Column(
-                          children: additionalFieldsControllers.map((controllers) {
+                          children:
+                              additionalFieldsControllers.map((controllers) {
                             return Padding(
                               padding: const EdgeInsets.only(top: 10),
                               child: Row(
@@ -156,12 +161,16 @@ class _CollabInfoPageState extends State<CollabInfoPage> {
                                           height: 30,
                                           child: TextField(
                                             controller: controllers['toolName'],
-                                            style: TextStyle(fontSize: 15, color: Colors.black),
+                                            style: TextStyle(
+                                                fontSize: 15,
+                                                color: Colors.black),
                                             textAlign: TextAlign.center,
                                             decoration: InputDecoration(
                                               hintText: '도구명',
                                               border: InputBorder.none,
-                                              contentPadding: EdgeInsets.symmetric(vertical: 5),
+                                              contentPadding:
+                                                  EdgeInsets.symmetric(
+                                                      vertical: 5),
                                               hintStyle: TextStyle(
                                                   fontFamily: 'Inter',
                                                   fontWeight: FontWeight.w400,
@@ -170,7 +179,9 @@ class _CollabInfoPageState extends State<CollabInfoPage> {
                                             ),
                                           ),
                                         ),
-                                        Divider(color: Color(0xFF828282), thickness: 1),
+                                        Divider(
+                                            color: Color(0xFF828282),
+                                            thickness: 1),
                                       ],
                                     ),
                                   ),
@@ -181,12 +192,17 @@ class _CollabInfoPageState extends State<CollabInfoPage> {
                                         SizedBox(
                                           height: 30,
                                           child: TextField(
-                                            controller: controllers['toolEmail'],
-                                            style: TextStyle(fontSize: 15, color: Colors.black),
+                                            controller:
+                                                controllers['toolEmail'],
+                                            style: TextStyle(
+                                                fontSize: 15,
+                                                color: Colors.black),
                                             decoration: InputDecoration(
                                               hintText: '계정 이메일을 입력해주세요',
                                               border: InputBorder.none,
-                                              contentPadding: EdgeInsets.symmetric(vertical: 5),
+                                              contentPadding:
+                                                  EdgeInsets.symmetric(
+                                                      vertical: 5),
                                               hintStyle: TextStyle(
                                                   fontFamily: 'Inter',
                                                   fontWeight: FontWeight.w400,
@@ -195,7 +211,9 @@ class _CollabInfoPageState extends State<CollabInfoPage> {
                                             ),
                                           ),
                                         ),
-                                        Divider(color: Color(0xFF828282), thickness: 1),
+                                        Divider(
+                                            color: Color(0xFF828282),
+                                            thickness: 1),
                                       ],
                                     ),
                                   ),
@@ -208,25 +226,34 @@ class _CollabInfoPageState extends State<CollabInfoPage> {
                         ElevatedButton(
                           onPressed: () {
                             widget.signUpRequest.gitId = githubController.text;
-                            widget.signUpRequest.notionMail = notionController.text;
-                            widget.signUpRequest.plusMail = eMailController.text;
+                            widget.signUpRequest.notionMail =
+                                notionController.text;
+                            widget.signUpRequest.plusMail =
+                                eMailController.text;
 
                             // 기타 협업 툴 데이터 저장
+                            Map<String, String> collabTools = {};
                             additionalFieldsControllers.forEach((controllers) {
                               String toolName = controllers['toolName']!.text;
                               String toolEmail = controllers['toolEmail']!.text;
                               if (toolName.isNotEmpty && toolEmail.isNotEmpty) {
-                                widget.signUpRequest.collabTools[toolName] = toolEmail;
+                                collabTools[toolName] = toolEmail;
                               }
                             });
+
+                            widget.signUpRequest.collabTools =
+                                jsonEncode(collabTools);
 
                             // 다음 정보 입력란 페이지로 전환
                             Navigator.push(
                               context,
                               PageRouteBuilder(
-                                pageBuilder: (context, animation, secondaryAnimation) =>
-                                    SchoolInfoPage(signUpRequest: widget.signUpRequest),
-                                transitionsBuilder: (context, animation, secondaryAnimation, child) {
+                                pageBuilder: (context, animation,
+                                        secondaryAnimation) =>
+                                    SchoolInfoPage(
+                                        signUpRequest: widget.signUpRequest),
+                                transitionsBuilder: (context, animation,
+                                    secondaryAnimation, child) {
                                   return FadeTransition(
                                     opacity: animation,
                                     child: child,

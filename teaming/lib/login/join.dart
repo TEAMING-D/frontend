@@ -20,20 +20,21 @@ class _JoinPageState extends State<JoinPage> {
   bool _isConfirmPasswordVisible = false;
 
   final SignUpRequest signUpRequest = SignUpRequest(
-    username: '',
-    phone: '',
-    password: '',
-    schoolName: '',
-    schoolId: 0,
-    email: '',
-    major: '',
-    gitId: '',
-    notionMail: '',
-    plusMail: '',
-    birth: '',
-    sns: '',
-    collabTools: {},
-  );
+  username: '',
+  phone: '',
+  password: '',
+  schoolName: '',
+  schoolId: 0,
+  email: '',
+  major: '',
+  gitId: '',
+  notionMail: '',
+  plusMail: '',
+  birth: '',
+  sns: '',
+  collabTools: '{}', // JSON 문자열로 초기화
+);
+
 
   void _showPopup(String message) {
     showDialog(
@@ -257,40 +258,40 @@ class _JoinPageState extends State<JoinPage> {
                   ),
                   SizedBox(height: 15),
                   ElevatedButton(
-                    onPressed: () {
-                      if (passwordController.text != confirmPasswordController.text) {
-                        _showPopup('비밀번호가 일치하지 않습니다.');
-                        return;
-                      }
+  onPressed: () {
+    if (passwordController.text != confirmPasswordController.text) {
+      _showPopup('비밀번호가 일치하지 않습니다.');
+      return;
+    }
 
-                      signUpRequest.email = emailController.text;
-                      signUpRequest.password = passwordController.text;
+    signUpRequest.email = emailController.text;
+    signUpRequest.password = passwordController.text;
 
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                          builder: (context) => CollabInfoPage(signUpRequest: signUpRequest),
-                        ),
-                      );
-                    },
-                    style: ElevatedButton.styleFrom(
-                      foregroundColor: Colors.white,
-                      backgroundColor: Color.fromRGBO(84, 84, 84, 1),
-                      minimumSize: Size(double.infinity, 50),
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(30),
-                      ),
-                    ),
-                    child: Text(
-                      '회원가입',
-                      style: TextStyle(
-                        fontSize: 18,
-                        fontFamily: 'Inter',
-                        fontWeight: FontWeight.bold,
-                        color: Colors.white,
-                      ),
-                    ),
-                  ),
+    Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (context) => CollabInfoPage(signUpRequest: signUpRequest),
+      ),
+    );
+  },
+  style: ElevatedButton.styleFrom(
+    foregroundColor: Colors.white,
+    backgroundColor: Color.fromRGBO(84, 84, 84, 1),
+    minimumSize: Size(double.infinity, 50),
+    shape: RoundedRectangleBorder(
+      borderRadius: BorderRadius.circular(30),
+    ),
+  ),
+  child: Text(
+    '회원가입',
+    style: TextStyle(
+      fontSize: 18,
+      fontFamily: 'Inter',
+      fontWeight: FontWeight.bold,
+      color: Colors.white,
+    ),
+  ),
+),
                   SizedBox(height: 100),
                   Center(
                     child: TextButton(

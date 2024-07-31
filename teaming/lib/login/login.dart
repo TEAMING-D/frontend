@@ -19,10 +19,18 @@ class _LoginPageState extends State<LoginPage> {
   bool isChecked = false;
   bool _isPasswordVisible = false;
 
- Future<void> _login() async {
+  Future<void> _login() async {
     final email = emailController.text;
     final password = passwordController.text;
-    Navigator.pushNamedAndRemoveUntil(
+
+    print("Login Email: $email");
+    print("Login Password: $password");
+
+    try {
+      final response = await apiService.login(email, password);
+      // 로그인 성공 처리
+
+      Navigator.pushNamedAndRemoveUntil(
         context,
         '/teamProjects',
         (Route<dynamic> route) => false, // 모든 이전 화면 제거
@@ -90,17 +98,11 @@ class _LoginPageState extends State<LoginPage> {
           'hasNotification': true,
         },
       );
-/*
-    try {
-      final response = await apiService.login(email, password);
-      // 로그인 성공 처리
-      print('Login successful: ${response.token}');
-      
     } catch (e) {
       // 에러 처리(알림 문구로 변환)
       print('Error: $e');
       _showPopup('로그인에 실패했습니다.\n네트워크 연결을 확인해주세요.');
-    }*/
+    }
   }
 
   void _showPopup(String message) {
