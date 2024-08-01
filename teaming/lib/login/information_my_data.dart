@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:teaming/login/information_schedule.dart';
-import 'package:teaming/login/textfield_widget.dart';
+import 'package:teaming/textfield_widget.dart';
 import 'package:teaming/popup_widget.dart';
 import '../model/sign_up_dto.dart';
 

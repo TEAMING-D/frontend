@@ -1,9 +1,10 @@
+import 'dart:convert';
 import 'dart:ui';
 import 'package:flutter/material.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:teaming/home/goodbye.dart';
 import 'package:teaming/home/user_time_table_modify.dart';
-import 'package:teaming/login/textfield_widget.dart';
+import 'package:teaming/textfield_widget.dart';
 import 'package:teaming/login/login.dart';
 import 'package:teaming/popup_widget.dart';
 import 'package:teaming/service/api_service.dart';
@@ -19,7 +20,14 @@ class UserInfoModifyPage extends StatefulWidget {
   State<UserInfoModifyPage> createState() => _UserInfoModifyPageState();
 }
 
+// 토글 관련 API 없어 CustomSwitch 주석 처리
+
 class _UserInfoModifyPageState extends State<UserInfoModifyPage> {
+  final ApiService apiService = ApiService();
+  // 변경 불가능한 부분의 상태변수
+  String email = '';
+  String username = '';
+
   bool _isPasswordVisible = false;
   bool _isConfirmPasswordVisible = false;
 
@@ -27,33 +35,34 @@ class _UserInfoModifyPageState extends State<UserInfoModifyPage> {
   final TextEditingController confirmPasswordController =
       TextEditingController();
   final TextEditingController notionController =
-      TextEditingController(text: "notionMail@gmail.com");
+      TextEditingController(text: "");
   final TextEditingController githubController =
-      TextEditingController(text: "gitMail@gmail.com");
+      TextEditingController(text: "");
   final TextEditingController backupEmailController =
-      TextEditingController(text: "backup@gmail.com");
+      TextEditingController(text: "");
   final TextEditingController discordController =
-      TextEditingController(text: "discordMail@gmail.com");
+      TextEditingController(text: "");
   final TextEditingController schoolNameController =
-      TextEditingController(text: "숙명여자대학교");
+      TextEditingController(text: "");
   final TextEditingController studentIdController =
-      TextEditingController(text: "2012345");
-  final TextEditingController majorController =
-      TextEditingController(text: "IT공학전공");
+      TextEditingController(text: "");
+  final TextEditingController majorController = TextEditingController(text: "");
   final TextEditingController phoneNumber1Controller =
-      TextEditingController(text: "010");
+      TextEditingController(text: "");
   final TextEditingController phoneNumber2Controller =
-      TextEditingController(text: "1234");
+      TextEditingController(text: "");
   final TextEditingController phoneNumber3Controller =
-      TextEditingController(text: "5678");
+      TextEditingController(text: "");
   final TextEditingController birthYearController =
-      TextEditingController(text: "2000");
+      TextEditingController(text: "");
   final TextEditingController birthMonthController =
-      TextEditingController(text: "01");
+      TextEditingController(text: "");
   final TextEditingController birthDayController =
-      TextEditingController(text: "01");
+      TextEditingController(text: "");
+  final TextEditingController snsTypeController =
+      TextEditingController(text: "");
   final TextEditingController snsAccountController =
-      TextEditingController(text: "@nickname");
+      TextEditingController(text: "");
 
   // 토글 스위치 상태 변수들
   bool isNotionVisible = false;
@@ -66,6 +75,82 @@ class _UserInfoModifyPageState extends State<UserInfoModifyPage> {
   bool isSNSAccountVisible = false;
 
   List<AdditionalField> additionalFields = [];
+
+  @override
+  void initState() {
+    super.initState();
+    _fetchUserInfo();
+  }
+
+ Future<void> _fetchUserInfo() async {
+  try {
+    final userInfo = await apiService.getUserInfo();
+    setState(() {
+      // 서버에서 가져온 데이터로 컨트롤러 업데이트
+      // 변경 불가능
+      email = userInfo['data']['email'] ?? '';
+      username = userInfo['data']['username'] ?? '';
+      
+      // 변경 가능
+      schoolNameController.text = userInfo['data']['schoolName'] ?? '';
+      studentIdController.text = userInfo['data']['schoolNum'] ?? '';
+      majorController.text = userInfo['data']['major'] ?? '';
+
+      if (userInfo['data'].containsKey('phoneNumber')) {
+        final phoneNumber = userInfo['data']['phoneNumber'] ?? '';
+        final phoneParts = phoneNumber.split('-');
+        if (phoneParts.length == 3) {
+          phoneNumber1Controller.text = phoneParts[0];
+          phoneNumber2Controller.text = phoneParts[1];
+          phoneNumber3Controller.text = phoneParts[2];
+        }
+      }
+
+      if (userInfo['data'].containsKey('birth')) {
+        final birthDate = userInfo['data']['birth'] ?? '';
+        final birthParts = birthDate.split('-');
+        if (birthParts.length == 3) {
+          birthYearController.text = birthParts[0];
+          birthMonthController.text = birthParts[1];
+          birthDayController.text = birthParts[2];
+        }
+      }
+
+      if (userInfo['data'].containsKey('sns')) {
+        final sns = userInfo['data']['sns']?.split(' ') ?? ['', ''];
+        if (sns.length >= 2) {
+          snsTypeController.text = sns[0];
+          snsAccountController.text = sns[1];
+        } else {
+          snsTypeController.text = '';
+          snsAccountController.text = '';
+        }
+      }
+
+      if (userInfo['data'].containsKey('collabTools')) {
+        final collabTools = userInfo['data']['collabTools'];
+        if (collabTools != null && collabTools.isNotEmpty) {
+          final cleanCollabTools = collabTools.replaceAll(RegExp(r',\s*}'), '}');
+          final Map<String, dynamic> toolsMap = jsonDecode(cleanCollabTools);
+          additionalFields.clear();
+          toolsMap.forEach((toolName, email) {
+            additionalFields.add(
+              AdditionalField(
+                toolNameController: TextEditingController(text: toolName),
+                emailController: TextEditingController(text: email),
+              ),
+            );
+          });
+        } else {
+          additionalFields.clear(); // collabTools가 없을 경우 초기화
+        }
+      }
+    });
+  } catch (e) {
+    _showErrorPopup(context, '사용자 정보를 불러오는 데 실패했습니다.');
+  }
+}
+
 
   Widget buildToggleTextField(
       String label,
@@ -90,10 +175,10 @@ class _UserInfoModifyPageState extends State<UserInfoModifyPage> {
                   color: Color(0xFF484848),
                 ),
               ),
-              CustomSwitch(
+              /* CustomSwitch(
                 value: toggleValue,
                 onChanged: onChanged,
-              ),
+              ), */
             ],
           ),
           buildTextFieldOnly(hintText, controllerName: controller),
@@ -103,7 +188,7 @@ class _UserInfoModifyPageState extends State<UserInfoModifyPage> {
   }
 
   void addFields() {
-    if (additionalFields.length < 4) {
+    if (additionalFields.length < 5) {
       setState(() {
         additionalFields.add(
           AdditionalField(
@@ -116,21 +201,21 @@ class _UserInfoModifyPageState extends State<UserInfoModifyPage> {
   }
 
   Future<void> _logout(BuildContext context) async {
-  // final ApiService apiService = ApiService();
+    // final ApiService apiService = ApiService();
 
-  try {
-    // await apiService.logout(); // 로그아웃 API 호출 부분 주석 처리(서버 미완)
-    final FlutterSecureStorage secureStorage = const FlutterSecureStorage();
-    await secureStorage.delete(key: 'accessToken'); // 토큰 삭제
-    Navigator.pushAndRemoveUntil(
-      context,
-      MaterialPageRoute(builder: (context) => LoginPage()),
-      (Route<dynamic> route) => false,
-    );
-  } catch (e) {
-    _showErrorPopup(context, '로그아웃에 실패했습니다.');
+    try {
+      // await apiService.logout(); // 로그아웃 API 호출 부분 주석 처리(서버 미완)
+      final FlutterSecureStorage secureStorage = const FlutterSecureStorage();
+      await secureStorage.delete(key: 'accessToken'); // 토큰 삭제
+      Navigator.pushAndRemoveUntil(
+        context,
+        MaterialPageRoute(builder: (context) => LoginPage()),
+        (Route<dynamic> route) => false,
+      );
+    } catch (e) {
+      _showErrorPopup(context, '로그아웃에 실패했습니다.');
+    }
   }
-}
 
   void _showChoicePopup(
       BuildContext context, String normalMessage, VoidCallback onConfirm,
@@ -164,80 +249,72 @@ class _UserInfoModifyPageState extends State<UserInfoModifyPage> {
   }
 
   Widget buildAdditionalField(int index) {
-    final field = additionalFields[index];
-    return Padding(
-      padding: const EdgeInsets.only(top: 10),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              SizedBox(
-                width: 82,
-                child: Column(
-                  children: [
-                    Padding(
-                      padding: const EdgeInsets.only(left: 3),
-                      child: SizedBox(
-                        height: 30,
-                        child: TextField(
-                          controller: field.toolNameController,
-                          style: TextStyle(fontSize: 15, color: Colors.black),
-                          textAlign: TextAlign.start,
-                          decoration: InputDecoration(
-                            hintText: '도구명',
-                            border: InputBorder.none,
-                            contentPadding: EdgeInsets.symmetric(vertical: 5),
-                            hintStyle: TextStyle(
-                                fontFamily: 'Inter',
-                                fontWeight: FontWeight.w400,
-                                fontSize: 16,
-                                color: Color(0xFF828282)),
-                          ),
+  final field = additionalFields[index];
+  return Padding(
+    padding: const EdgeInsets.only(top: 10),
+    child: Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: [
+            SizedBox(
+              width: 82,
+              child: Column(
+                children: [
+                  Padding(
+                    padding: const EdgeInsets.only(left: 3),
+                    child: SizedBox(
+                      height: 30,
+                      child: TextField(
+                        controller: field.toolNameController,
+                        style: TextStyle(fontSize: 15, color: Colors.black),
+                        textAlign: TextAlign.start,
+                        decoration: InputDecoration(
+                          hintText: '도구명',
+                          border: InputBorder.none,
+                          contentPadding: EdgeInsets.symmetric(vertical: 5),
+                          hintStyle: TextStyle(
+                              fontFamily: 'Inter',
+                              fontWeight: FontWeight.w400,
+                              fontSize: 16,
+                              color: Color(0xFF828282)),
                         ),
                       ),
                     ),
-                    Divider(color: Color(0xFF828282), thickness: 1),
-                  ],
-                ),
+                  ),
+                ],
               ),
-              CustomSwitch(
-                value: field.isFieldVisible,
-                onChanged: (value) {
-                  setState(() {
-                    field.isFieldVisible = value;
-                  });
-                },
-              ),
-            ],
-          ),
-          SizedBox(height: 5),
-          Padding(
-            padding: const EdgeInsets.only(left: 3),
-            child: SizedBox(
-              height: 30,
-              child: TextField(
-                controller: field.emailController,
-                style: TextStyle(fontSize: 15, color: Colors.black),
-                decoration: InputDecoration(
-                  hintText: '계정 이메일을 입력해주세요',
-                  border: InputBorder.none,
-                  contentPadding: EdgeInsets.symmetric(vertical: 5),
-                  hintStyle: TextStyle(
-                      fontFamily: 'Inter',
-                      fontWeight: FontWeight.w400,
-                      fontSize: 15,
-                      color: Color(0xFF828282)),
-                ),
+            ),
+          ],
+        ),
+        SizedBox(height: 10),
+        Padding(
+          padding: const EdgeInsets.only(left: 3),
+          child: SizedBox(
+            height: 30,
+            child: TextField(
+              controller: field.emailController,
+              style: TextStyle(fontSize: 15, color: Colors.black),
+              decoration: InputDecoration(
+                hintText: '계정 이메일을 입력해주세요',
+                border: InputBorder.none,
+                contentPadding: EdgeInsets.symmetric(vertical: 5),
+                hintStyle: TextStyle(
+                    fontFamily: 'Inter',
+                    fontWeight: FontWeight.w400,
+                    fontSize: 15,
+                    color: Color(0xFF828282)),
               ),
             ),
           ),
-          Divider(color: Color(0xFF828282), thickness: 1),
-        ],
-      ),
-    );
-  }
+        ),
+        Divider(color: Color(0xFF828282), thickness: 1),
+      ],
+    ),
+  );
+}
+
 
   @override
   Widget build(BuildContext context) {
@@ -391,7 +468,7 @@ class _UserInfoModifyPageState extends State<UserInfoModifyPage> {
                             height: 8,
                           ),
                           Text(
-                            'main@gmail.com',
+                             email.isEmpty ? 'email@sample.com' : email,
                             style: TextStyle(
                               fontFamily: 'Inter',
                               fontWeight: FontWeight.w400,
@@ -467,15 +544,6 @@ class _UserInfoModifyPageState extends State<UserInfoModifyPage> {
                       ],
                     ),
                   ),
-                  SizedBox(
-                    height: 10,
-                  ),
-                  buildToggleTextField("Discord", "계정 이메일을 입력해주세요",
-                      discordController, isDiscordVisible, (value) {
-                    setState(() {
-                      isDiscordVisible = value;
-                    });
-                  }),
                   Padding(
                     padding: const EdgeInsets.symmetric(horizontal: 48),
                     child: Column(
@@ -536,7 +604,7 @@ class _UserInfoModifyPageState extends State<UserInfoModifyPage> {
                             height: 8,
                           ),
                           Text(
-                            '김세아',
+                            username.isEmpty ? '이름 예시' : username,
                             style: TextStyle(
                               fontFamily: 'Inter',
                               fontWeight: FontWeight.w400,
@@ -581,12 +649,17 @@ class _UserInfoModifyPageState extends State<UserInfoModifyPage> {
                   SizedBox(
                     height: 10,
                   ),
-                  buildToggleTextField("SNS 계정", "계정 아이디를 입력해주세요",
-                      snsAccountController, isSNSAccountVisible, (value) {
-                    setState(() {
-                      isSNSAccountVisible = value;
-                    });
-                  }),
+                  Padding(
+                    padding:
+                        const EdgeInsets.symmetric(horizontal: 50, vertical: 5),
+                    child: buildDivideTextField(
+                      'SNS 계정',
+                      'SNS 종류',
+                      '계정 아이디를 입력해주세요',
+                      snsTypeController,
+                      snsAccountController,
+                    ),
+                  ),
                   SizedBox(
                     height: 100,
                   ),

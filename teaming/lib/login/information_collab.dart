@@ -2,7 +2,7 @@ import 'dart:convert';
 
 import 'package:flutter/material.dart';
 import 'package:teaming/login/information_school.dart';
-import 'package:teaming/login/textfield_widget.dart';
+import 'package:teaming/textfield_widget.dart';
 import '../model/sign_up_dto.dart';
 
 class CollabInfoPage extends StatefulWidget {

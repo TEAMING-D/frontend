@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:teaming/login/textfield_widget.dart';
+import 'package:teaming/textfield_widget.dart';
 
 class GoodbyePage extends StatefulWidget {
   const GoodbyePage({super.key});

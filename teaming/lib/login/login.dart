@@ -24,18 +24,18 @@ class _LoginPageState extends State<LoginPage> {
   bool _isPasswordVisible = false;
 
   Future<void> _login() async {
-     String? emailError = _validateEmail(emailController.text);
-  String? passwordError = _validatePassword(passwordController.text);
+    String? emailError = _validateEmail(emailController.text);
+    String? passwordError = _validatePassword(passwordController.text);
 
-  if (emailError != null) {
-    _showPopup(emailError);
-    return;
-  }
-  
-  if (passwordError != null) {
-    _showPopup(passwordError);
-    return;
-  }
+    if (emailError != null) {
+      _showPopup(emailError);
+      return;
+    }
+
+    if (passwordError != null) {
+      _showPopup(passwordError);
+      return;
+    }
 
     final email = emailController.text;
     final password = passwordController.text;
@@ -122,7 +122,7 @@ class _LoginPageState extends State<LoginPage> {
         },
       );
     } catch (e) {
-      _showPopup('로그인 실패:\n''$e');
+      _showPopup('로그인 실패:\n' '$e');
     }
   }
 
@@ -254,6 +254,9 @@ class _LoginPageState extends State<LoginPage> {
                             color: Color.fromRGBO(156, 156, 156, 1)),
                       ),
                       validator: _validateEmail,
+                      onChanged: (value) {
+                        setState(() {});
+                      },
                     ),
                   ),
                   SizedBox(height: 15),
@@ -302,6 +305,9 @@ class _LoginPageState extends State<LoginPage> {
                         ),
                       ),
                       validator: _validatePassword,
+                      onChanged: (value) {
+                        setState(() {});
+                      },
                     ),
                   ),
                   SizedBox(height: 15),

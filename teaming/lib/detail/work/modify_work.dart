@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:teaming/detail/work/team_work.dart';
-import 'package:teaming/login/textfield_widget.dart';
+import 'package:teaming/textfield_widget.dart';
 
 // 현재 수정 기능 오류로 작동 안 하니까 서버랑 연결할 때 파일에 있는 기존 수정 기능 빼고 team_work.dart에서 initState할때 API 불러오기 방식으로 수정
 class ModifyWorkPage extends StatefulWidget {
