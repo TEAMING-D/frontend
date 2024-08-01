@@ -94,10 +94,27 @@ class ApiService {
   }
 
 
-  Future<void> logout() async {
-    await secureStorage.delete(key: 'accessToken');
-    print('Logged out and token deleted.');
+   Future<void> logout() async {
+    String? token = await secureStorage.read(key: 'accessToken');
+    if (token != null) {
+      final url = Uri.parse('$baseUrl/api/user/logout');
+      final headers = {
+        'Content-Type': 'application/json',
+        'Authorization': 'Bearer $token',
+      };
+
+      final response = await http.post(url, headers: headers);
+      if (response.statusCode == 200) {
+        await secureStorage.delete(key: 'accessToken');
+        print('Logged out and token deleted.');
+      } else {
+        throw Exception('Failed to log out');
+      }
+    } else {
+      print('No token found to log out');
+    }
   }
+
 
   Future<bool> validateToken(String token) async {
     final url = Uri.parse('$baseUrl/validateToken');

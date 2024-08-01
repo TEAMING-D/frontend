@@ -1,8 +1,12 @@
 import 'dart:ui';
 import 'package:flutter/material.dart';
+import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:teaming/home/goodbye.dart';
 import 'package:teaming/home/user_time_table_modify.dart';
 import 'package:teaming/login/information_widget.dart';
+import 'package:teaming/login/login.dart';
+import 'package:teaming/popup_widget.dart';
+import 'package:teaming/service/api_service.dart';
 
 class UserInfoModifyPage extends StatefulWidget {
   final List<Map<String, dynamic>> projects;
@@ -109,6 +113,54 @@ class _UserInfoModifyPageState extends State<UserInfoModifyPage> {
         );
       });
     }
+  }
+
+  Future<void> _logout(BuildContext context) async {
+  // final ApiService apiService = ApiService();
+
+  try {
+    // await apiService.logout(); // 로그아웃 API 호출 부분 주석 처리(서버 미완)
+    final FlutterSecureStorage secureStorage = const FlutterSecureStorage();
+    await secureStorage.delete(key: 'accessToken'); // 토큰 삭제
+    Navigator.pushAndRemoveUntil(
+      context,
+      MaterialPageRoute(builder: (context) => LoginPage()),
+      (Route<dynamic> route) => false,
+    );
+  } catch (e) {
+    _showErrorPopup(context, '로그아웃에 실패했습니다.');
+  }
+}
+
+  void _showChoicePopup(
+      BuildContext context, String normalMessage, VoidCallback onConfirm,
+      {String? boldMessage}) {
+    showGeneralDialog(
+      barrierLabel: "Popup",
+      barrierDismissible: true,
+      barrierColor: Colors.black.withOpacity(0.3),
+      transitionDuration: Duration(milliseconds: 300),
+      context: context,
+      pageBuilder: (context, anim1, anim2) {
+        return PopupChoiceWidget(
+          normalMessage: normalMessage,
+          boldMessage: boldMessage,
+          onConfirm: onConfirm,
+        );
+      },
+      transitionBuilder: (context, anim1, anim2, child) {
+        return FadeTransition(opacity: anim1, child: child);
+      },
+    );
+  }
+
+  void _showErrorPopup(BuildContext context, String message) {
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return PopupWidget(message: message);
+      },
+    );
   }
 
   Widget buildAdditionalField(int index) {
@@ -224,6 +276,24 @@ class _UserInfoModifyPageState extends State<UserInfoModifyPage> {
             centerTitle: true,
             actions: [
               IconButton(
+                padding: EdgeInsets.only(right: 5),
+                onPressed: () {
+                  _showChoicePopup(
+                    context,
+                    "로그아웃을 진행하시겠습니까?",
+                    () async {
+                      await _logout(context);
+                    },
+                    boldMessage: '로그아웃',
+                  );
+                },
+                icon: Icon(
+                  Icons.output_rounded,
+                  color: Colors.black,
+                ),
+                constraints: BoxConstraints(),
+              ),
+              IconButton(
                 padding: EdgeInsets.only(right: 10),
                 onPressed: () {
                   Navigator.push(
@@ -234,7 +304,7 @@ class _UserInfoModifyPageState extends State<UserInfoModifyPage> {
                   );
                 },
                 icon: Icon(
-                  Icons.output_rounded,
+                  Icons.delete_forever_outlined,
                   color: Colors.black,
                 ),
                 constraints: BoxConstraints(),
@@ -375,9 +445,9 @@ class _UserInfoModifyPageState extends State<UserInfoModifyPage> {
                   SizedBox(
                     height: 10,
                   ),
-                   Padding(
-                     padding: const EdgeInsets.symmetric(horizontal: 48),
-                     child: Row(
+                  Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 48),
+                    child: Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
                         Text(
@@ -395,8 +465,9 @@ class _UserInfoModifyPageState extends State<UserInfoModifyPage> {
                           onPressed: addFields,
                         ),
                       ],
-                                       ),
-                   ),SizedBox(
+                    ),
+                  ),
+                  SizedBox(
                     height: 10,
                   ),
                   buildToggleTextField("Discord", "계정 이메일을 입력해주세요",
@@ -405,7 +476,6 @@ class _UserInfoModifyPageState extends State<UserInfoModifyPage> {
                       isDiscordVisible = value;
                     });
                   }),
-                 
                   Padding(
                     padding: const EdgeInsets.symmetric(horizontal: 48),
                     child: Column(
