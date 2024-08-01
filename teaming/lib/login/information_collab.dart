@@ -25,6 +25,7 @@ class _CollabInfoPageState extends State<CollabInfoPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
+        scrolledUnderElevation: 0,
         leading: IconButton(
           onPressed: () {
             Navigator.pop(context);
@@ -62,7 +63,7 @@ class _CollabInfoPageState extends State<CollabInfoPage> {
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        SizedBox(height: 100),
+                        SizedBox(height: 150),
                         Text.rich(
                           TextSpan(
                             children: [

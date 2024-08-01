@@ -309,7 +309,7 @@ class _LoginPageState extends State<LoginPage> {
                     onPressed: emailController.text.isNotEmpty &&
                             passwordController.text.isNotEmpty
                         ? () {
-                            _login(); // _login 메서드 호출
+                            _login();
                           }
                         : () {
                             showDialog(

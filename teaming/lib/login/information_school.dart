@@ -7,7 +7,8 @@ import '../model/sign_up_dto.dart';
 class SchoolInfoPage extends StatefulWidget {
   final SignUpRequest signUpRequest;
 
-  const SchoolInfoPage({Key? key, required this.signUpRequest}) : super(key: key);
+  const SchoolInfoPage({Key? key, required this.signUpRequest})
+      : super(key: key);
 
   @override
   State<SchoolInfoPage> createState() => _SchoolInfoPageState();
@@ -188,17 +189,22 @@ class _SchoolInfoPageState extends State<SchoolInfoPage> {
                               ),
                             ),
                             SizedBox(height: 50),
-                            buildTextField(
-                                '학교명', '학교명을 입력해주세요', controllerName: schoolNameController),
+                            buildTextField('학교명', '학교명을 입력해주세요',
+                                controllerName: schoolNameController,
+                                inputFormatters: [
+                                  FilteringTextInputFormatter.allow(
+                                      RegExp(r'[ㄱ-ㅎㅏ-ㅣ가-힣\s]')),
+                                ]),
                             SizedBox(height: 20),
-                            buildTextField(
-                                '학번', '학번을 입력해주세요', controllerName: schoolNumController, keyboardType: TextInputType.number,
-                                  inputFormatters: [
-                                    FilteringTextInputFormatter.digitsOnly,
-                                  ]),
+                            buildTextField('학번', '학번을 입력해주세요',
+                                controllerName: schoolNumController,
+                                keyboardType: TextInputType.number,
+                                inputFormatters: [
+                                  FilteringTextInputFormatter.digitsOnly,
+                                ]),
                             SizedBox(height: 20),
-                            buildTextField(
-                                '전공', '주전공을 입력해주세요', controllerName: majorController),
+                            buildTextField('전공', '주전공을 입력해주세요',
+                                controllerName: majorController,),
                             SizedBox(height: 50),
                           ],
                         ),
@@ -219,7 +225,8 @@ class _SchoolInfoPageState extends State<SchoolInfoPage> {
           onPressed: () {
             if (_areFieldsFilled(context)) {
               widget.signUpRequest.schoolName = schoolNameController.text;
-              widget.signUpRequest.schoolId = int.parse(schoolNumController.text);
+              widget.signUpRequest.schoolId =
+                  int.parse(schoolNumController.text);
               widget.signUpRequest.major = majorController.text;
 
               // 다음 페이지로 이동하는 로직 추가
