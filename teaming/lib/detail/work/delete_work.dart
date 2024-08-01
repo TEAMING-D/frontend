@@ -76,7 +76,7 @@ class _DeleteWorkPageState extends State<DeleteWorkPage> {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.center,
             children: [
-              SizedBox(height: 80),
+              SizedBox(height: kToolbarHeight * 2 ),
               Padding(
                 padding: const EdgeInsets.symmetric(horizontal: 16.0),
                 child: Column(
@@ -221,6 +221,7 @@ class _DeleteWorkPageState extends State<DeleteWorkPage> {
                         width: 10,
                       ),
                       Container(
+                        width: MediaQuery.of(context).size.width * 0.73,
                         padding: EdgeInsets.all(16),
                         decoration: BoxDecoration(
                           color: isCompleted ? Color(0xff737373) : Colors.white,

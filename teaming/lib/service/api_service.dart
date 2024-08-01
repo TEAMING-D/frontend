@@ -93,6 +93,20 @@ class ApiService {
     }
   }
 
+  Future<List<String>> searchSchools(String query) async {
+  final response = await http.get(
+    Uri.parse('$baseUrl/schools'),
+  );
+
+  if (response.statusCode == 200) {
+     List<dynamic> data = json.decode(utf8.decode(response.bodyBytes));
+    List<String> schoolNames = data.map((school) => school['name'] as String).toList();
+    return schoolNames;
+  } else {
+    throw Exception('Failed to load schools');
+  }
+}
+
 
    Future<void> logout() async {
     String? token = await secureStorage.read(key: 'accessToken');

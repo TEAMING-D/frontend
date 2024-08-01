@@ -247,7 +247,7 @@ class _TeamWorkPageState extends State<TeamWorkPage> {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.center,
           children: [
-            SizedBox(height: 80),
+            SizedBox(height: kToolbarHeight * 2 - 5),
             Row(
               mainAxisAlignment: MainAxisAlignment.end,
               children: [

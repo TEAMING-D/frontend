@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:teaming/login/information_my_data.dart';
-import 'package:teaming/login/information_widget.dart';
+import 'package:teaming/login/textfield_widget.dart';
+import 'package:teaming/service/api_service.dart';
 import '../model/sign_up_dto.dart';
 
 class SchoolInfoPage extends StatefulWidget {
@@ -18,11 +19,129 @@ class _SchoolInfoPageState extends State<SchoolInfoPage> {
   final TextEditingController schoolNameController = TextEditingController();
   final TextEditingController schoolNumController = TextEditingController();
   final TextEditingController majorController = TextEditingController();
+  final ApiService apiService = ApiService();
+  String selectedSchoolName = "학교를 선택해주세요";
 
   bool _areFieldsFilled(BuildContext context) {
     return schoolNameController.text.isNotEmpty &&
         schoolNumController.text.isNotEmpty &&
         majorController.text.isNotEmpty;
+  }
+
+  void _showSchoolSearchPopup(BuildContext context, List<String> schools) {
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return Align(
+          alignment: Alignment.center,
+          child: Material(
+            borderRadius: BorderRadius.circular(10),
+            color: Colors.white,
+            child: Container(
+              width: 300,
+              padding: EdgeInsets.all(15),
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Padding(
+                    padding: const EdgeInsets.fromLTRB(0, 10, 0, 15),
+                    child: Text(
+                      '학교 선택',
+                      textAlign: TextAlign.center,
+                      style: TextStyle(
+                        fontFamily: 'Inter',
+                        fontWeight: FontWeight.bold,
+                        fontSize: 17,
+                        color: Color(0xFF585454),
+                        height: 1.2,
+                      ),
+                    ),
+                  ),
+                  Container(
+                    height: 450,
+                    child: ListView.builder(
+                      shrinkWrap: true,
+                      itemCount: schools.length,
+                      itemBuilder: (BuildContext context, int index) {
+                        return ListTile(
+                          title: Text(
+                            schools[index],
+                            style: TextStyle(
+                              fontFamily: 'Inter',
+                              fontWeight: FontWeight.w400,
+                              fontSize: 15,
+                              color: Color(0xFF585454),
+                            ),
+                          ),
+                          onTap: () {
+                            setState(() {
+                              selectedSchoolName = schools[index];
+                            });
+                            Navigator.of(context).pop();
+                          },
+                        );
+                      },
+                    ),
+                  ),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceAround,
+                    children: [
+                      Expanded(
+                        child: ElevatedButton(
+                          onPressed: () {
+                            Navigator.of(context).pop();
+                          },
+                          style: ElevatedButton.styleFrom(
+                            foregroundColor: Colors.grey,
+                            backgroundColor: Color(0xffD8D8D8),
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(10),
+                            ),
+                          ),
+                          child: Text(
+                            '취소',
+                            style: TextStyle(
+                              fontSize: 16,
+                              fontFamily: 'Inter',
+                              fontWeight: FontWeight.bold,
+                              color: Color.fromRGBO(84, 84, 84, 1),
+                            ),
+                          ),
+                        ),
+                      ),
+                      SizedBox(width: 10),
+                      Expanded(
+                        child: ElevatedButton(
+                          onPressed: () {
+                            Navigator.of(context).pop();
+                          },
+                          style: ElevatedButton.styleFrom(
+                            foregroundColor: Colors.white,
+                            backgroundColor: Color.fromRGBO(84, 84, 84, 1),
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(10),
+                            ),
+                          ),
+                          child: Text(
+                            '확인',
+                            style: TextStyle(
+                              fontSize: 16,
+                              fontFamily: 'Inter',
+                              fontWeight: FontWeight.bold,
+                              color: Colors.white,
+                            ),
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+                ],
+              ),
+            ),
+          ),
+        );
+      },
+    );
   }
 
   void _showPopup(BuildContext context) {
@@ -189,12 +308,47 @@ class _SchoolInfoPageState extends State<SchoolInfoPage> {
                               ),
                             ),
                             SizedBox(height: 50),
-                            buildTextField('학교명', '학교명을 입력해주세요',
-                                controllerName: schoolNameController,
-                                inputFormatters: [
-                                  FilteringTextInputFormatter.allow(
-                                      RegExp(r'[ㄱ-ㅎㅏ-ㅣ가-힣\s]')),
-                                ]),
+                            GestureDetector(
+                              onTap: () async {
+                                List<String> schools =
+                                    await apiService.searchSchools("");
+                                _showSchoolSearchPopup(context, schools);
+                              },
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  Text(
+                                    '학교명',
+                                    style: TextStyle(
+                                      fontFamily: 'Inter',
+                                      fontWeight: FontWeight.w500,
+                                      fontSize: 16,
+                                      color: Color(0xFF484848),
+                                    ),
+                                  ),
+                                  SizedBox(height: 10,),
+                                  SizedBox(
+                                    height: 30,
+                                    child: Container(
+                                      alignment: Alignment.centerLeft,
+                                      child: Text(
+                                        selectedSchoolName,
+                                        style: TextStyle(
+                                          fontSize: 15,
+                                          color: selectedSchoolName ==
+                                                  "학교를 선택해주세요"
+                                              ? Color(0xFF9C9C9C)
+                                              : Colors.black,
+                                        ),
+                                      ),
+                                    ),
+                                  ),
+                                  SizedBox(height: 3),
+                                  Divider(
+                                      color: Color(0xFF9C9C9C), thickness: 1),
+                                ],
+                              ),
+                            ),
                             SizedBox(height: 20),
                             buildTextField('학번', '학번을 입력해주세요',
                                 controllerName: schoolNumController,
@@ -203,8 +357,11 @@ class _SchoolInfoPageState extends State<SchoolInfoPage> {
                                   FilteringTextInputFormatter.digitsOnly,
                                 ]),
                             SizedBox(height: 20),
-                            buildTextField('전공', '주전공을 입력해주세요',
-                                controllerName: majorController,),
+                            buildTextField(
+                              '전공',
+                              '주전공을 입력해주세요',
+                              controllerName: majorController,
+                            ),
                             SizedBox(height: 50),
                           ],
                         ),

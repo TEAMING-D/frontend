@@ -9,6 +9,8 @@ Widget buildTextField(
   TextEditingController? controllerName,
   TextInputType keyboardType = TextInputType.text,
   List<TextInputFormatter>? inputFormatters,
+  void Function(String)? onSubmitted,
+   void Function(String)? onTap,
 }) {
   return Column(
     crossAxisAlignment: CrossAxisAlignment.start,
@@ -41,6 +43,11 @@ Widget buildTextField(
               color: Color(0xFFA9A9A9),
             ),
           ),
+          onSubmitted: onSubmitted,
+          onTap: () {
+            if (onTap != null) {
+              onTap(controllerName!.text);
+            }}
         ),
       ),
       SizedBox(height: 3),

@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:teaming/login/information_widget.dart';
+import 'package:teaming/login/textfield_widget.dart';
 import 'package:teaming/login/welcome.dart';
 import 'package:teaming/model/sign_up_dto.dart';
 

@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:teaming/home/goodbye.dart';
 import 'package:teaming/home/user_time_table_modify.dart';
-import 'package:teaming/login/information_widget.dart';
+import 'package:teaming/login/textfield_widget.dart';
 import 'package:teaming/login/login.dart';
 import 'package:teaming/popup_widget.dart';
 import 'package:teaming/service/api_service.dart';

@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:teaming/login/information_widget.dart';
+import 'package:teaming/login/textfield_widget.dart';
 
 class AddWorkPage extends StatefulWidget {
   final Function(Map<String, dynamic>) onAddProject;

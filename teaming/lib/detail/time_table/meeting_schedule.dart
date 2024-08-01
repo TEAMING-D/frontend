@@ -235,29 +235,50 @@ class _MeetingSchedulePageState extends State<MeetingSchedulePage> {
                   ],
                 ),
               )
-            : ListView.builder(
-                itemCount: meetings.length,
-                itemBuilder: (context, index) {
-                  final meeting = meetings[index];
-                  return MeetingBlock(
-                    meeting: meeting,
-                    onDelete: () {
-                      _deleteMeeting(meeting);
-                    },
-                    onEdit: () async {
-                      final editedMeeting = await Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                          builder: (context) =>
-                              ModifyMeetingPage(meeting: meeting),
-                        ),
-                      );
-                      if (editedMeeting != null) {
-                        _editMeeting(meeting, editedMeeting);
-                      }
-                    },
-                  );
-                },
+            : Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  SizedBox(height: kToolbarHeight * 2),
+                  Center(
+                    child: Text(
+                      '회의 일정 블록을 꾹 눌러 삭제할 수 있습니다',
+                  style: TextStyle(
+                    fontFamily: 'Inter',
+                    fontWeight: FontWeight.w400,
+                    fontSize: 13,
+                    color: Color(0xFF404040),
+                  ),
+                  textAlign: TextAlign.center,
+                    ),
+                  ),
+                  Expanded(
+                    child: ListView.builder(
+                      padding: EdgeInsets.only(top: 20),
+                      itemCount: meetings.length,
+                      itemBuilder: (context, index) {
+                        final meeting = meetings[index];
+                        return MeetingBlock(
+                          meeting: meeting,
+                          onDelete: () {
+                            _deleteMeeting(meeting);
+                          },
+                          onEdit: () async {
+                            final editedMeeting = await Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                builder: (context) =>
+                                    ModifyMeetingPage(meeting: meeting),
+                              ),
+                            );
+                            if (editedMeeting != null) {
+                              _editMeeting(meeting, editedMeeting);
+                            }
+                          },
+                        );
+                      },
+                    ),
+                  ),
+                ],
               ),
       ),
       bottomNavigationBar: DetailNavigationBar(
