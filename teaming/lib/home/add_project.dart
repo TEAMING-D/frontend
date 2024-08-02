@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:teaming/textfield_widget.dart';
+import 'package:teaming/service/api_service.dart';
+import 'package:teaming/popup_widget.dart';
 
 class AddProjectPage extends StatefulWidget {
   final Function(Map<String, dynamic>) onAddProject;
@@ -12,20 +14,26 @@ class AddProjectPage extends StatefulWidget {
 }
 
 class _AddProjectPageState extends State<AddProjectPage> {
+  final ApiService apiService = ApiService();
   final projectNameController = TextEditingController();
   final projectTypeController = TextEditingController();
   final endYearController = TextEditingController();
   final endMonthController = TextEditingController();
   final endDayController = TextEditingController();
   final teamMembersController = TextEditingController();
-  final List<String> teamMembers = [];
+  final List<Map<String, dynamic>> teamMembers = []; // 팀원 정보 리스트
 
   final int nowYear = int.parse(DateTime.now().toString().substring(0, 4));
   OverlayEntry? dropdownOverlayEntry;
   String selectedProjectType = '수업';
   final GlobalKey _textFieldKey = GlobalKey();
 
-  void _addTeamMember(String member) {
+ void _addTeamMember(Map<String, dynamic> member) {
+    // 중복 체크
+    if (teamMembers.any((existingMember) => existingMember['userId'] == member['userId'])) {
+      showErrorPopup(context, '이미 추가된 팀원입니다.');
+      return;
+    }
     setState(() {
       teamMembers.add(member);
       teamMembersController.clear();
@@ -33,10 +41,86 @@ class _AddProjectPageState extends State<AddProjectPage> {
     });
   }
 
-  void _removeTeamMember(String member) {
+  void _removeTeamMember(Map<String, dynamic> member) {
     setState(() {
       teamMembers.remove(member);
     });
+  }
+
+  Future<void> handleSearch(BuildContext context) async {
+    if (teamMembersController.text.isNotEmpty) {
+      try {
+        final results = await apiService.searchUser(teamMembersController.text);
+        if (results.isNotEmpty) {
+          FocusScope.of(context).unfocus();
+          WidgetsBinding.instance.addPostFrameCallback((_) {
+            removeDropdownOverlay();
+            showDropdownOverlay(results);
+          });
+        } else {
+          showErrorPopup(context, '검색 결과가 없습니다.');
+        }
+      } catch (e) {
+        showErrorPopup(context, '사용자 검색에 실패했습니다.');
+      }
+    }
+  }
+
+  void showDropdownOverlay(List<Map<String, dynamic>> results) {
+     Future.delayed(Duration(milliseconds: 300), () {
+    final renderBox =
+        _textFieldKey.currentContext!.findRenderObject() as RenderBox;
+    final size = renderBox.size;
+    final offset = renderBox.localToGlobal(Offset.zero);
+
+    dropdownOverlayEntry = OverlayEntry(
+      builder: (context) => GestureDetector(
+        onTap: () {
+          removeDropdownOverlay();
+        },
+        child: Stack(
+          children: [
+            Positioned.fill(
+              child: Container(
+                color: Colors.transparent, // 터치 이벤트 감지용
+              ),
+            ),
+            Positioned(
+              left: offset.dx,
+              top: offset.dy + size.height + 5,
+              width: size.width,
+              child: Material(
+                elevation: 2.0,
+                child: Container(
+                  color: Colors.white,
+                  child: ListView(
+                    padding: EdgeInsets.zero,
+                    shrinkWrap: true,
+                    children: results.map((result) {
+                      return ListTile(
+                        title: Text(
+                            '${result['username']} (${result['schoolName']}, ${result['schoolNum']})'),
+                        onTap: () {
+                          _addTeamMember(result);
+                        },
+                      );
+                    }).toList(),
+                  ),
+                ),
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+
+    Overlay.of(context).insert(dropdownOverlayEntry!);
+     });
+  }
+
+  void removeDropdownOverlay() {
+    dropdownOverlayEntry?.remove();
+    dropdownOverlayEntry = null;
   }
 
   void _createProject() {
@@ -45,6 +129,21 @@ class _AddProjectPageState extends State<AddProjectPage> {
         endYearController.text.isNotEmpty &&
         endMonthController.text.isNotEmpty &&
         endDayController.text.isNotEmpty) {
+      final deadlineDate = DateTime(
+        int.parse(endYearController.text),
+        int.parse(endMonthController.text),
+        int.parse(endDayController.text),
+      );
+      final today = DateTime.now();
+
+      if (deadlineDate.isBefore(DateTime(today.year, today.month, today.day))) {
+        endYearController.clear();
+        endMonthController.clear();
+        endDayController.clear();
+        showErrorPopup(context, '오늘 이전의 날짜를 입력할 수 없습니다.');
+        return;
+      }
+
       showGeneralDialog(
         barrierLabel: "Popup",
         barrierDismissible: true,
@@ -52,161 +151,30 @@ class _AddProjectPageState extends State<AddProjectPage> {
         transitionDuration: Duration(milliseconds: 300),
         context: context,
         pageBuilder: (context, anim1, anim2) {
-          return Align(
-            alignment: Alignment.center,
-            child: Material(
-              borderRadius: BorderRadius.circular(10),
-              color: Colors.white,
-              child: Container(
-                width: 300,
-                padding: EdgeInsets.all(11),
-                child: Column(
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    Padding(
-                      padding: const EdgeInsets.fromLTRB(0, 10, 0, 18),
-                      child: Column(
-                        children: [
-                          Text(
-                            "프로젝트를 생성하시겠습니까?",
-                            textAlign: TextAlign.center,
-                            style: TextStyle(
-                              fontFamily: 'Inter',
-                              fontWeight: FontWeight.bold,
-                              fontSize: 17,
-                              color: Color(0xFF585454),
-                              height: 1.2,
-                            ),
-                          ),
-                          SizedBox(
-                            height: 8,
-                          ),
-                          Text(
-                            "각 팀원에게는 알림이 가며 개별적으로\n승인받아야 팀원으로 정상 등록됩니다",
-                            textAlign: TextAlign.center,
-                            style: TextStyle(
-                              fontFamily: 'Inter',
-                              fontWeight: FontWeight.w400,
-                              fontSize: 14,
-                              color: Color(0xFF585454),
-                              height: 1.2,
-                            ),
-                          ),
-                        ],
-                      ),
-                    ),
-                    Padding(
-                      padding: const EdgeInsets.symmetric(horizontal: 3),
-                      child: Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceAround,
-                        children: [
-                          Expanded(
-                            child: ElevatedButton(
-                              onPressed: () {
-                                Navigator.of(context).pop();
-                              },
-                              style: ElevatedButton.styleFrom(foregroundColor: Colors.grey,
-                                backgroundColor: Color(0xffD8D8D8),
-                                shape: RoundedRectangleBorder(
-                                  borderRadius: BorderRadius.circular(10),
-                                ),
-                              ),
-                              child: Text(
-                                '취소',
-                                style: TextStyle(
-                                  fontSize: 16,
-                                  fontFamily: 'Inter',
-                                  fontWeight: FontWeight.bold,
-                                  color: Color.fromRGBO(84, 84, 84, 1),
-                                ),
-                              ),
-                            ),
-                          ),
-                          SizedBox(
-                            width: 10,
-                          ),
-                          Expanded(
-                            child: ElevatedButton(
-                              onPressed: () {
-                                if (int.parse(endYearController.text) <
-                                    nowYear) {
-                                  endYearController.text =
-                                      DateTime.now().toString().substring(0, 4);
-                                } else if (int.parse(endYearController.text) >
-                                    2999) {
-                                  endYearController.text =
-                                      DateTime.now().toString().substring(0, 4);
-                                }
-
-                                if (endYearController.text.length < 4) {
-                                  endYearController.text =
-                                      DateTime.now().toString().substring(0, 4);
-                                }
-
-                                switch (int.parse(endMonthController.text)) {
-                                  case (0 || > 12):
-                                    endMonthController.text = DateTime.now()
-                                        .toString()
-                                        .substring(5, 7);
-                                    break;
-                                  case < 10:
-                                    endMonthController.text =
-                                        '0${endMonthController.text}';
-                                    break;
-                                }
-
-                                switch (int.parse(endDayController.text)) {
-                                  case (0 || > 31):
-                                    endDayController.text = DateTime.now()
-                                        .toString()
-                                        .substring(8, 10);
-                                    break;
-                                  case < 10:
-                                    endDayController.text =
-                                        '0${endDayController.text}';
-                                    break;
-                                }
-
-                                final newProject = {
-                                  'name': projectNameController.text,
-                                  'class': selectedProjectType,
-                                  'endDate':
-                                      '${endYearController.text}.${endMonthController.text}.${endDayController.text}',
-                                  'members': teamMembers,
-                                  'progress': 0,
-                                  'startDate': DateTime.now()
-                                      .toString()
-                                      .substring(0, 10)
-                                      .replaceAll('-', '.'),
-                                };
-                                widget.onAddProject(newProject);
-                                Navigator.pop(context);
-                                Navigator.pop(context);
-                              },
-                              style: ElevatedButton.styleFrom(foregroundColor: Colors.white,
-                                backgroundColor: Color.fromRGBO(84, 84, 84, 1),
-                                shape: RoundedRectangleBorder(
-                                  borderRadius: BorderRadius.circular(10),
-                                ),
-                              ),
-                              child: Text(
-                                '확인',
-                                style: TextStyle(
-                                  fontSize: 16,
-                                  fontFamily: 'Inter',
-                                  fontWeight: FontWeight.bold,
-                                  color: Colors.white,
-                                ),
-                              ),
-                            ),
-                          ),
-                        ],
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-            ),
+          return PopupChoiceWidget(
+            normalMessage: "각 팀원에게는 알림이 가며 개별적으로\n승인받아야 팀원으로 정상 등록됩니다",
+            onConfirm: () async {
+              Navigator.of(context).pop();
+              try {
+                final newProject = {
+                  'name': projectNameController.text,
+                  'description': projectTypeController.text,
+                  'type': selectedProjectType,
+                  'deadline':
+                      '${endYearController.text}-${endMonthController.text}-${endDayController.text}',
+                  'members':
+                      teamMembers.map((member) => member['userId']).toList(),
+                };
+                await apiService.createWorkspace(newProject);
+                showSuccessPopup(context, '프로젝트가 성공적으로 생성되었습니다.',
+                    onConfirm: () {
+                  Navigator.pop(context); // 현재 화면을 pop 합니다.
+                });
+              } catch (e) {
+                showErrorPopup(context, '프로젝트 생성에 실패했습니다.');
+              }
+            },
+            boldMessage: "프로젝트를 생성하시겠습니까?",
           );
         },
         transitionBuilder: (context, anim1, anim2, child) {
@@ -225,62 +193,7 @@ class _AddProjectPageState extends State<AddProjectPage> {
         transitionDuration: Duration(milliseconds: 300),
         context: context,
         pageBuilder: (context, anim1, anim2) {
-          return Align(
-            alignment: Alignment.center,
-            child: Material(
-              borderRadius: BorderRadius.circular(10),
-              color: Colors.white,
-              child: Container(
-                width: 300,
-                padding: EdgeInsets.all(15),
-                child: Column(
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    Padding(
-                      padding: const EdgeInsets.fromLTRB(0, 10, 0, 15),
-                      child: Text(
-                        "모든 입력란 기입이 필요합니다\n다시 한 번 확인해주세요",
-                        textAlign: TextAlign.center,
-                        style: TextStyle(
-                          fontFamily: 'Inter',
-                          fontWeight: FontWeight.w400,
-                          fontSize: 16,
-                          color: Color(0xFF585454),
-                          height: 1.2,
-                        ),
-                      ),
-                    ),
-                    Row(
-                      children: [
-                        Expanded(
-                          child: ElevatedButton(
-                            onPressed: () {
-                              Navigator.of(context).pop();
-                            },
-                            style: ElevatedButton.styleFrom(foregroundColor: Colors.white,
-                              backgroundColor: Color.fromRGBO(84, 84, 84, 1),
-                              shape: RoundedRectangleBorder(
-                                borderRadius: BorderRadius.circular(10),
-                              ),
-                            ),
-                            child: Text(
-                              '확인',
-                              style: TextStyle(
-                                fontSize: 16,
-                                fontFamily: 'Inter',
-                                fontWeight: FontWeight.bold,
-                                color: Colors.white,
-                              ),
-                            ),
-                          ),
-                        ),
-                      ],
-                    ),
-                  ],
-                ),
-              ),
-            ),
-          );
+          return PopupWidget(message: "모든 입력란 기입이 필요합니다\n다시 한 번 확인해주세요");
         },
         transitionBuilder: (context, anim1, anim2, child) {
           return FadeTransition(
@@ -292,72 +205,26 @@ class _AddProjectPageState extends State<AddProjectPage> {
     }
   }
 
-  void showDropdownOverlay() {
-    // 키보드 사라지는 시간때문에 지연 걸어둠
-    Future.delayed(Duration(milliseconds: 700), () {
-      final renderBox =
-          _textFieldKey.currentContext!.findRenderObject() as RenderBox;
-      final size = renderBox.size;
-      final offset = renderBox.localToGlobal(Offset.zero);
-
-      dropdownOverlayEntry = OverlayEntry(
-        builder: (context) => GestureDetector(
-          onTap: () {
-            removeDropdownOverlay();
-          },
-          child: Stack(
-            children: [
-              Positioned.fill(
-                child: Container(
-                  color: Colors.transparent, //터치 이벤트 감지용
-                ),
-              ),
-              Positioned(
-                left: offset.dx,
-                top: offset.dy + size.height + 5,
-                width: size.width,
-                child: Material(
-                  elevation: 2.0,
-                  child: Container(
-                    color: Colors.white,
-                    child: ListView(
-                      padding: EdgeInsets.zero,
-                      shrinkWrap: true,
-                      children: List.generate(5, (index) {
-                        final member = '${teamMembersController.text}_$index';
-                        return ListTile(
-                          title: Text(member),
-                          onTap: () {
-                            _addTeamMember(member);
-                          },
-                        );
-                      }),
-                    ),
-                  ),
-                ),
-              ),
-            ],
-          ),
-        ),
-      );
-
-      Overlay.of(context).insert(dropdownOverlayEntry!);
-    });
+  void showSuccessPopup(BuildContext context, String message,
+      {VoidCallback? onConfirm}) {
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return PopupWidget(
+          message: message,
+          onConfirm: onConfirm,
+        );
+      },
+    );
   }
 
-  void handleSearch(BuildContext context) {
-    if (teamMembersController.text.isNotEmpty) {
-      FocusScope.of(context).unfocus();
-      WidgetsBinding.instance.addPostFrameCallback((_) {
-        removeDropdownOverlay();
-        showDropdownOverlay();
-      });
-    }
-  }
-
-  void removeDropdownOverlay() {
-    dropdownOverlayEntry?.remove();
-    dropdownOverlayEntry = null;
+  void showErrorPopup(BuildContext context, String message) {
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return PopupWidget(message: message);
+      },
+    );
   }
 
   @override
@@ -405,8 +272,8 @@ class _AddProjectPageState extends State<AddProjectPage> {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     SizedBox(height: 130),
-                    buildTextField(
-                        '프로젝트명', '프로젝트 이름을 입력해주세요', controllerName: projectNameController),
+                    buildTextField('프로젝트명', '프로젝트 이름을 입력해주세요',
+                        controllerName: projectNameController),
                     SizedBox(height: 16),
                     Text(
                       '프로젝트 유형',
@@ -554,7 +421,7 @@ class _AddProjectPageState extends State<AddProjectPage> {
                       children: [
                         buildShortTextField(
                           'YYYY',
-                           controllerName:endYearController,
+                          controllerName: endYearController,
                           keyboardType: TextInputType.number,
                           inputFormatters: [
                             FilteringTextInputFormatter.digitsOnly,
@@ -566,7 +433,7 @@ class _AddProjectPageState extends State<AddProjectPage> {
                         ),
                         buildShortTextField(
                           'MM',
-                           controllerName:endMonthController,
+                          controllerName: endMonthController,
                           keyboardType: TextInputType.number,
                           inputFormatters: [
                             FilteringTextInputFormatter.digitsOnly,
@@ -578,7 +445,7 @@ class _AddProjectPageState extends State<AddProjectPage> {
                         ),
                         buildShortTextField(
                           'DD',
-                           controllerName:endDayController,
+                          controllerName: endDayController,
                           keyboardType: TextInputType.number,
                           inputFormatters: [
                             FilteringTextInputFormatter.digitsOnly,
@@ -653,44 +520,67 @@ class _AddProjectPageState extends State<AddProjectPage> {
                       ),
                     ),
                     Wrap(
-                      children: teamMembers.map((member) {
-                        return Container(
-                          margin: EdgeInsets.only(top: 10),
-                          padding: EdgeInsets.only(left: 15),
-                          height: 35,
-                          decoration: BoxDecoration(
-                            color: Colors.white,
-                            border: Border.all(color: Color(0xFFD1D1D1)),
-                            borderRadius: BorderRadius.circular(10),
-                          ),
-                          child: Row(
-                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                            children: [
-                              Expanded(
-                                child: Text(
-                                  member,
-                                  style: TextStyle(
-                                    fontFamily: 'Inter',
-                                    fontWeight: FontWeight.w400,
-                                    fontSize: 14,
-                                    color: Color(0xFF484848),
-                                  ),
-                                ),
-                              ),
-                              IconButton(
-                                icon: Icon(
-                                  Icons.close,
-                                  color: Color(0xFF484848),
-                                ),
-                                padding: EdgeInsets.zero,
-                                constraints: BoxConstraints(),
-                                onPressed: () => _removeTeamMember(member),
-                              ),
-                            ],
-                          ),
-                        );
-                      }).toList(),
-                    ),
+  children: teamMembers.toSet().map((member) {
+    final text = '${member['username']} (${member['schoolName']}, ${member['schoolNum']})';
+    final textSpan = TextSpan(
+      text: text,
+      style: TextStyle(
+        fontFamily: 'Inter',
+        fontWeight: FontWeight.w400,
+        fontSize: 14,
+        color: Color(0xFF484848),
+      ),
+    );
+    final textPainter = TextPainter(
+      text: textSpan,
+      maxLines: 2,
+      textDirection: TextDirection.ltr,
+    );
+    textPainter.layout(maxWidth: 200);
+
+    final numLines = textPainter.computeLineMetrics().length;
+    final containerHeight = (numLines > 1) ? 55.0 : 40.0;
+    
+    return Container(
+      margin: EdgeInsets.only(top: 10),
+      padding: EdgeInsets.fromLTRB(15, 0, 0, 0),
+      height: containerHeight,
+      decoration: BoxDecoration(
+        color: Colors.white,
+        border: Border.all(color: Color(0xFFD1D1D1)),
+        borderRadius: BorderRadius.circular(10),
+      ),
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        children: [
+          Expanded(
+            child: Text(
+              text,
+              style: TextStyle(
+                fontFamily: 'Inter',
+                fontWeight: FontWeight.w400,
+                fontSize: 14,
+                color: Color(0xFF484848),
+              ),
+              maxLines: 2,
+              overflow: TextOverflow.ellipsis,
+            ),
+          ),
+          IconButton(
+            icon: Icon(
+              Icons.close,
+              color: Color(0xFF484848),
+            ),
+            padding: EdgeInsets.zero,
+            constraints: BoxConstraints(),
+            onPressed: () => _removeTeamMember(member),
+          ),
+        ],
+      ),
+    );
+  }).toList(),
+)
+,
                     SizedBox(height: 200),
                   ],
                 ),
@@ -705,7 +595,8 @@ class _AddProjectPageState extends State<AddProjectPage> {
         bottom: 53,
         child: ElevatedButton(
           onPressed: _createProject,
-          style: ElevatedButton.styleFrom(foregroundColor: Colors.white,
+          style: ElevatedButton.styleFrom(
+            foregroundColor: Colors.white,
             backgroundColor: Color.fromRGBO(84, 84, 84, 1),
             minimumSize: Size(double.infinity, 50),
             shape: RoundedRectangleBorder(

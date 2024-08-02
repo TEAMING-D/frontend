@@ -180,7 +180,7 @@ class ApiService {
 
   // 탈퇴 API
   Future<void> deleteAccount() async {
-     final String? token = await secureStorage.read(key: 'accessToken');
+    final String? token = await secureStorage.read(key: 'accessToken');
     if (token == null) {
       throw Exception('토큰이 없습니다');
     }
@@ -196,7 +196,49 @@ class ApiService {
     }
   }
 
-  
+  // 워크스페이스 생성 API
+  Future<void> createWorkspace(Map<String, dynamic> workspaceData) async {
+    final String? token = await secureStorage.read(key: 'accessToken');
+    if (token == null) {
+      throw Exception('토큰이 없습니다');
+    }
+    final response = await http.post(
+      Uri.parse('$baseUrl/api/workspaces'),
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': token,
+      },
+      body: jsonEncode(workspaceData),
+    );
+
+    if (response.statusCode != 200) {
+       print('Failed to load user info: ${response.statusCode}');
+      print('Error response: ${utf8.decode(response.bodyBytes)}');
+      throw Exception('Failed to create workspace');
+    }
+  }
+
+  // username(유저명)으로 유저 찾기 API
+  Future<List<Map<String, dynamic>>> searchUser(String username) async {
+   final String? token = await secureStorage.read(key: 'accessToken');
+    if (token == null) {
+      throw Exception('토큰이 없습니다');
+    }
+    final response = await http.get(
+      Uri.parse('$baseUrl/users/username/$username'),
+      headers: {
+        'Authorization': token,
+      },
+    );
+
+  if (response.statusCode == 200) {
+      final utf8Body = utf8.decode(response.bodyBytes);
+      final data = jsonDecode(utf8Body)['data'];
+      return List<Map<String, dynamic>>.from(data);
+    } else {
+      throw Exception('Failed to search user');
+    }
+  }
 }
 
 class User {
