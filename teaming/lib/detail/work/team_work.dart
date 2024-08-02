@@ -1,76 +1,61 @@
+import 'dart:convert';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:teaming/detail/work/add_work.dart';
 import 'package:teaming/detail/work/delete_work.dart';
 import 'package:teaming/detail/work/detail_work.dart';
 import 'package:teaming/detail/navigation_bar.dart';
+import 'package:teaming/service/api_service.dart';
 
 class TeamWorkPage extends StatefulWidget {
-final Map<String, dynamic>? updatedTask;
+  final int projectId;
 
-TeamWorkPage({this.updatedTask});
+  TeamWorkPage({required this.projectId});
 
   @override
   _TeamWorkPageState createState() => _TeamWorkPageState();
 }
 
 class _TeamWorkPageState extends State<TeamWorkPage> {
-  List<Map<String, dynamic>> tasks = [
-    {
-      'title': 'PPT 제작',
-      'members': ['김세아'],
-      'description': 'PPT 디자인 및 내용 정리',
-      'startDate': '2024.05.01',
-      'endDate': '2024.05.04',
-      'progress': 50,
-    },
-    {
-      'title': '자료조사',
-      'members': ['오수진', '윤소윤'],
-      'description': '지정 주제 관련 기사 및 논문 조사',
-      'startDate': '2024.04.30',
-      'endDate': '2024.05.02',
-      'progress': 90,
-    },
-    {
-      'title': '주제 선정',
-      'members': ['김세아', '오수진', '윤소윤'],
-      'description': '수업 내용에 맞는 적절한 주제 선정',
-      'startDate': '2024.04.03',
-      'endDate': '2024.04.25',
-      'progress': 100,
-    },
-    {
-      'title': '교수님 피드백 정리',
-      'members': ['김세아', '오수진', '윤소윤'],
-      'description': '회의하면서 주제 아이디어안도 생각',
-      'startDate': '2024.04.01',
-      'endDate': '2024.04.20',
-      'progress': 100,
-    },
-    {
-      'title': '수업 사전조사',
-      'members': ['김세아', '오수진', '윤소윤'],
-      'description': '수업 내용에 맞는 논문 및 기사 조사하고 노션에 따로 정리하기',
-      'startDate': '2024.04.01',
-      'endDate': '2024.04.18',
-      'progress': 100,
-    },
-  ];
+  final ApiService apiService = ApiService();
+  List<Map<String, dynamic>> tasks = [];
 
- @override
+  @override
   void initState() {
     super.initState();
-    if (widget.updatedTask != null) {
-      int index = tasks.indexWhere((t) => t['title'] == widget.updatedTask!['title']);
-      if (index != -1) {
-        setState(() {
-          tasks[index] = widget.updatedTask!;
-        });
-      }
-    }
+    _saveProjectId();
+    _fetchTasks();
   }
 
+ Future<void> _saveProjectId() async {
+  final prefs = await SharedPreferences.getInstance();
+  await prefs.setInt('projectId', widget.projectId);
+}
+
+
+  Future<void> _fetchTasks() async {
+    try {
+      final tasks = await apiService.getTasks(widget.projectId); // 프로젝트 ID 사용
+      final List<Map<String, dynamic>> parsedTasks = tasks.map((task) {
+        return {
+          'title': task['name'] ?? 'No title',
+          'members': task['assignedUserIds'] ?? [],
+          'description': task['description'] ?? 'No description',
+          'startDate': task['createdAt'] ?? '',
+          'endDate': task['dueDate'] ?? '',
+          'progress': task['progress']?.toInt() ?? 0,
+        };
+      }).toList();
+
+      setState(() {
+        this.tasks = parsedTasks;
+      });
+    } catch (e) {
+      // 에러 처리
+      print('업무를 불러오지 못했습니다:\n' '$e');
+    }
+  }
 
   String _selectedView = '블록 형태로 보기';
 
@@ -130,24 +115,55 @@ class _TeamWorkPageState extends State<TeamWorkPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        scrolledUnderElevation: 0,
-        leading: IconButton(
-          icon: Icon(Icons.arrow_back, color: Color(0xff585858)),
-          onPressed: () => Navigator.pop(context),
-        ),
-        title: Text(
-          '업무 관리',
-          style: TextStyle(
-            fontFamily: 'Inter',
-            fontWeight: FontWeight.w800,
-            fontSize: 16,
-            color: Color(0xFF404040),
+        appBar: AppBar(
+          scrolledUnderElevation: 0,
+          leading: IconButton(
+            icon: Icon(Icons.arrow_back, color: Color(0xff585858)),
+            onPressed: () => Navigator.pop(context),
           ),
-        ),
-        centerTitle: true,
-        actions: [
-          if (tasks.isNotEmpty)
+          title: Text(
+            '업무 관리',
+            style: TextStyle(
+              fontFamily: 'Inter',
+              fontWeight: FontWeight.w800,
+              fontSize: 16,
+              color: Color(0xFF404040),
+            ),
+          ),
+          centerTitle: true,
+          actions: [
+            if (tasks.isNotEmpty)
+              Padding(
+                padding: EdgeInsets.symmetric(horizontal: 4.0),
+                child: SizedBox(
+                  width: 33,
+                  height: 33,
+                  child: CupertinoButton(
+                    padding: EdgeInsets.zero,
+                    child: Image.asset(
+                      'assets/icon/minus_icon.png',
+                      width: 33,
+                      height: 33,
+                    ),
+                    onPressed: () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => DeleteWorkPage(
+                            tasks: tasks,
+                            view: _selectedView,
+                            onDelete: (updatedTasks) {
+                              setState(() {
+                                tasks = updatedTasks;
+                              });
+                            },
+                          ),
+                        ),
+                      );
+                    },
+                  ),
+                ),
+              ),
             Padding(
               padding: EdgeInsets.symmetric(horizontal: 4.0),
               child: SizedBox(
@@ -156,130 +172,96 @@ class _TeamWorkPageState extends State<TeamWorkPage> {
                 child: CupertinoButton(
                   padding: EdgeInsets.zero,
                   child: Image.asset(
-                    'assets/icon/minus_icon.png',
+                    'assets/icon/plus_icon.png',
                     width: 33,
                     height: 33,
                   ),
-                  onPressed: () {
-                    Navigator.push(
+                  onPressed: () async {
+                    final newTask = await Navigator.push(
                       context,
                       MaterialPageRoute(
-                        builder: (context) => DeleteWorkPage(
-                          tasks: tasks,
-                          view: _selectedView,
-                          onDelete: (updatedTasks) {
+                        builder: (context) => AddWorkPage(
+                          onAddProject: (task) {
+                            task['progress'] = 0;
+                            task['startDate'] = DateTime.now()
+                                .toString()
+                                .substring(0, 10)
+                                .replaceAll('-', '.');
                             setState(() {
-                              tasks = updatedTasks;
+                              tasks.insert(0, task);
                             });
                           },
+                          teamMembers: ['김세아', '오수진', '윤소윤'],
                         ),
                       ),
                     );
+
+                    if (newTask != null) {
+                      newTask['progress'] = 0;
+                      newTask['startDate'] = DateTime.now()
+                          .toString()
+                          .substring(0, 10)
+                          .replaceAll('-', '.');
+                      setState(() {
+                        tasks.insert(0, newTask);
+                      });
+                    }
                   },
                 ),
               ),
             ),
-          Padding(
-            padding: EdgeInsets.symmetric(horizontal: 4.0),
-            child: SizedBox(
-              width: 33,
-              height: 33,
-              child: CupertinoButton(
-                padding: EdgeInsets.zero,
-                child: Image.asset(
-                  'assets/icon/plus_icon.png',
-                  width: 33,
-                  height: 33,
-                ),
-                onPressed: () async {
-                  final newTask = await Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                      builder: (context) => AddWorkPage(
-                        onAddProject: (task) {
-                          task['progress'] = 0;
-                          task['startDate'] = DateTime.now()
-                              .toString()
-                              .substring(0, 10)
-                              .replaceAll('-', '.');
-                          setState(() {
-                            tasks.insert(0, task);
-                          });
-                        },
-                        teamMembers: ['김세아', '오수진', '윤소윤'],
-                      ),
-                    ),
-                  );
-
-                  if (newTask != null) {
-                    newTask['progress'] = 0;
-                    newTask['startDate'] = DateTime.now()
-                        .toString()
-                        .substring(0, 10)
-                        .replaceAll('-', '.');
-                    setState(() {
-                      tasks.insert(0, newTask);
-                    });
-                  }
-                },
-              ),
+            SizedBox(
+              width: 8,
+            )
+          ],
+          backgroundColor: Color.fromRGBO(255, 255, 255, 0.8),
+        ),
+        extendBodyBehindAppBar: true,
+        body: Container(
+          width: MediaQuery.of(context).size.width,
+          decoration: BoxDecoration(
+            gradient: LinearGradient(
+              begin: Alignment.center,
+              end: Alignment.bottomRight,
+              colors: [
+                Colors.white,
+                Color.fromRGBO(138, 138, 138, 1),
+              ],
             ),
           ),
-          SizedBox(
-            width: 8,
-          )
-        ],
-        backgroundColor: Color.fromRGBO(255, 255, 255, 0.8),
-      ),
-      extendBodyBehindAppBar: true,
-      body: Container(
-        width: MediaQuery.of(context).size.width,
-        decoration: BoxDecoration(
-          gradient: LinearGradient(
-            begin: Alignment.center,
-            end: Alignment.bottomRight,
-            colors: [
-              Colors.white,
-              Color.fromRGBO(138, 138, 138, 1),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.center,
+            children: [
+              SizedBox(height: kToolbarHeight * 2 - 5),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.end,
+                children: [
+                  tasks.isEmpty
+                      ? SizedBox()
+                      : TextButton.icon(
+                          icon: Icon(Icons.keyboard_arrow_down_outlined,
+                              color: Colors.black),
+                          onPressed: () => _showDropdownMenu(context),
+                          label: Text(
+                            _selectedView,
+                            style: TextStyle(
+                                fontFamily: 'Inter',
+                                fontWeight: FontWeight.w400,
+                                color: Colors.black,
+                                fontSize: 14),
+                          ),
+                          iconAlignment: IconAlignment.end,
+                        ),
+                ],
+              ),
+              Expanded(
+                child: tasks.isEmpty ? _buildEmptyView() : _buildTaskView(),
+              ),
             ],
           ),
         ),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.center,
-          children: [
-            SizedBox(height: kToolbarHeight * 2 - 5),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.end,
-              children: [
-                tasks.isEmpty
-                    ? SizedBox()
-                    : TextButton.icon(
-                        icon: Icon(Icons.keyboard_arrow_down_outlined,
-                            color: Colors.black),
-                        onPressed: () => _showDropdownMenu(context),
-                        label: Text(
-                          _selectedView,
-                          style: TextStyle(
-                              fontFamily: 'Inter',
-                              fontWeight: FontWeight.w400,
-                              color: Colors.black,
-                              fontSize: 14),
-                        ),
-                        iconAlignment: IconAlignment.end,
-                      ),
-              ],
-            ),
-            Expanded(
-              child: tasks.isEmpty ? _buildEmptyView() : _buildTaskView(),
-            ),
-          ],
-        ),
-      ),
-      bottomNavigationBar: DetailNavigationBar(
-        currentIndex: 1,
-        currentPage: TeamWorkPage,
-      ),
-    );
+        bottomNavigationBar:
+            DetailNavigationBar(currentIndex: 1, currentPage: TeamWorkPage));
   }
 
   Widget _buildEmptyView() {
@@ -317,9 +299,9 @@ class _TeamWorkPageState extends State<TeamWorkPage> {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.end,
           children: tasks.map((task) {
-            var displayMembers = task['members'].length > 3
-                ? '${task['members'].take(3).join(', ')} 외 ${task['members'].length - 3}인'
-                : task['members'].join(', ');
+            var displayMembers = (task['members'] ?? []).length > 3
+                ? '${(task['members'] ?? []).take(3).join(', ')} 외 ${(task['members'] ?? []).length - 3}인'
+                : (task['members'] ?? []).join(', ');
 
             return GestureDetector(
               onTap: () {
@@ -333,7 +315,7 @@ class _TeamWorkPageState extends State<TeamWorkPage> {
                           int index = tasks.indexOf(task);
                           tasks[index] = updatedTask;
                         });
-                      }, // 샘플로 작업
+                      },
                       teamMembers: ['오수진', '윤소윤', '김세아'],
                       currentUser: '김세아',
                     ),
@@ -521,27 +503,38 @@ class _TeamWorkPageState extends State<TeamWorkPage> {
                   item['description'] != '완료' && item['description'] != '완료 예정';
 
               return GestureDetector(
-                onTap: () {
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                      builder: (context) => WorkDetailPage(
-                        task: tasks.firstWhere(
-                            (t) => t['title'] == item['title'].split(' ')[0]),
-                        onUpdate: (updatedTask) {
-                          setState(() {
-                            int taskIndex = tasks.indexWhere(
-                                (t) => t['title'] == updatedTask['title']);
-                            tasks[taskIndex] = updatedTask;
-                          });
-                        },
-                        // 샘플로 작업
-                        teamMembers: ['오수진', '윤소윤', '김세아'],
-                        currentUser: '김세아',
-                      ),
-                    ),
-                  );
-                },
+                onTap: item['title'].contains('시작')
+                    ? () {
+                        var task = tasks.firstWhere(
+                          (t) =>
+                              t['title'] == item['title'].replaceAll(' 시작', ''),
+                          orElse: () => <String, dynamic>{}, // 빈 맵을 반환
+                        );
+
+                        if (task.isNotEmpty) {
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (context) => WorkDetailPage(
+                                task: task,
+                                onUpdate: (updatedTask) {
+                                  setState(() {
+                                    int taskIndex = tasks.indexWhere((t) =>
+                                        t['title'] == updatedTask['title']);
+                                    if (taskIndex != -1) {
+                                      tasks[taskIndex] = updatedTask;
+                                    }
+                                  });
+                                },
+                                // 샘플로 작업
+                                teamMembers: ['오수진', '윤소윤', '김세아'],
+                                currentUser: '김세아',
+                              ),
+                            ),
+                          );
+                        }
+                      }
+                    : null, // '시작' 항목이 아닌 경우 터치 불가능
                 child: Padding(
                   padding: EdgeInsets.only(bottom: hasDetails ? 20 : 10),
                   child: Row(

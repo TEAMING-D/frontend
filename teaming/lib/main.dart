@@ -1,14 +1,16 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:teaming/home/project.dart';
 import 'package:teaming/login/join.dart';
 import 'package:teaming/login/login.dart';
-import 'package:teaming/popup_widget.dart';
+import 'package:teaming/widget/popup_widget.dart';
 import 'package:teaming/service/api_service.dart';
 
-void main() {
+void main() async {
   WidgetsFlutterBinding.ensureInitialized();
+    await SharedPreferences.getInstance();
   runApp(MyApp());
 }
 

@@ -1,6 +1,8 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:teaming/detail/time_table/time_table.dart';
+import 'package:teaming/detail/work/team_work.dart';
 import 'package:teaming/home/add_project.dart';
 import 'package:teaming/home/delete_project.dart';
 import 'package:teaming/home/notice.dart';
@@ -25,6 +27,19 @@ class _TeamProjectPageState extends State<TeamProjectPage> {
   void initState() {
     super.initState();
     _fetchWorkspaces();
+  }
+
+  @override
+void dispose() {
+  _clearProjectId(); // projectId 삭제 함수 호출
+  super.dispose();
+}
+
+  Future<void> _clearProjectId() async {
+    final prefs = await SharedPreferences.getInstance();
+    if (prefs.containsKey('projectId')) {
+      await prefs.remove('projectId');
+    }
   }
 
   Future<void> _fetchWorkspaces() async {
@@ -290,11 +305,14 @@ class _TeamProjectPageState extends State<TeamProjectPage> {
     return Column(
       children: projects.map((project) {
         return GestureDetector(
-          onTap: () {
+          // 프로젝트 블록 눌렀을 때 이동
+          onTap: () async {
+            final prefs = await SharedPreferences.getInstance();
+            await prefs.setInt('projectId', project['id']);
             Navigator.push(
               context,
               MaterialPageRoute(
-                builder: (context) => TeamSchedulePage(),
+                builder: (context) => TeamWorkPage(projectId: project['id']),
               ),
             );
           },

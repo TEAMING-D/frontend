@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:teaming/login/login.dart';
-import 'package:teaming/popup_widget.dart';
+import 'package:teaming/widget/popup_widget.dart';
 import 'package:teaming/service/api_service.dart';
-import 'package:teaming/textfield_widget.dart';
+import 'package:teaming/widget/textfield_widget.dart';
 
 class GoodbyePage extends StatefulWidget {
   const GoodbyePage({super.key});

@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:teaming/detail/work/team_work.dart';
-import 'package:teaming/textfield_widget.dart';
+import 'package:teaming/widget/textfield_widget.dart';
 
 // 현재 수정 기능 오류로 작동 안 하니까 서버랑 연결할 때 파일에 있는 기존 수정 기능 빼고 team_work.dart에서 initState할때 API 불러오기 방식으로 수정
 class ModifyWorkPage extends StatefulWidget {
@@ -54,13 +54,6 @@ class _ModifyWorkPageState extends State<ModifyWorkPage> {
  widget.onUpdate(task); // 이 코드가 작업을 업데이트하도록 보장
   Navigator.pop(context, task); // 업데이트된 작업을 반환
 
-  Navigator.pushAndRemoveUntil(
-    context,
-    MaterialPageRoute(
-      builder: (context) => TeamWorkPage(updatedTask: updatedTask),
-    ),
-    (Route<dynamic> route) => false,
-  );
 }
 
   @override

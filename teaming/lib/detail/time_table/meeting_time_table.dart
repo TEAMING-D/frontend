@@ -4,7 +4,7 @@ import 'package:teaming/detail/time_table/meeting_schedule.dart';
 import 'package:teaming/detail/time_table/member_time_table.dart';
 import 'package:teaming/detail/navigation_bar.dart';
 import 'package:teaming/detail/time_table/time_table.dart';
-import 'package:teaming/popup_widget.dart';
+import 'package:teaming/widget/popup_widget.dart';
 
 class MeetingTimePage extends StatefulWidget {
   const MeetingTimePage({super.key});

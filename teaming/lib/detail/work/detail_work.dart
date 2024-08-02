@@ -24,7 +24,7 @@ class WorkDetailPage extends StatefulWidget {
 class _WorkDetailPageState extends State<WorkDetailPage> {
   late Map<String, dynamic> task;
   late bool isTaskOwner;
-  List<FileItem> selectedFiles = []; // 추가된 부분
+  List<FileItem> selectedFiles = [];
 
   List<Map<String, dynamic>> tasks = [
     {
@@ -103,11 +103,11 @@ class _WorkDetailPageState extends State<WorkDetailPage> {
   ];
 
   @override
-  void initState() {
-    super.initState();
-    task = Map<String, dynamic>.from(widget.task);
-    isTaskOwner = task['members'].contains(widget.currentUser);
-  }
+void initState() {
+  super.initState();
+  task = Map<String, dynamic>.from(widget.task);
+ isTaskOwner = task['members'] != null && task['members'].contains(widget.currentUser);
+}
 
   void _updateProgress(int progress) {
     setState(() {
@@ -231,14 +231,15 @@ class _WorkDetailPageState extends State<WorkDetailPage> {
               children: [
                 SizedBox(height: 80),
                 Text(
-                  task['title'],
-                  style: TextStyle(
-                      fontFamily: 'Inter',
-                      fontSize: 31,
-                      fontWeight: FontWeight.bold,
-                      color: Color(0xff5A5A5A),
-                      letterSpacing: -1),
-                ),
+  task['title'] ?? 'No Title',
+  style: TextStyle(
+    fontFamily: 'Inter',
+    fontSize: 31,
+    fontWeight: FontWeight.bold,
+    color: Color(0xff5A5A5A),
+    letterSpacing: -1,
+  ),
+),
                 SizedBox(height: 6),
                 Text.rich(
                   TextSpan(
@@ -246,7 +247,9 @@ class _WorkDetailPageState extends State<WorkDetailPage> {
                         TextSpan(
                             text: '담당자 : ',
                             style: TextStyle(fontWeight: FontWeight.bold)),
-                        TextSpan(text: '${task['members'].join(', ')}'),
+                        TextSpan(
+  text: '${task['members']?.join(', ') ?? 'No Members'}',
+),
                       ],
                       style: TextStyle(
                           fontFamily: 'Inter',

@@ -7,9 +7,10 @@ import 'package:teaming/detail/modify/modify_project.dart';
 import 'package:teaming/detail/participation/participation.dart';
 import 'package:teaming/detail/work/team_work.dart';
 import 'package:teaming/detail/time_table/time_table.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class DetailNavigationBar extends StatelessWidget {
-  final int currentIndex;
+   final int currentIndex;
   final Type currentPage;
 
   List<Map<String, dynamic>> tasks = [
@@ -88,13 +89,16 @@ class DetailNavigationBar extends StatelessWidget {
       ),
     ];
 
-
-  DetailNavigationBar({
+ DetailNavigationBar({
     super.key,
     required this.currentIndex,
     required this.currentPage,
   });
-  void _onItemTapped(BuildContext context, int index) {
+
+
+  Future<void> _onItemTapped(BuildContext context, int index) async {
+    final prefs = await SharedPreferences.getInstance();
+    
     switch (index) {
       case 0:
         Navigator.pushReplacement(
@@ -108,15 +112,20 @@ class DetailNavigationBar extends StatelessWidget {
         );
         break;
       case 1:
-        Navigator.pushReplacement(
-          context,
-          PageRouteBuilder(
-            pageBuilder: (_, __, ___) => TeamWorkPage(),
-            transitionDuration: Duration(milliseconds: 500),
-            transitionsBuilder: (_, a, __, c) =>
-                FadeTransition(opacity: a, child: c),
-          ),
-        );
+       int? projectId = prefs.getInt('projectId');
+        if (projectId != null) {
+          Navigator.pushReplacement(
+            context,
+            PageRouteBuilder(
+              pageBuilder: (_, __, ___) => TeamWorkPage(projectId: projectId),
+              transitionDuration: Duration(milliseconds: 500),
+              transitionsBuilder: (_, a, __, c) =>
+                  FadeTransition(opacity: a, child: c),
+            ),
+          );
+        } else {
+          // Handle the case where projectId is not set
+        }
         break;
       case 2:
         Navigator.pushReplacement(context,

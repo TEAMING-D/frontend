@@ -1,6 +1,6 @@
 import 'dart:ui';
 import 'package:flutter/material.dart';
-import 'package:teaming/popup_widget.dart';
+import 'package:teaming/widget/popup_widget.dart';
 import 'package:teaming/service/api_service.dart';
 
 class DeleteProjectPage extends StatefulWidget {

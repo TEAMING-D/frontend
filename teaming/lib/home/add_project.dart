@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:teaming/textfield_widget.dart';
+import 'package:teaming/widget/textfield_widget.dart';
 import 'package:teaming/service/api_service.dart';
-import 'package:teaming/popup_widget.dart';
+import 'package:teaming/widget/popup_widget.dart';
 
 class AddProjectPage extends StatefulWidget {
   final Function(Map<String, dynamic>) onAddProject;

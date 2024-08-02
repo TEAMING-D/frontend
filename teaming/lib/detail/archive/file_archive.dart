@@ -17,7 +17,7 @@ class FileArchivePage extends StatelessWidget {
     print('Downloading $fileName');
   }
 
-   void _showDropdownMenu(BuildContext context) {
+  void _showDropdownMenu(BuildContext context) {
     final RenderBox renderBox = context.findRenderObject() as RenderBox;
     final position = renderBox.localToGlobal(Offset.zero);
 
@@ -54,7 +54,6 @@ class FileArchivePage extends StatelessWidget {
     );
   }
 
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -82,7 +81,8 @@ class FileArchivePage extends StatelessWidget {
                     color: Color(0xFF404040),
                   ),
                 ),
-                Icon(Icons.keyboard_arrow_down_rounded, color: Color(0xFF404040)),
+                Icon(Icons.keyboard_arrow_down_rounded,
+                    color: Color(0xFF404040)),
               ],
             ),
           ),
@@ -109,7 +109,8 @@ class FileArchivePage extends StatelessWidget {
                 );
               },
             ),
-            IconButton(padding: EdgeInsets.only(right: 10),
+            IconButton(
+              padding: EdgeInsets.only(right: 10),
               constraints: BoxConstraints(),
               icon: Image.asset(
                 'assets/icon/plus_icon.png',
@@ -127,7 +128,7 @@ class FileArchivePage extends StatelessWidget {
         ),
         extendBodyBehindAppBar: true,
         extendBody: true,
-        body:  Container(
+        body: Container(
           padding: EdgeInsets.symmetric(horizontal: 20),
           width: MediaQuery.of(context).size.width,
           decoration: BoxDecoration(
@@ -162,7 +163,7 @@ class FileArchivePage extends StatelessWidget {
                 )
               : Column(
                   children: [
-                    SizedBox(height: 85),
+                    SizedBox(height: kToolbarHeight * 2),
                     Text(
                       '30일까지 보관된 후 파일이 만료됩니다\n터치해 파일을 다운로드할 수 있습니다',
                       style: TextStyle(
@@ -197,12 +198,16 @@ class FileArchivePage extends StatelessWidget {
                                       textAlign: TextAlign.start,
                                       decoration: InputDecoration(
                                         focusedBorder: OutlineInputBorder(
-                                          borderRadius: BorderRadius.circular(5),
-                                          borderSide: BorderSide(color: Color(0xFF616161)),
+                                          borderRadius:
+                                              BorderRadius.circular(5),
+                                          borderSide: BorderSide(
+                                              color: Color(0xFF616161)),
                                         ),
                                         enabledBorder: OutlineInputBorder(
-                                          borderRadius: BorderRadius.circular(5),
-                                          borderSide: BorderSide(color: Color(0xFF616161)),
+                                          borderRadius:
+                                              BorderRadius.circular(5),
+                                          borderSide: BorderSide(
+                                              color: Color(0xFF616161)),
                                         ),
                                         hintText: '자료명으로 검색하기',
                                         hintStyle: TextStyle(
@@ -211,8 +216,10 @@ class FileArchivePage extends StatelessWidget {
                                           fontSize: 12,
                                           color: Color(0xFF585454),
                                         ),
-                                        suffixIcon: Icon(Icons.search, color: Color(0xFF585454)),
-                                        contentPadding: EdgeInsets.symmetric(vertical: 0, horizontal: 12),
+                                        suffixIcon: Icon(Icons.search,
+                                            color: Color(0xFF585454)),
+                                        contentPadding: EdgeInsets.symmetric(
+                                            vertical: 0, horizontal: 12),
                                         isDense: true,
                                       ),
                                     ),
@@ -237,9 +244,11 @@ class FileArchivePage extends StatelessWidget {
                                 Container(
                                   width: 300,
                                   margin: EdgeInsets.symmetric(vertical: 5),
-                                  padding: EdgeInsets.symmetric(horizontal: 10, vertical: 5),
+                                  padding: EdgeInsets.symmetric(
+                                      horizontal: 10, vertical: 5),
                                   decoration: BoxDecoration(
-                                    border: Border.all(color: Color(0xFFCCCCCC)),
+                                    border:
+                                        Border.all(color: Color(0xFFCCCCCC)),
                                     borderRadius: BorderRadius.circular(5),
                                   ),
                                   child: Row(
@@ -252,7 +261,9 @@ class FileArchivePage extends StatelessWidget {
                                           fontSize: 12,
                                           letterSpacing: -0.2,
                                           color: Color(0xFF585454),
-                                          decoration: isExpired ? TextDecoration.lineThrough : null,
+                                          decoration: isExpired
+                                              ? TextDecoration.lineThrough
+                                              : null,
                                         ),
                                       ),
                                     ],
@@ -267,7 +278,9 @@ class FileArchivePage extends StatelessWidget {
                                     fontFamily: 'Inter',
                                     fontWeight: FontWeight.w400,
                                     fontSize: 11,
-                                    color: isExpired ? Color(0xFF585454) : Color(0xFFBBBBBB),
+                                    color: isExpired
+                                        ? Color(0xFF585454)
+                                        : Color(0xFFBBBBBB),
                                   ),
                                 ),
                               ],

@@ -305,6 +305,37 @@ class ApiService {
       throw Exception('워크스페이스 삭제에 실패했습니다: ${response.body}');
     }
   }
+
+  // 워크스페이스 내 업무 조회 API
+  Future<List<Map<String, dynamic>>> getTasks(int projectId) async {
+    final url = '$baseUrl/api/workspaces/$projectId/works';
+
+    final String? token = await secureStorage.read(key: 'accessToken');
+    if (token == null) {
+      throw Exception('토큰이 없습니다');
+    }
+
+    final response = await http.get(
+      Uri.parse(url),
+      headers: {
+        'Authorization': token,
+      },
+    );
+
+    if (response.statusCode == 200) {
+         List<dynamic> data = jsonDecode(utf8.decode(response.bodyBytes));
+      return data.map((item) => item as Map<String, dynamic>).toList();
+    } else {
+       print('Failed to load user info: ${response.statusCode}');
+      print('Error response: ${utf8.decode(response.bodyBytes)}');
+      throw Exception('업무를 불러오지 못했습니다');
+    }
+  }
+
+
+
+
+  //여기에 계속 추가
 }
 
 class User {

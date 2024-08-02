@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:teaming/login/information_collab.dart';
 import 'package:teaming/login/login.dart';
-import 'package:teaming/popup_widget.dart';
+import 'package:teaming/widget/popup_widget.dart';
 import 'package:teaming/service/api_service.dart'; 
 import 'package:teaming/model/sign_up_dto.dart';
 

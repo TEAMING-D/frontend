@@ -23,27 +23,27 @@ class _ParticipationAnalysisPageState extends State<ParticipationAnalysisPage> {
   bool showBalloon = false;
   Offset touchPosition = Offset.zero;
 
-ScrollController _scrollController = ScrollController();
+  ScrollController _scrollController = ScrollController();
 
-@override
-void initState() {
-  super.initState();
-  _initializeWeights();
-  _calculateScores();
-  _scrollController.addListener(() {
-    if (showBalloon) {
-      setState(() {
-        showBalloon = false;
-      });
-    }
-  });
-}
+  @override
+  void initState() {
+    super.initState();
+    _initializeWeights();
+    _calculateScores();
+    _scrollController.addListener(() {
+      if (showBalloon) {
+        setState(() {
+          showBalloon = false;
+        });
+      }
+    });
+  }
 
-@override
-void dispose() {
-  _scrollController.dispose();
-  super.dispose();
-}
+  @override
+  void dispose() {
+    _scrollController.dispose();
+    super.dispose();
+  }
 
   void _initializeWeights() {
     for (var task in widget.tasks) {
@@ -104,7 +104,7 @@ void dispose() {
     });
   }
 
-    List<String> _getMemberTasks(String member) {
+  List<String> _getMemberTasks(String member) {
     List<String> tasks = [];
     for (var task in widget.tasks) {
       if (task['members'].contains(member)) {
@@ -113,7 +113,6 @@ void dispose() {
     }
     return tasks;
   }
-
 
   @override
   Widget build(BuildContext context) {
@@ -180,261 +179,343 @@ void dispose() {
       ),
       extendBodyBehindAppBar: true,
       body: GestureDetector(
-  onTap: () => setState(() => showBalloon = false),
-  onTapDown: (TapDownDetails details) {
-    setState(() {
-      touchPosition = details.globalPosition;
-    });
-  },
-  child: Stack( // Stack으로 변경
-    children: [
-      Container(
-        padding: EdgeInsets.symmetric(horizontal: 20),
-        width: MediaQuery.of(context).size.width,
-        decoration: BoxDecoration(
-          gradient: LinearGradient(
-            begin: Alignment.center,
-            end: Alignment.bottomRight,
-            colors: [
-              Colors.white,
-              Color.fromRGBO(138, 138, 138, 1),
-            ],
-          ),
-        ),
-        child: SingleChildScrollView(
-          controller: _scrollController,
-          padding: EdgeInsets.all(16),
-          child: Column(
-            children: [
-              SizedBox(height: 70),
-              Center(
-                child: Text(
-                  '업무 수행 기간과 담당자 인원을 고려해 평가합니다\n그래프를 터치하여 어떤 업무를 수행했는지 확인할 수 있습니다.',
-                  style: TextStyle(
-                    fontFamily: 'Inter',
-                    fontSize: 12,
-                    color: Color(0xff404040),
-                    letterSpacing: -0.4,
-                  ),
-                  textAlign: TextAlign.center,
+        onTap: () => setState(() => showBalloon = false),
+        onTapDown: (TapDownDetails details) {
+          setState(() {
+            touchPosition = details.globalPosition;
+          });
+        },
+        child: Stack(
+          // Stack으로 변경
+          children: [
+            Container(
+              padding: EdgeInsets.symmetric(horizontal: 20),
+              width: MediaQuery.of(context).size.width,
+              decoration: BoxDecoration(
+                gradient: LinearGradient(
+                  begin: Alignment.center,
+                  end: Alignment.bottomRight,
+                  colors: [
+                    Colors.white,
+                    Color.fromRGBO(138, 138, 138, 1),
+                  ],
                 ),
               ),
-              Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  SizedBox(height: 40),
-                  SizedBox(
-                    height: 300,
-                    child: PieChart(
-                      PieChartData(
-                        sections: sections,
-                        centerSpaceRadius: 0,
-                        sectionsSpace: 0,
-                        pieTouchData: PieTouchData(
-  touchCallback: (FlTouchEvent event, pieTouchResponse) {
-    setState(() {
-      if (event is FlTapUpEvent) {
-        final desiredSection = pieTouchResponse?.touchedSection;
-        if (desiredSection != null && desiredSection.touchedSectionIndex != -1 && desiredSection.touchedSectionIndex < memberScores.length) {
-          selectedMember = memberScores.keys.toList()[desiredSection.touchedSectionIndex];
-          showBalloon = true;
-          touchPosition = event.localPosition;
-        }
-      } else {
-        showBalloon = false;
-      }
-    });
-  },
-),
+              child: SingleChildScrollView(
+                controller: _scrollController,
+                padding: EdgeInsets.all(16),
+                child: Column(
+                  children: [
+                    SizedBox(height: kToolbarHeight * 2 - 10),
+                    Center(
+                      child: Text(
+                        '업무 수행 기간과 담당자 인원을 고려해 평가합니다\n그래프를 터치하여 어떤 업무를 수행했는지 확인할 수 있습니다.',
+                        style: TextStyle(
+                          fontFamily: 'Inter',
+                          fontSize: 12,
+                          color: Color(0xff404040),
+                          letterSpacing: -0.4,
+                        ),
+                        textAlign: TextAlign.center,
                       ),
                     ),
-                  ),
-                  SizedBox(height: 50),
-                  Text(
-                    '가중치 설정',
-                    style: TextStyle(
-                      fontFamily: 'Inter',
-                      fontWeight: FontWeight.bold,
-                      fontSize: 20,
-                      color: Color(0xff5A5A5A),
-                      letterSpacing: -0.4,
-                    ),
-                  ),
-                  SizedBox(height: 3),
-                  Text(
-                    '업무 및 담당 팀원의 가중치 설정이 가능합니다.\n1~9 사이에서 가중치 비율을 설정해주세요.',
-                    style: TextStyle(
-                      fontFamily: 'Inter',
-                      fontSize: 12,
-                      color: Color(0xff838383),
-                      letterSpacing: -0.4,
-                    ),
-                  ),
-                  SizedBox(height: 10),
-                  ListView.builder(
-                    padding: EdgeInsets.zero,
-                    shrinkWrap: true,
-                    physics: NeverScrollableScrollPhysics(),
-                    itemCount: widget.tasks.length,
-                    itemBuilder: (context, index) {
-                      String taskTitle = widget.tasks[index]['title'];
-                      String taskDescription = widget.tasks[index]['description'];
-                      List<String> members = widget.tasks[index]['members'];
-                      return Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Padding(
-                            padding: const EdgeInsets.symmetric(vertical: 8.0),
-                            child: Row(
+                    Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        SizedBox(height: 40),
+                        SizedBox(
+                          height: 300,
+                          child: PieChart(
+                            PieChartData(
+                              sections: sections,
+                              centerSpaceRadius: 0,
+                              sectionsSpace: 0,
+                              pieTouchData: PieTouchData(
+                                touchCallback:
+                                    (FlTouchEvent event, pieTouchResponse) {
+                                  setState(() {
+                                    if (event is FlTapUpEvent) {
+                                      final desiredSection =
+                                          pieTouchResponse?.touchedSection;
+                                      if (desiredSection != null &&
+                                          desiredSection.touchedSectionIndex !=
+                                              -1 &&
+                                          desiredSection.touchedSectionIndex <
+                                              memberScores.length) {
+                                        selectedMember = memberScores.keys
+                                                .toList()[
+                                            desiredSection.touchedSectionIndex];
+                                        showBalloon = true;
+                                        touchPosition = event.localPosition;
+                                      }
+                                    } else {
+                                      showBalloon = false;
+                                    }
+                                  });
+                                },
+                              ),
+                            ),
+                          ),
+                        ),
+                        SizedBox(height: 50),
+                        Text(
+                          '가중치 설정',
+                          style: TextStyle(
+                            fontFamily: 'Inter',
+                            fontWeight: FontWeight.bold,
+                            fontSize: 20,
+                            color: Color(0xff5A5A5A),
+                            letterSpacing: -0.4,
+                          ),
+                        ),
+                        SizedBox(height: 3),
+                        Text(
+                          '업무 및 담당 팀원의 가중치 설정이 가능합니다.\n1~9 사이에서 가중치 비율을 설정해주세요.',
+                          style: TextStyle(
+                            fontFamily: 'Inter',
+                            fontSize: 12,
+                            color: Color(0xff838383),
+                            letterSpacing: -0.4,
+                          ),
+                        ),
+                        SizedBox(height: 10),
+                        ListView.builder(
+                          padding: EdgeInsets.zero,
+                          shrinkWrap: true,
+                          physics: NeverScrollableScrollPhysics(),
+                          itemCount: widget.tasks.length,
+                          itemBuilder: (context, index) {
+                            String taskTitle = widget.tasks[index]['title'];
+                            String taskDescription =
+                                widget.tasks[index]['description'];
+                            List<String> members =
+                                widget.tasks[index]['members'];
+                            return Column(
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
                                 Padding(
-                                  padding: const EdgeInsets.only(top: 6),
-                                  child: Icon(Icons.circle,
-                                      size: 10, color: Color(0xff5A5A5A)),
-                                ),
-                                SizedBox(width: 8),
-                                Expanded(
-                                  child: Column(
-                                    crossAxisAlignment: CrossAxisAlignment.start,
+                                  padding:
+                                      const EdgeInsets.symmetric(vertical: 8.0),
+                                  child: Row(
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.start,
                                     children: [
-                                      Text(taskTitle,
-                                          style: TextStyle(
-                                            fontWeight: FontWeight.bold,
-                                            fontSize: 15,
-                                            fontFamily: 'Leferi',
-                                            color: Color(0xff5A5A5A),
-                                            letterSpacing: -0.3,
-                                          )),
-                                      SizedBox(height: 4),
-                                      SizedBox(
-                                        width: 210,
-                                        child: Text(taskDescription,
-                                            style: TextStyle(
-                                              color: Color(0xff5A5A5A),
-                                              fontSize: 13,
-                                              letterSpacing: -0.3,
-                                            )),
+                                      Padding(
+                                        padding: const EdgeInsets.only(top: 6),
+                                        child: Icon(Icons.circle,
+                                            size: 10, color: Color(0xff5A5A5A)),
                                       ),
-                                      SizedBox(height: 10),
-                                      for (var member in members)
-                                        members.length > 1
-                                            ? SizedBox(
-                                                height: 30,
-                                                child: Row(
-                                                  mainAxisAlignment: MainAxisAlignment.start,
-                                                  children: [
-                                                    Text('$member  · · ·  ',
-                                                        style: TextStyle(
-                                                          color: Color(0xff5A5A5A),
-                                                          fontSize: 13,
-                                                          letterSpacing: -0.3,
-                                                          fontWeight: FontWeight.bold,
-                                                        )),
-                                                    DropdownButton<int>(
-                                                      value: memberWeights[taskTitle]?[member] ?? 1,
-                                                      items: List.generate(
-                                                        9,
-                                                        (i) => DropdownMenuItem<int>(
-                                                          value: i + 1,
-                                                          child: Text((i + 1).toString()),
+                                      SizedBox(width: 8),
+                                      Expanded(
+                                        child: Column(
+                                          crossAxisAlignment:
+                                              CrossAxisAlignment.start,
+                                          children: [
+                                            Text(taskTitle,
+                                                style: TextStyle(
+                                                  fontWeight: FontWeight.bold,
+                                                  fontSize: 15,
+                                                  fontFamily: 'Leferi',
+                                                  color: Color(0xff5A5A5A),
+                                                  letterSpacing: -0.3,
+                                                )),
+                                            SizedBox(height: 4),
+                                            SizedBox(
+                                              width: 210,
+                                              child: Text(taskDescription,
+                                                  style: TextStyle(
+                                                    color: Color(0xff5A5A5A),
+                                                    fontSize: 13,
+                                                    letterSpacing: -0.3,
+                                                  )),
+                                            ),
+                                            SizedBox(height: 10),
+                                            for (var member in members)
+                                              members.length > 1
+                                                  ? SizedBox(
+                                                      height: 30,
+                                                      child: Row(
+                                                        mainAxisAlignment:
+                                                            MainAxisAlignment
+                                                                .start,
+                                                        children: [
+                                                          Text(
+                                                              '$member  · · ·  ',
+                                                              style: TextStyle(
+                                                                color: Color(
+                                                                    0xff5A5A5A),
+                                                                fontSize: 13,
+                                                                letterSpacing:
+                                                                    -0.3,
+                                                                fontWeight:
+                                                                    FontWeight
+                                                                        .bold,
+                                                              )),
+                                                          DropdownButton<int>(
+                                                            value: memberWeights[
+                                                                        taskTitle]
+                                                                    ?[member] ??
+                                                                1,
+                                                            items:
+                                                                List.generate(
+                                                              9,
+                                                              (i) =>
+                                                                  DropdownMenuItem<
+                                                                      int>(
+                                                                value: i + 1,
+                                                                child: Text((i +
+                                                                        1)
+                                                                    .toString()),
+                                                              ),
+                                                            ),
+                                                            onChanged: (value) {
+                                                              if (value !=
+                                                                  null) {
+                                                                _updateMemberWeight(
+                                                                    taskTitle,
+                                                                    member,
+                                                                    value);
+                                                              }
+                                                            },
+                                                            underline:
+                                                                SizedBox(),
+                                                            icon: Icon(
+                                                              Icons
+                                                                  .keyboard_arrow_down_outlined,
+                                                              color: Color(
+                                                                  0xff5A5A5A),
+                                                            ),
+                                                            dropdownColor:
+                                                                Colors.white,
+                                                            style: TextStyle(
+                                                              color: Color(
+                                                                  0xff5A5A5A),
+                                                              fontSize: 13,
+                                                              fontWeight:
+                                                                  FontWeight
+                                                                      .bold,
+                                                            ),
+                                                            menuMaxHeight: 250,
+                                                          ),
+                                                        ],
+                                                      ),
+                                                    )
+                                                  : Text('$member  · · ·  1',
+                                                      style: TextStyle(
+                                                        color:
+                                                            Color(0xff5A5A5A),
+                                                        fontSize: 13,
+                                                        letterSpacing: -0.3,
+                                                        fontWeight:
+                                                            FontWeight.bold,
+                                                      )),
+                                          ],
+                                        ),
+                                      ),
+                                      Column(
+                                        children: [
+                                          SizedBox(height: 10),
+                                          SizedBox(
+                                            height: 30,
+                                            width: 83,
+                                            child: Row(
+                                              mainAxisSize: MainAxisSize.min,
+                                              children: [
+                                                Container(
+                                                  decoration: BoxDecoration(
+                                                    color: Color(0xff5F5F5F),
+                                                    borderRadius:
+                                                        BorderRadius.circular(
+                                                            30),
+                                                  ),
+                                                  child: Row(
+                                                    children: [
+                                                      SizedBox(
+                                                        width: 25,
+                                                        height: 25,
+                                                        child: IconButton(
+                                                          icon: Icon(
+                                                              Icons.remove,
+                                                              color:
+                                                                  Colors.white,
+                                                              size: 13),
+                                                          onPressed: () {
+                                                            int currentWeight =
+                                                                taskWeights[
+                                                                        taskTitle] ??
+                                                                    1;
+                                                            if (currentWeight >
+                                                                1) {
+                                                              _updateTaskWeight(
+                                                                  taskTitle,
+                                                                  currentWeight -
+                                                                      1);
+                                                            }
+                                                          },
+                                                          padding:
+                                                              EdgeInsets.all(0),
+                                                          constraints:
+                                                              BoxConstraints(),
                                                         ),
                                                       ),
-                                                      onChanged: (value) {
-                                                        if (value != null) {
-                                                          _updateMemberWeight(taskTitle, member, value);
-                                                        }
-                                                      },
-                                                      underline: SizedBox(),
-                                                      icon: Icon(
-                                                        Icons.keyboard_arrow_down_outlined,
-                                                        color: Color(0xff5A5A5A),
+                                                      Container(
+                                                        width: 33,
+                                                        height: 33,
+                                                        alignment:
+                                                            Alignment.center,
+                                                        padding: EdgeInsets
+                                                            .symmetric(
+                                                                horizontal: 12),
+                                                        decoration:
+                                                            BoxDecoration(
+                                                          color:
+                                                              Color(0xffD9D9D9),
+                                                          shape:
+                                                              BoxShape.circle,
+                                                        ),
+                                                        child: Text(
+                                                          taskWeights[taskTitle]
+                                                              .toString(),
+                                                          style: TextStyle(
+                                                            color: Color(
+                                                                0xff5A5A5A),
+                                                            fontSize: 14,
+                                                            letterSpacing: -0.3,
+                                                            fontWeight:
+                                                                FontWeight.w500,
+                                                          ),
+                                                          textAlign:
+                                                              TextAlign.center,
+                                                        ),
                                                       ),
-                                                      dropdownColor: Colors.white,
-                                                      style: TextStyle(
-                                                        color: Color(0xff5A5A5A),
-                                                        fontSize: 13,
-                                                        fontWeight: FontWeight.bold,
+                                                      SizedBox(
+                                                        width: 25,
+                                                        height: 25,
+                                                        child: IconButton(
+                                                          icon: Icon(Icons.add,
+                                                              color:
+                                                                  Colors.white,
+                                                              size: 13),
+                                                          onPressed: () {
+                                                            int currentWeight =
+                                                                taskWeights[
+                                                                        taskTitle] ??
+                                                                    1;
+                                                            if (currentWeight <
+                                                                9) {
+                                                              _updateTaskWeight(
+                                                                  taskTitle,
+                                                                  currentWeight +
+                                                                      1);
+                                                            }
+                                                          },
+                                                          padding:
+                                                              EdgeInsets.all(0),
+                                                          constraints:
+                                                              BoxConstraints(),
+                                                        ),
                                                       ),
-                                                      menuMaxHeight: 250,
-                                                    ),
-                                                  ],
-                                                ),
-                                              )
-                                            : Text('$member  · · ·  1',
-                                                style: TextStyle(
-                                                  color: Color(0xff5A5A5A),
-                                                  fontSize: 13,
-                                                  letterSpacing: -0.3,
-                                                  fontWeight: FontWeight.bold,
-                                                )),
-                                    ],
-                                  ),
-                                ),
-                                Column(
-                                  children: [
-                                    SizedBox(height: 10),
-                                    SizedBox(
-                                      height: 30,
-                                      width: 83,
-                                      child: Row(
-                                        mainAxisSize: MainAxisSize.min,
-                                        children: [
-                                          Container(
-                                            decoration: BoxDecoration(
-                                              color: Color(0xff5F5F5F),
-                                              borderRadius: BorderRadius.circular(30),
-                                            ),
-                                            child: Row(
-                                              children: [
-                                                SizedBox(
-                                                  width: 25,
-                                                  height: 25,
-                                                  child: IconButton(
-                                                    icon: Icon(Icons.remove, color: Colors.white, size: 13),
-                                                    onPressed: () {
-                                                      int currentWeight = taskWeights[taskTitle] ?? 1;
-                                                      if (currentWeight > 1) {
-                                                        _updateTaskWeight(taskTitle, currentWeight - 1);
-                                                      }
-                                                    },
-                                                    padding: EdgeInsets.all(0),
-                                                    constraints: BoxConstraints(),
-                                                  ),
-                                                ),
-                                                Container(
-                                                  width: 33,
-                                                  height: 33,
-                                                  alignment: Alignment.center,
-                                                  padding: EdgeInsets.symmetric(horizontal: 12),
-                                                  decoration: BoxDecoration(
-                                                    color: Color(0xffD9D9D9),
-                                                    shape: BoxShape.circle,
-                                                  ),
-                                                  child: Text(
-                                                    taskWeights[taskTitle].toString(),
-                                                    style: TextStyle(
-                                                      color: Color(0xff5A5A5A),
-                                                      fontSize: 14,
-                                                      letterSpacing: -0.3,
-                                                      fontWeight: FontWeight.w500,
-                                                    ),
-                                                    textAlign: TextAlign.center,
-                                                  ),
-                                                ),
-                                                SizedBox(
-                                                  width: 25,
-                                                  height: 25,
-                                                  child: IconButton(
-                                                    icon: Icon(Icons.add, color: Colors.white, size: 13),
-                                                    onPressed: () {
-                                                      int currentWeight = taskWeights[taskTitle] ?? 1;
-                                                      if (currentWeight < 9) {
-                                                        _updateTaskWeight(taskTitle, currentWeight + 1);
-                                                      }
-                                                    },
-                                                    padding: EdgeInsets.all(0),
-                                                    constraints: BoxConstraints(),
+                                                    ],
                                                   ),
                                                 ),
                                               ],
@@ -442,61 +523,60 @@ void dispose() {
                                           ),
                                         ],
                                       ),
-                                    ),
-                                  ],
+                                    ],
+                                  ),
                                 ),
+                                SizedBox(height: 20),
                               ],
-                            ),
-                          ),
-                          SizedBox(height: 20),
-                        ],
-                      );
-                    },
-                  ),
-                ],
-              ),
-            ],
-          ),
-        ),
-      ),
-        if (showBalloon)
-          Positioned(
-            // 터치 위치 오프셋 조정
-            left: touchPosition.dx + 30,
-            top: touchPosition.dy + 80,
-            child: GestureDetector(
-              onTap: () => setState(() => showBalloon = false),
-              child: Center(
-                child: Card(color: Colors.white,
-                elevation: 4,
-                  child: Padding(
-                    padding: const EdgeInsets.all(10),
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: _getMemberTasks(selectedMember)
-                          .map((task) => Text( task,
-                        style: TextStyle(
-                          fontFamily: 'Inter',
-                          color: Color(0xff585454),
-                          fontSize: 10,
-                          fontWeight: FontWeight.w400,
+                            );
+                          },
                         ),
-                      ))
-                          .toList(),
+                      ],
+                    ),
+                  ],
+                ),
+              ),
+            ),
+            if (showBalloon)
+              Positioned(
+                // 터치 위치 오프셋 조정
+                left: touchPosition.dx + 30,
+                top: touchPosition.dy + 80,
+                child: GestureDetector(
+                  onTap: () => setState(() => showBalloon = false),
+                  child: Center(
+                    child: Card(
+                      color: Colors.white,
+                      elevation: 4,
+                      child: Padding(
+                        padding: const EdgeInsets.all(10),
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: _getMemberTasks(selectedMember)
+                              .map((task) => Text(
+                                    task,
+                                    style: TextStyle(
+                                      fontFamily: 'Inter',
+                                      color: Color(0xff585454),
+                                      fontSize: 10,
+                                      fontWeight: FontWeight.w400,
+                                    ),
+                                  ))
+                              .toList(),
+                        ),
+                      ),
                     ),
                   ),
                 ),
               ),
-            ),
-          ),
-      ],
-    ),
-  ), bottomNavigationBar: DetailNavigationBar(
+          ],
+        ),
+      ),
+      bottomNavigationBar: DetailNavigationBar(
         currentIndex: 2,
         currentPage: ParticipationAnalysisPage,
       ),
-);
-
+    );
   }
 }
 

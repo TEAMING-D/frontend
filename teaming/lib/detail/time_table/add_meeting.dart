@@ -2,8 +2,8 @@ import 'dart:ui';
 import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/services.dart';
-import 'package:teaming/textfield_widget.dart';
-import 'package:teaming/popup_widget.dart';
+import 'package:teaming/widget/textfield_widget.dart';
+import 'package:teaming/widget/popup_widget.dart';
 
 class AddMeetingPage extends StatefulWidget {
   const AddMeetingPage({super.key});

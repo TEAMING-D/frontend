@@ -1,8 +1,8 @@
 import 'dart:ui';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:teaming/textfield_widget.dart';
-import 'package:teaming/popup_widget.dart';
+import 'package:teaming/widget/textfield_widget.dart';
+import 'package:teaming/widget/popup_widget.dart';
 
 class ScheduleEditPage extends StatefulWidget {
   const ScheduleEditPage({super.key});
