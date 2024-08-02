@@ -5,26 +5,38 @@ import 'package:teaming/home/add_project.dart';
 import 'package:teaming/home/delete_project.dart';
 import 'package:teaming/home/notice.dart';
 import 'package:teaming/home/user_information_modify.dart';
+import 'package:teaming/service/api_service.dart';
 
 class TeamProjectPage extends StatefulWidget {
-  final List<Map<String, dynamic>> projects;
-  final bool hasNotification;
-
-  const TeamProjectPage(
-      {super.key, required this.projects, required this.hasNotification});
+  const TeamProjectPage({super.key});
 
   @override
   State<TeamProjectPage> createState() => _TeamProjectPageState();
 }
 
 class _TeamProjectPageState extends State<TeamProjectPage> {
-  List<Map<String, String>> notifications = [
-    {
-      "title": "프로젝트명C",
-      "message": "프로젝트명C에서 팀원 삭제 요청이 들어왔습니다.\n해당 프로젝트에서 나가시겠습니까?"
-    },
-    {"title": "프로젝트명B", "message": "프로젝트명B에 팀원으로 초대되었습니다.\n해당 프로젝트에 참여하시겠습니까?"},
-  ];
+  final ApiService apiService = ApiService();
+  List<Map<String, dynamic>> projects = [];
+  List<Map<String, String>> notifications = [];
+  bool hasNotification = false;
+
+  @override
+  void initState() {
+    super.initState();
+    _fetchWorkspaces();
+  }
+
+  Future<void> _fetchWorkspaces() async {
+    try {
+      final workspaces = await apiService.getWorkspaces();
+      setState(() {
+        projects = workspaces;
+      });
+    } catch (e) {
+      // 에러 처리
+      print('워크스페이스를 불러오는 데 실패했습니다: $e');
+    }
+  }
 
   void _handleAccept(int index) {
     setState(() {
@@ -42,13 +54,13 @@ class _TeamProjectPageState extends State<TeamProjectPage> {
 
   void _addProject(Map<String, dynamic> newProject) {
     setState(() {
-      widget.projects.insert(0, newProject);
+      projects.insert(0, newProject);
     });
   }
 
   void _updateProject(int index, Map<String, dynamic> updatedProject) {
     setState(() {
-      widget.projects[index] = updatedProject;
+      projects[index] = updatedProject;
     });
   }
 
@@ -62,7 +74,7 @@ class _TeamProjectPageState extends State<TeamProjectPage> {
             return Padding(
               padding: const EdgeInsets.only(left: 10),
               child: IconButton(
-                icon: widget.hasNotification
+                icon: hasNotification
                     ? Image.asset(
                         'assets/icon/alert_true_icon.png',
                         width: 28,
@@ -81,7 +93,7 @@ class _TeamProjectPageState extends State<TeamProjectPage> {
           },
         ),
         actions: [
-          if (widget.projects.isNotEmpty)
+          if (projects.isNotEmpty)
             Padding(
               padding: EdgeInsets.symmetric(horizontal: 4.0),
               child: SizedBox(
@@ -99,10 +111,10 @@ class _TeamProjectPageState extends State<TeamProjectPage> {
                       context,
                       MaterialPageRoute(
                         builder: (context) => DeleteProjectPage(
-                          projects: widget.projects,
+                          projects: projects,
                           onDeleteProjects: (selectedProjects) {
                             setState(() {
-                              widget.projects.removeWhere((project) =>
+                              projects.removeWhere((project) =>
                                   selectedProjects.contains(project));
                             });
                           },
@@ -155,10 +167,10 @@ class _TeamProjectPageState extends State<TeamProjectPage> {
                     context,
                     MaterialPageRoute(
                       builder: (context) => UserInfoModifyPage(
-                        projects: widget.projects,
+                        projects: projects,
                         onDeleteProjects: (selectedProjects) {
                           setState(() {
-                            widget.projects.removeWhere((project) =>
+                            projects.removeWhere((project) =>
                                 selectedProjects.contains(project));
                           });
                         },
@@ -201,7 +213,7 @@ class _TeamProjectPageState extends State<TeamProjectPage> {
                     ],
                   ),
                 ),
-                child: widget.projects.isEmpty
+                child: projects.isEmpty
                     ? Center(child: _buildEmptyView())
                     : Column(
                         crossAxisAlignment: CrossAxisAlignment.end,
@@ -260,7 +272,7 @@ class _TeamProjectPageState extends State<TeamProjectPage> {
 
   Widget _buildProjectListView(BuildContext context) {
     return Column(
-      children: widget.projects.map((project) {
+      children: projects.map((project) {
         return GestureDetector(
           onTap: () {
             Navigator.push(
@@ -306,9 +318,10 @@ class _TeamProjectPageState extends State<TeamProjectPage> {
                     ),
                     SizedBox(height: 3),
                     Text(
-                      project['members'].length <= 4
-                          ? '팀원: ${project['members'].join(', ')}'
-                          : '팀원: ${project['members'].getRange(0, 3).join(', ')} 외 ${project['members'].length - 4}인',
+                      project['members'] != null &&
+                              project['members'].isNotEmpty
+                          ? '팀원: ${project['members'].map((member) => member is Map<String, dynamic> ? member['username'] ?? 'null' : 'null').join(', ')}'
+                          : '팀원: null',
                       style: TextStyle(
                         fontSize: 13,
                         color: project['progress'] == 100
@@ -318,7 +331,7 @@ class _TeamProjectPageState extends State<TeamProjectPage> {
                     ),
                     SizedBox(height: 2),
                     Text(
-                      '수업: ${project['class']}',
+                      '${project['type']}: ${project['description']}',
                       style: TextStyle(
                         fontSize: 13,
                         color: project['progress'] == 100
@@ -329,8 +342,8 @@ class _TeamProjectPageState extends State<TeamProjectPage> {
                     SizedBox(height: 10),
                     Text(
                       project['progress'] == 100
-                          ? '기간: ${project['startDate']} ~ ${project['endDate']}'
-                          : '기간: ${project['startDate']} ~',
+                          ? '기간: ${project['startDate'] ?? DateTime.now().toString().split(' ')[0]} ~ ${project['endDate']}'
+                          : '기간: ${project['startDate'] ?? DateTime.now().toString().split(' ')[0]} ~',
                       style: TextStyle(
                         fontSize: 13,
                         color: project['progress'] == 100
@@ -348,7 +361,7 @@ class _TeamProjectPageState extends State<TeamProjectPage> {
                     TextSpan(
                       children: [
                         TextSpan(
-                          text: '${project['progress']}%\n',
+                          text: '${project['progress'] ?? 0}%\n',
                           style: TextStyle(
                             fontSize: 40,
                             fontWeight: FontWeight.bold,
@@ -362,7 +375,7 @@ class _TeamProjectPageState extends State<TeamProjectPage> {
                         TextSpan(
                           text: project['progress'] == 100
                               ? '완료된 프로젝트입니다'
-                              : '${project['endDate']}까지',
+                              : '${project['deadline']}까지',
                           style: TextStyle(
                             color: project['progress'] == 100
                                 ? Color(0xffEEEEEE)

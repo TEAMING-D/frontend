@@ -212,7 +212,7 @@ class ApiService {
     );
 
     if (response.statusCode != 200) {
-       print('Failed to load user info: ${response.statusCode}');
+      print('Failed to load user info: ${response.statusCode}');
       print('Error response: ${utf8.decode(response.bodyBytes)}');
       throw Exception('Failed to create workspace');
     }
@@ -220,7 +220,7 @@ class ApiService {
 
   // username(유저명)으로 유저 찾기 API
   Future<List<Map<String, dynamic>>> searchUser(String username) async {
-   final String? token = await secureStorage.read(key: 'accessToken');
+    final String? token = await secureStorage.read(key: 'accessToken');
     if (token == null) {
       throw Exception('토큰이 없습니다');
     }
@@ -231,12 +231,57 @@ class ApiService {
       },
     );
 
-  if (response.statusCode == 200) {
+    if (response.statusCode == 200) {
       final utf8Body = utf8.decode(response.bodyBytes);
       final data = jsonDecode(utf8Body)['data'];
       return List<Map<String, dynamic>>.from(data);
     } else {
       throw Exception('Failed to search user');
+    }
+  }
+
+  // 유저 정보 수정 API
+  Future<void> updateUserInfo(Map<String, dynamic> userInfo) async {
+    final String? token = await secureStorage.read(key: 'accessToken');
+    if (token == null) {
+      throw Exception('토큰이 없습니다');
+    }
+
+    final response = await http.put(
+      Uri.parse('$baseUrl/users'),
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': token,
+      },
+      body: jsonEncode(userInfo),
+    );
+
+    if (response.statusCode != 200) {
+      throw Exception('Failed to update user info');
+    }
+  }
+
+  // 유저 워크스페이스 authToken으로 조회하게 바뀐 뒤 url 수정
+  Future<List<Map<String, dynamic>>> getWorkspaces() async {
+    final String? token = await secureStorage.read(key: 'accessToken');
+    if (token == null) {
+      throw Exception('토큰이 없습니다');
+    }
+
+    final response = await http.get(
+      Uri.parse('$baseUrl/api/workspaces'),
+      headers: {
+        'Authorization': token,
+      },
+    );
+
+    if (response.statusCode == 200) {
+      final List data = jsonDecode(utf8.decode(response.bodyBytes));
+      return List<Map<String, dynamic>>.from(data);
+    } else {
+      print('Failed to load user info: ${response.statusCode}');
+      print('Error response: ${utf8.decode(response.bodyBytes)}');
+      throw Exception('워크스페이스를 불러오는 데 실패했습니다');
     }
   }
 }

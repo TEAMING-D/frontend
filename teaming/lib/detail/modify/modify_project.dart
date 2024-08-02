@@ -29,17 +29,17 @@ class _ModifyProjectPageState extends State<ModifyProjectPage> {
     super.initState();
     // 샘플 데이터를 초기화합니다.
     final project = {
-  'name': '프로젝트명A',
-  'members': [
-    {'name': '김세아', 'status': ''},
-    {'name': '오수진', 'status': ''},
-    {'name': '윤소윤', 'status': ''}
-  ],
-  'class': '수업명A',
-  'progress': 80,
-  'startDate': '2024.03.04',
-  'endDate': '2024.08.15',
-};
+      'name': '프로젝트명A',
+      'members': [
+        {'name': '김세아', 'status': ''},
+        {'name': '오수진', 'status': ''},
+        {'name': '윤소윤', 'status': ''}
+      ],
+      'class': '수업명A',
+      'progress': 80,
+      'startDate': '2024.03.04',
+      'endDate': '2024.08.15',
+    };
     projectNameController =
         TextEditingController(text: project['name'] as String);
     projectTypeController =
@@ -52,8 +52,9 @@ class _ModifyProjectPageState extends State<ModifyProjectPage> {
     endDayController = TextEditingController(
         text: (project['endDate'] as String).split('.')[2]);
     teamMembers = List<Map<String, String>>.from(
-  (project['members'] as List<dynamic>).map((member) => Map<String, String>.from(member)).toList()
-);
+        (project['members'] as List<dynamic>)
+            .map((member) => Map<String, String>.from(member))
+            .toList());
   }
 
   void _addTeamMember(String member) {
@@ -65,7 +66,7 @@ class _ModifyProjectPageState extends State<ModifyProjectPage> {
   }
 
   void _removeTeamMember(String member) {
-    showGeneralDialog(
+    /* showGeneralDialog(
       barrierLabel: "Popup",
       barrierDismissible: true,
       barrierColor: Colors.black.withOpacity(0.3),
@@ -107,7 +108,8 @@ class _ModifyProjectPageState extends State<ModifyProjectPage> {
                             onPressed: () {
                               Navigator.of(context).pop();
                             },
-                            style: ElevatedButton.styleFrom(foregroundColor: Colors.white,
+                            style: ElevatedButton.styleFrom(
+                              foregroundColor: Colors.white,
                               backgroundColor: Color(0xffD8D8D8),
                               shape: RoundedRectangleBorder(
                                 borderRadius: BorderRadius.circular(10),
@@ -143,7 +145,8 @@ class _ModifyProjectPageState extends State<ModifyProjectPage> {
                               });
                               Navigator.of(context).pop();
                             },
-                            style: ElevatedButton.styleFrom(foregroundColor: Colors.white,
+                            style: ElevatedButton.styleFrom(
+                              foregroundColor: Colors.white,
                               backgroundColor: Color.fromRGBO(84, 84, 84, 1),
                               shape: RoundedRectangleBorder(
                                 borderRadius: BorderRadius.circular(10),
@@ -175,7 +178,18 @@ class _ModifyProjectPageState extends State<ModifyProjectPage> {
           child: child,
         );
       },
-    );
+    ); */
+
+    // 알림 관련 API 미구현으로 일방 삭제 및 화면전환 진행
+    setState(() {
+      teamMembers = teamMembers.map((m) {
+        if (m['name'] == member) {
+          return {'name': m['name']!, 'status': '→ 탈퇴 요청 중'};
+        }
+        return m;
+      }).toList();
+    });
+
   }
 
   void _modifyProject() {
@@ -233,7 +247,8 @@ class _ModifyProjectPageState extends State<ModifyProjectPage> {
                             onPressed: () {
                               Navigator.of(context).pop();
                             },
-                            style: ElevatedButton.styleFrom(foregroundColor: Colors.white,
+                            style: ElevatedButton.styleFrom(
+                              foregroundColor: Colors.white,
                               backgroundColor: Color.fromRGBO(84, 84, 84, 1),
                               shape: RoundedRectangleBorder(
                                 borderRadius: BorderRadius.circular(10),
@@ -549,11 +564,7 @@ class _ModifyProjectPageState extends State<ModifyProjectPage> {
                     SizedBox(
                       height: 20,
                     ),
-                    buildDateTextField(
-                        '마감 기한',
-                        'YYYY',
-                        'MM',
-                        'DD',
+                    buildDateTextField('마감 기한', 'YYYY', 'MM', 'DD',
                         controller1: endYearController,
                         controller2: endMonthController,
                         controller3: endDayController),
@@ -623,45 +634,46 @@ class _ModifyProjectPageState extends State<ModifyProjectPage> {
                       ),
                     ),
                     Wrap(
-  children: teamMembers.map((member) {
-    return Container(
-      margin: EdgeInsets.only(top: 10),
-      padding: EdgeInsets.only(left: 15),
-      height: 35,
-      decoration: BoxDecoration(
-        color: Colors.white,
-        border: Border.all(color: Color(0xFFD1D1D1)),
-        borderRadius: BorderRadius.circular(10),
-      ),
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-        children: [
-          Expanded(
-            child: Text(
-              '${member['name']} ${member['status']}',
-              style: TextStyle(
-                fontFamily: 'Inter',
-                fontWeight: FontWeight.w400,
-                fontSize: 14,
-                color: Color(0xFF484848),
-              ),
-            ),
-          ),
-          if (member['status'] != '→ 탈퇴 요청 중')
-            IconButton(
-              icon: Icon(
-                Icons.close,
-                color: Color(0xFF484848),
-              ),
-            padding: EdgeInsets.zero,
-            constraints: BoxConstraints(),
-            onPressed: () => _removeTeamMember(member['name']!),
-          ),
-        ],
-      ),
-    );
-  }).toList(),
-),
+                      children: teamMembers.map((member) {
+                        return Container(
+                          margin: EdgeInsets.only(top: 10),
+                          padding: EdgeInsets.only(left: 15),
+                          height: 35,
+                          decoration: BoxDecoration(
+                            color: Colors.white,
+                            border: Border.all(color: Color(0xFFD1D1D1)),
+                            borderRadius: BorderRadius.circular(10),
+                          ),
+                          child: Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            children: [
+                              Expanded(
+                                child: Text(
+                                  '${member['name']} ${member['status']}',
+                                  style: TextStyle(
+                                    fontFamily: 'Inter',
+                                    fontWeight: FontWeight.w400,
+                                    fontSize: 14,
+                                    color: Color(0xFF484848),
+                                  ),
+                                ),
+                              ),
+                              if (member['status'] != '→ 탈퇴 요청 중')
+                                IconButton(
+                                  icon: Icon(
+                                    Icons.close,
+                                    color: Color(0xFF484848),
+                                  ),
+                                  padding: EdgeInsets.zero,
+                                  constraints: BoxConstraints(),
+                                  onPressed: () =>
+                                      _removeTeamMember(member['name']!),
+                                ),
+                            ],
+                          ),
+                        );
+                      }).toList(),
+                    ),
                     SizedBox(height: 200),
                   ],
                 ),
@@ -676,7 +688,8 @@ class _ModifyProjectPageState extends State<ModifyProjectPage> {
         bottom: 53,
         child: ElevatedButton(
           onPressed: _modifyProject,
-          style: ElevatedButton.styleFrom(foregroundColor: Colors.white,
+          style: ElevatedButton.styleFrom(
+            foregroundColor: Colors.white,
             backgroundColor: Color.fromRGBO(84, 84, 84, 1),
             minimumSize: Size(double.infinity, 50),
             shape: RoundedRectangleBorder(

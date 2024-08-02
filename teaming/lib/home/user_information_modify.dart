@@ -82,75 +82,75 @@ class _UserInfoModifyPageState extends State<UserInfoModifyPage> {
     _fetchUserInfo();
   }
 
- Future<void> _fetchUserInfo() async {
-  try {
-    final userInfo = await apiService.getUserInfo();
-    setState(() {
-      // 서버에서 가져온 데이터로 컨트롤러 업데이트
-      // 변경 불가능
-      email = userInfo['data']['email'] ?? '';
-      username = userInfo['data']['username'] ?? '';
-      
-      // 변경 가능
-      schoolNameController.text = userInfo['data']['schoolName'] ?? '';
-      studentIdController.text = userInfo['data']['schoolNum'] ?? '';
-      majorController.text = userInfo['data']['major'] ?? '';
+  Future<void> _fetchUserInfo() async {
+    try {
+      final userInfo = await apiService.getUserInfo();
+      setState(() {
+        // 서버에서 가져온 데이터로 컨트롤러 업데이트
+        // 변경 불가능
+        email = userInfo['data']['email'] ?? '';
+        username = userInfo['data']['username'] ?? '';
 
-      if (userInfo['data'].containsKey('phoneNumber')) {
-        final phoneNumber = userInfo['data']['phoneNumber'] ?? '';
-        final phoneParts = phoneNumber.split('-');
-        if (phoneParts.length == 3) {
-          phoneNumber1Controller.text = phoneParts[0];
-          phoneNumber2Controller.text = phoneParts[1];
-          phoneNumber3Controller.text = phoneParts[2];
-        }
-      }
+        // 변경 가능
+        schoolNameController.text = userInfo['data']['schoolName'] ?? '';
+        studentIdController.text = userInfo['data']['schoolNum'] ?? '';
+        majorController.text = userInfo['data']['major'] ?? '';
 
-      if (userInfo['data'].containsKey('birth')) {
-        final birthDate = userInfo['data']['birth'] ?? '';
-        final birthParts = birthDate.split('-');
-        if (birthParts.length == 3) {
-          birthYearController.text = birthParts[0];
-          birthMonthController.text = birthParts[1];
-          birthDayController.text = birthParts[2];
+        if (userInfo['data'].containsKey('phoneNumber')) {
+          final phoneNumber = userInfo['data']['phoneNumber'] ?? '';
+          final phoneParts = phoneNumber.split('-');
+          if (phoneParts.length == 3) {
+            phoneNumber1Controller.text = phoneParts[0];
+            phoneNumber2Controller.text = phoneParts[1];
+            phoneNumber3Controller.text = phoneParts[2];
+          }
         }
-      }
 
-      if (userInfo['data'].containsKey('sns')) {
-        final sns = userInfo['data']['sns']?.split(' ') ?? ['', ''];
-        if (sns.length >= 2) {
-          snsTypeController.text = sns[0];
-          snsAccountController.text = sns[1];
-        } else {
-          snsTypeController.text = '';
-          snsAccountController.text = '';
+        if (userInfo['data'].containsKey('birth')) {
+          final birthDate = userInfo['data']['birth'] ?? '';
+          final birthParts = birthDate.split('-');
+          if (birthParts.length == 3) {
+            birthYearController.text = birthParts[0];
+            birthMonthController.text = birthParts[1];
+            birthDayController.text = birthParts[2];
+          }
         }
-      }
 
-      if (userInfo['data'].containsKey('collabTools')) {
-        final collabTools = userInfo['data']['collabTools'];
-        if (collabTools != null && collabTools.isNotEmpty) {
-          final cleanCollabTools = collabTools.replaceAll(RegExp(r',\s*}'), '}');
-          final Map<String, dynamic> toolsMap = jsonDecode(cleanCollabTools);
-          additionalFields.clear();
-          toolsMap.forEach((toolName, email) {
-            additionalFields.add(
-              AdditionalField(
-                toolNameController: TextEditingController(text: toolName),
-                emailController: TextEditingController(text: email),
-              ),
-            );
-          });
-        } else {
-          additionalFields.clear(); // collabTools가 없을 경우 초기화
+        if (userInfo['data'].containsKey('sns')) {
+          final sns = userInfo['data']['sns']?.split(' ') ?? ['', ''];
+          if (sns.length >= 2) {
+            snsTypeController.text = sns[0];
+            snsAccountController.text = sns[1];
+          } else {
+            snsTypeController.text = '';
+            snsAccountController.text = '';
+          }
         }
-      }
-    });
-  } catch (e) {
-    _showErrorPopup(context, '사용자 정보를 불러오는 데 실패했습니다.');
+
+        if (userInfo['data'].containsKey('collabTools')) {
+          final collabTools = userInfo['data']['collabTools'];
+          if (collabTools != null && collabTools.isNotEmpty) {
+            final cleanCollabTools =
+                collabTools.replaceAll(RegExp(r',\s*}'), '}');
+            final Map<String, dynamic> toolsMap = jsonDecode(cleanCollabTools);
+            additionalFields.clear();
+            toolsMap.forEach((toolName, email) {
+              additionalFields.add(
+                AdditionalField(
+                  toolNameController: TextEditingController(text: toolName),
+                  emailController: TextEditingController(text: email),
+                ),
+              );
+            });
+          } else {
+            additionalFields.clear(); // collabTools가 없을 경우 초기화
+          }
+        }
+      });
+    } catch (e) {
+      _showErrorPopup(context, '사용자 정보를 불러오는 데 실패했습니다.');
+    }
   }
-}
-
 
   Widget buildToggleTextField(
       String label,
@@ -248,73 +248,85 @@ class _UserInfoModifyPageState extends State<UserInfoModifyPage> {
     );
   }
 
+  void showSuccessPopup(BuildContext context, String message,
+      {VoidCallback? onConfirm}) {
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return PopupWidget(
+          message: message,
+          onConfirm: onConfirm,
+        );
+      },
+    );
+  }
+
   Widget buildAdditionalField(int index) {
-  final field = additionalFields[index];
-  return Padding(
-    padding: const EdgeInsets.only(top: 10),
-    child: Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Row(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          children: [
-            SizedBox(
-              width: 82,
-              child: Column(
-                children: [
-                  Padding(
-                    padding: const EdgeInsets.only(left: 3),
-                    child: SizedBox(
-                      height: 30,
-                      child: TextField(
-                        controller: field.toolNameController,
-                        style: TextStyle(fontSize: 15, color: Colors.black),
-                        textAlign: TextAlign.start,
-                        decoration: InputDecoration(
-                          hintText: '도구명',
-                          border: InputBorder.none,
-                          contentPadding: EdgeInsets.symmetric(vertical: 5),
-                          hintStyle: TextStyle(
-                              fontFamily: 'Inter',
-                              fontWeight: FontWeight.w400,
-                              fontSize: 16,
-                              color: Color(0xFF828282)),
+    final field = additionalFields[index];
+    return Padding(
+      padding: const EdgeInsets.only(top: 10),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              SizedBox(
+                width: 82,
+                child: Column(
+                  children: [
+                    Padding(
+                      padding: const EdgeInsets.only(left: 3),
+                      child: SizedBox(
+                        height: 30,
+                        child: TextField(
+                          controller: field.toolNameController,
+                          style: TextStyle(fontSize: 15, color: Colors.black),
+                          textAlign: TextAlign.start,
+                          decoration: InputDecoration(
+                            hintText: '도구명',
+                            border: InputBorder.none,
+                            contentPadding: EdgeInsets.symmetric(vertical: 5),
+                            hintStyle: TextStyle(
+                                fontFamily: 'Inter',
+                                fontWeight: FontWeight.w400,
+                                fontSize: 16,
+                                color: Color(0xFF828282)),
+                          ),
                         ),
                       ),
                     ),
-                  ),
-                ],
+                  ],
+                ),
               ),
-            ),
-          ],
-        ),
-        SizedBox(height: 10),
-        Padding(
-          padding: const EdgeInsets.only(left: 3),
-          child: SizedBox(
-            height: 30,
-            child: TextField(
-              controller: field.emailController,
-              style: TextStyle(fontSize: 15, color: Colors.black),
-              decoration: InputDecoration(
-                hintText: '계정 이메일을 입력해주세요',
-                border: InputBorder.none,
-                contentPadding: EdgeInsets.symmetric(vertical: 5),
-                hintStyle: TextStyle(
-                    fontFamily: 'Inter',
-                    fontWeight: FontWeight.w400,
-                    fontSize: 15,
-                    color: Color(0xFF828282)),
+            ],
+          ),
+          SizedBox(height: 10),
+          Padding(
+            padding: const EdgeInsets.only(left: 3),
+            child: SizedBox(
+              height: 30,
+              child: TextField(
+                controller: field.emailController,
+                style: TextStyle(fontSize: 15, color: Colors.black),
+                decoration: InputDecoration(
+                  hintText: '계정 이메일을 입력해주세요',
+                  border: InputBorder.none,
+                  contentPadding: EdgeInsets.symmetric(vertical: 5),
+                  hintStyle: TextStyle(
+                      fontFamily: 'Inter',
+                      fontWeight: FontWeight.w400,
+                      fontSize: 15,
+                      color: Color(0xFF828282)),
+                ),
               ),
             ),
           ),
-        ),
-        Divider(color: Color(0xFF828282), thickness: 1),
-      ],
-    ),
-  );
-}
-
+          Divider(color: Color(0xFF828282), thickness: 1),
+        ],
+      ),
+    );
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -468,7 +480,7 @@ class _UserInfoModifyPageState extends State<UserInfoModifyPage> {
                             height: 8,
                           ),
                           Text(
-                             email.isEmpty ? 'email@sample.com' : email,
+                            email.isEmpty ? 'email@sample.com' : email,
                             style: TextStyle(
                               fontFamily: 'Inter',
                               fontWeight: FontWeight.w400,
@@ -477,10 +489,11 @@ class _UserInfoModifyPageState extends State<UserInfoModifyPage> {
                             ),
                           ),
                           SizedBox(height: 3),
-                          Divider(color: Color(0xFF9C9C9C), thickness: 1),
+                          Divider(color: Color(0xFF9C9C9C), thickness: 0),
                         ],
                       )),
-                  Padding(
+                  // 유저 정보 수정 API에 비밀번호 수정 미구현
+                  /*  Padding(
                     padding:
                         const EdgeInsets.symmetric(horizontal: 50, vertical: 5),
                     child: buildTextField("계정 비밀번호", "변경 비밀번호를 입력하세요",
@@ -491,9 +504,9 @@ class _UserInfoModifyPageState extends State<UserInfoModifyPage> {
                         const EdgeInsets.symmetric(horizontal: 50, vertical: 5),
                     child: buildTextField("계정 비밀번호 확인", "변경 비밀번호를 입력하세요",
                         controllerName: confirmPasswordController),
-                  ),
+                  ), */
                   SizedBox(
-                    height: 65,
+                    height: 50,
                   ),
                   buildToggleTextField("Notion", "계정 이메일을 입력해주세요",
                       notionController, isNotionVisible, (value) {
@@ -613,7 +626,7 @@ class _UserInfoModifyPageState extends State<UserInfoModifyPage> {
                             ),
                           ),
                           SizedBox(height: 3),
-                          Divider(color: Color(0xFF9C9C9C), thickness: 1),
+                          Divider(color: Color(0xFF9C9C9C), thickness: 0),
                         ],
                       )),
                   Padding(
@@ -686,8 +699,34 @@ class _UserInfoModifyPageState extends State<UserInfoModifyPage> {
           right: 50,
           bottom: 53,
           child: ElevatedButton(
-            onPressed: () {
-              // 저장 버튼 눌렀을 때 처리할 코드
+            onPressed: () async {
+              try {
+                final collabToolsMap = {
+                  for (var field in additionalFields)
+                    field.toolNameController.text: field.emailController.text
+                };
+                final phone =
+                    '${phoneNumber1Controller.text}-${phoneNumber2Controller.text}-${phoneNumber3Controller.text}';
+                final userInfo = {
+                  'email': email,
+                  'username': username,
+                  'schoolName': schoolNameController.text,
+                  'schoolNum': studentIdController.text,
+                  'major': majorController.text,
+                  'phone': phone,
+                  'birth':
+                      '${birthYearController.text}-${birthMonthController.text.padLeft(2, '0')}-${birthDayController.text.padLeft(2, '0')}',
+                  'sns':
+                      '${snsTypeController.text} ${snsAccountController.text}',
+                  'collabTools': jsonEncode(collabToolsMap),
+                };
+                await apiService.updateUserInfo(userInfo);
+                showSuccessPopup(context, '정보가 성공적으로 수정되었습니다.', onConfirm: () {
+                  Navigator.pop(context);
+                });
+              } catch (e) {
+                _showErrorPopup(context, '사용자 정보 수정에 실패했습니다.');
+              }
             },
             style: ElevatedButton.styleFrom(
               backgroundColor: Color.fromRGBO(84, 84, 84, 1),

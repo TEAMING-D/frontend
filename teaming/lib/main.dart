@@ -42,8 +42,6 @@ class MyApp extends StatelessWidget {
             return MaterialPageRoute(
               builder: (context) {
                 return TeamProjectPage(
-                  projects: args['projects'],
-                  hasNotification: args['hasNotification'],
                 );
               },
             );
