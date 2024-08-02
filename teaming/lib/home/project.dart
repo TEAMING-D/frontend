@@ -19,6 +19,7 @@ class _TeamProjectPageState extends State<TeamProjectPage> {
   List<Map<String, dynamic>> projects = [];
   List<Map<String, String>> notifications = [];
   bool hasNotification = false;
+  bool isLoading = true;
 
   @override
   void initState() {
@@ -31,10 +32,14 @@ class _TeamProjectPageState extends State<TeamProjectPage> {
       final workspaces = await apiService.getWorkspaces();
       setState(() {
         projects = workspaces;
+        isLoading = false;
       });
     } catch (e) {
       // 에러 처리
       print('워크스페이스를 불러오는 데 실패했습니다: $e');
+      setState(() {
+        isLoading = false;
+      });
     }
   }
 
@@ -120,7 +125,9 @@ class _TeamProjectPageState extends State<TeamProjectPage> {
                           },
                         ),
                       ),
-                    );
+                    ).then((value) {
+                      _fetchWorkspaces();
+                    });
                   },
                 ),
               ),
@@ -145,7 +152,9 @@ class _TeamProjectPageState extends State<TeamProjectPage> {
                         onAddProject: _addProject,
                       ),
                     ),
-                  );
+                  ).then((value) {
+                    _fetchWorkspaces();
+                  });
                 },
               ),
             ),
@@ -213,33 +222,40 @@ class _TeamProjectPageState extends State<TeamProjectPage> {
                     ],
                   ),
                 ),
-                child: projects.isEmpty
-                    ? Center(child: _buildEmptyView())
-                    : Column(
-                        crossAxisAlignment: CrossAxisAlignment.end,
-                        children: [
-                          SizedBox(
-                            height: 115,
+                child: isLoading
+                    ? Center(
+                        child: CircularProgressIndicator(
+                          valueColor:
+                              AlwaysStoppedAnimation<Color>(Colors.black),
+                        ), // 로딩 인디케이터
+                      )
+                    : projects.isEmpty
+                        ? Center(child: _buildEmptyView())
+                        : Column(
+                            crossAxisAlignment: CrossAxisAlignment.end,
+                            children: [
+                              SizedBox(
+                                height: 115,
+                              ),
+                              Text(
+                                '프로젝트별 진행도는 ‘완료된 업무 / 전체 업무’를 기준으로 표시됩니다',
+                                style: TextStyle(
+                                  fontFamily: 'Inter',
+                                  fontWeight: FontWeight.w400,
+                                  color: Color(0xffA2A2A2),
+                                  fontSize: 11,
+                                ),
+                                textAlign: TextAlign.end,
+                              ),
+                              SizedBox(
+                                height: 5,
+                              ),
+                              _buildProjectListView(context),
+                              SizedBox(
+                                height: 30,
+                              ),
+                            ],
                           ),
-                          Text(
-                            '프로젝트별 진행도는 ‘완료된 업무 / 전체 업무’를 기준으로 표시됩니다',
-                            style: TextStyle(
-                              fontFamily: 'Inter',
-                              fontWeight: FontWeight.w400,
-                              color: Color(0xffA2A2A2),
-                              fontSize: 11,
-                            ),
-                            textAlign: TextAlign.end,
-                          ),
-                          SizedBox(
-                            height: 5,
-                          ),
-                          _buildProjectListView(context),
-                          SizedBox(
-                            height: 30,
-                          ),
-                        ],
-                      ),
               ),
             ),
           );

@@ -1,5 +1,7 @@
 import 'dart:ui';
 import 'package:flutter/material.dart';
+import 'package:teaming/popup_widget.dart';
+import 'package:teaming/service/api_service.dart';
 
 class DeleteProjectPage extends StatefulWidget {
   final List<Map<String, dynamic>> projects;
@@ -14,6 +16,7 @@ class DeleteProjectPage extends StatefulWidget {
 
 class _DeleteProjectPageState extends State<DeleteProjectPage> {
   List<Map<String, dynamic>> selectedProjects = [];
+  final ApiService apiService = ApiService();
 
   void _toggleProjectSelection(Map<String, dynamic> project) {
     setState(() {
@@ -25,10 +28,30 @@ class _DeleteProjectPageState extends State<DeleteProjectPage> {
     });
   }
 
-  void _deleteProjects() {
-    widget.onDeleteProjects(selectedProjects);
+  Future<void> _deleteProjects() async {
+    try {
+      for (var project in selectedProjects) {
+        await apiService.deleteWorkspace(project['id']);
+      }
+      widget.onDeleteProjects(selectedProjects);
+      Navigator.pop(context);
+      Navigator.pop(context);
+    } catch (e) {
+      print('프로젝트 삭제에 실패했습니다: $e');
+      _showErrorDialog('프로젝트 삭제에 실패했습니다.');
+    }
+  }
+
+  void _showErrorDialog(String message) {
     Navigator.pop(context);
-    Navigator.pop(context);
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return PopupWidget(
+          message: message
+        );
+      },
+    );
   }
 
   void _showDeleteConfirmationDialog() {
@@ -74,7 +97,8 @@ class _DeleteProjectPageState extends State<DeleteProjectPage> {
                             onPressed: () {
                               Navigator.of(context).pop();
                             },
-                            style: ElevatedButton.styleFrom(foregroundColor: Colors.grey,
+                            style: ElevatedButton.styleFrom(
+                              foregroundColor: Colors.grey,
                               backgroundColor: Color(0xffD8D8D8),
                               shape: RoundedRectangleBorder(
                                 borderRadius: BorderRadius.circular(10),
@@ -99,7 +123,8 @@ class _DeleteProjectPageState extends State<DeleteProjectPage> {
                             onPressed: () {
                               _deleteProjects();
                             },
-                            style: ElevatedButton.styleFrom(foregroundColor: Colors.white,
+                            style: ElevatedButton.styleFrom(
+                              foregroundColor: Colors.white,
                               backgroundColor: Color.fromRGBO(84, 84, 84, 1),
                               shape: RoundedRectangleBorder(
                                 borderRadius: BorderRadius.circular(10),
@@ -232,10 +257,10 @@ class _DeleteProjectPageState extends State<DeleteProjectPage> {
                     children: [
                       Expanded(
                         child: ListView(
-                          padding: EdgeInsets.fromLTRB(16, 10, 16, 120),
+                          padding: EdgeInsets.fromLTRB(16, 10, 32, 120),
                           children: widget.projects.map((project) {
                             return Padding(
-                              padding: const EdgeInsets.only(bottom: 10.0),
+                              padding: const EdgeInsets.only(bottom: 15.0),
                               child: Row(
                                 children: [
                                   Checkbox(

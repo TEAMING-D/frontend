@@ -203,7 +203,7 @@ class _AddProjectPageState extends State<AddProjectPage> {
 
         await apiService.createWorkspace(newProject);
         showSuccessPopup(context, '프로젝트가 성공적으로 생성되었습니다.', onConfirm: () {
-          Navigator.pop(context); 
+          Navigator.pop(context);
         });
       } catch (e) {
         showErrorPopup(context, '프로젝트 생성에 실패했습니다.');
@@ -491,6 +491,15 @@ class _AddProjectPageState extends State<AddProjectPage> {
                       ),
                     ),
                     SizedBox(
+                      height: 2,
+                    ),
+                    Text('유저 본인은 기본적으로 해당 프로젝트에 추가됩니다', style: TextStyle(
+                        fontFamily: 'Inter',
+                        fontWeight: FontWeight.w400,
+                        fontSize: 12,
+                        color: Color.fromARGB(255, 141, 141, 141),
+                      ),),
+                    SizedBox(
                       height: 10,
                     ),
                     Container(
@@ -561,7 +570,7 @@ class _AddProjectPageState extends State<AddProjectPage> {
                           maxLines: 2,
                           textDirection: TextDirection.ltr,
                         );
-                        textPainter.layout(maxWidth: 200);
+                        textPainter.layout(maxWidth: 230);
 
                         final numLines =
                             textPainter.computeLineMetrics().length;

@@ -284,6 +284,27 @@ class ApiService {
       throw Exception('워크스페이스를 불러오는 데 실패했습니다');
     }
   }
+
+  // 워크스페이스 삭제 API
+  Future<void> deleteWorkspace(int id) async {
+    final url = '$baseUrl/api/workspaces/$id';
+    final String? token = await secureStorage.read(key: 'accessToken');
+    if (token == null) {
+      throw Exception('토큰이 없습니다');
+    }
+    final response = await http.delete(
+      Uri.parse(url),
+      headers: {
+        'Authorization': token,
+      },
+    );
+
+    if (response.statusCode != 204) {
+      print('Failed to load user info: ${response.statusCode}');
+      print('Error response: ${utf8.decode(response.bodyBytes)}');
+      throw Exception('워크스페이스 삭제에 실패했습니다: ${response.body}');
+    }
+  }
 }
 
 class User {
