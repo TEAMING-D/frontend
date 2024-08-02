@@ -122,7 +122,7 @@ class _LoginPageState extends State<LoginPage> {
         },
       );
     } catch (e) {
-      _showPopup('로그인 실패:\n' '$e');
+      _showPopup(('$e' == "type 'Null' is not a subtype of type 'String'") ? '아이디 또는 비밀번호를\n다시 한 번 확인해 주세요' : '로그인 실패\n' '$e');
     }
   }
 

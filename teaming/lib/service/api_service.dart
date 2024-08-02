@@ -178,7 +178,23 @@ class ApiService {
     }
   }
 
+  // 탈퇴 API
+  Future<void> deleteAccount() async {
+     final String? token = await secureStorage.read(key: 'accessToken');
+    if (token == null) {
+      throw Exception('토큰이 없습니다');
+    }
+    final response = await http.delete(
+      Uri.parse('$baseUrl/users'),
+      headers: {
+        'Authorization': token,
+      },
+    );
 
+    if (response.statusCode != 204) {
+      throw Exception('Failed to delete account');
+    }
+  }
 
   
 }

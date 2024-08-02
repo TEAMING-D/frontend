@@ -1,4 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_secure_storage/flutter_secure_storage.dart';
+import 'package:teaming/login/login.dart';
+import 'package:teaming/popup_widget.dart';
+import 'package:teaming/service/api_service.dart';
 import 'package:teaming/textfield_widget.dart';
 
 class GoodbyePage extends StatefulWidget {
@@ -9,13 +13,68 @@ class GoodbyePage extends StatefulWidget {
 }
 
 class _GoodbyePageState extends State<GoodbyePage> {
-  final TextEditingController passwordController = TextEditingController();
+  final ApiService apiService = ApiService();
+  
+  Future<void> _deleteAccount() async {
+    try {
+      await apiService.deleteAccount();
+      const FlutterSecureStorage secureStorage = FlutterSecureStorage();
+      await secureStorage.delete(key: 'accessToken'); // 토큰 삭제
+      _showSuccessPopup('탈퇴에 성공했습니다.');
+    } catch (e) {
+      _showErrorPopup('탈퇴 처리에 실패했습니다.');
+    }
+  }
 
-  @override
-  void dispose() {
-    // 컨트롤러 해제
-    passwordController.dispose();
-    super.dispose();
+  void _showErrorPopup(String message) {
+    showDialog<void>(
+      context: context,
+      barrierDismissible: false, // 바깥 영역 터치해도 닫히지 않음
+      builder: (BuildContext context) {
+        return PopupWidget(
+          message: message,
+          onConfirm: () {
+            Navigator.of(context).pop();
+          },
+        );
+      },
+    );
+  }
+
+  void _showSuccessPopup(String message) {
+    showDialog<void>(
+      context: context,
+      barrierDismissible: false, // 바깥 영역 터치해도 닫히지 않음
+      builder: (BuildContext context) {
+        return PopupWidget(
+          message: message,
+          onConfirm: () {
+            Navigator.pushAndRemoveUntil(
+              context,
+              MaterialPageRoute(builder: (context) => LoginPage()),
+              (Route<dynamic> route) => false,
+            );
+          },
+        );
+      },
+    );
+  }
+
+  void _showChoicePopup(BuildContext context, String message) {
+    showDialog<void>(
+      context: context,
+      barrierDismissible: false, // 바깥 영역 터치해도 닫히지 않음
+      builder: (BuildContext context) {
+        return PopupChoiceWidget(
+          normalMessage: '정말 탈퇴하시겠습니까?',
+          boldMessage: message,
+          onConfirm: () {
+            Navigator.of(context).pop();
+            _deleteAccount();
+          },
+        );
+      },
+    );
   }
 
   @override
@@ -113,10 +172,10 @@ class _GoodbyePageState extends State<GoodbyePage> {
                           textAlign: TextAlign.center,
                         ),
                         SizedBox(
-                          height: 10,
+                          height: 30,
                         ),
                         Text(
-                          "계속하시려면 아래에 계정 비밀번호를\n다시 한 번 입력해 주세요",
+                          "계속하시려면 아래의 \n 탈퇴하기 버튼을 눌러주세요",
                           style: TextStyle(
                             fontFamily: "Inter",
                             fontWeight: FontWeight.w500,
@@ -128,26 +187,6 @@ class _GoodbyePageState extends State<GoodbyePage> {
                         SizedBox(
                           height: 40,
                         ),
-                        SizedBox(
-          height: 30,
-          child: TextField(obscureText: true,
-            controller: passwordController,
-            style: TextStyle(fontSize: 15, color: Colors.white),
-            textAlign: TextAlign.center,cursorColor: Colors.white,
-            decoration: InputDecoration(
-              hintText: "계정 비밀번호를 입력해주세요",
-              border: InputBorder.none,
-              contentPadding: EdgeInsets.symmetric(vertical: 5),
-              hintStyle: TextStyle(
-                  fontFamily: 'Inter',
-                  fontWeight: FontWeight.w400,
-                  fontSize: 15,
-                  color: Color(0xFFCDCDCD)), alignLabelWithHint: true,
-            ),
-          ),
-        ),
-        SizedBox(height: 3,),
-        SizedBox(width: 280, child: Divider(color: Colors.white, thickness: 1,)),
                       ],
                     ),
                   ),
@@ -163,9 +202,10 @@ class _GoodbyePageState extends State<GoodbyePage> {
         bottom: 53,
         child: ElevatedButton(
           onPressed: () {
-            // 계정 탈퇴 로직 추가
+            _showChoicePopup(context, '계정 및 전체 데이터 삭제');
           },
-          style: ElevatedButton.styleFrom(foregroundColor: Colors.grey,
+          style: ElevatedButton.styleFrom(
+            foregroundColor: Colors.grey,
             backgroundColor: Colors.white,
             minimumSize: Size(double.infinity, 50),
             shape: RoundedRectangleBorder(
