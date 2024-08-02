@@ -28,9 +28,10 @@ class _AddProjectPageState extends State<AddProjectPage> {
   String selectedProjectType = '수업';
   final GlobalKey _textFieldKey = GlobalKey();
 
- void _addTeamMember(Map<String, dynamic> member) {
+  void _addTeamMember(Map<String, dynamic> member) {
     // 중복 체크
-    if (teamMembers.any((existingMember) => existingMember['userId'] == member['userId'])) {
+    if (teamMembers.any(
+        (existingMember) => existingMember['userId'] == member['userId'])) {
       showErrorPopup(context, '이미 추가된 팀원입니다.');
       return;
     }
@@ -67,55 +68,55 @@ class _AddProjectPageState extends State<AddProjectPage> {
   }
 
   void showDropdownOverlay(List<Map<String, dynamic>> results) {
-     Future.delayed(Duration(milliseconds: 300), () {
-    final renderBox =
-        _textFieldKey.currentContext!.findRenderObject() as RenderBox;
-    final size = renderBox.size;
-    final offset = renderBox.localToGlobal(Offset.zero);
+    Future.delayed(Duration(milliseconds: 300), () {
+      final renderBox =
+          _textFieldKey.currentContext!.findRenderObject() as RenderBox;
+      final size = renderBox.size;
+      final offset = renderBox.localToGlobal(Offset.zero);
 
-    dropdownOverlayEntry = OverlayEntry(
-      builder: (context) => GestureDetector(
-        onTap: () {
-          removeDropdownOverlay();
-        },
-        child: Stack(
-          children: [
-            Positioned.fill(
-              child: Container(
-                color: Colors.transparent, // 터치 이벤트 감지용
-              ),
-            ),
-            Positioned(
-              left: offset.dx,
-              top: offset.dy + size.height + 5,
-              width: size.width,
-              child: Material(
-                elevation: 2.0,
+      dropdownOverlayEntry = OverlayEntry(
+        builder: (context) => GestureDetector(
+          onTap: () {
+            removeDropdownOverlay();
+          },
+          child: Stack(
+            children: [
+              Positioned.fill(
                 child: Container(
-                  color: Colors.white,
-                  child: ListView(
-                    padding: EdgeInsets.zero,
-                    shrinkWrap: true,
-                    children: results.map((result) {
-                      return ListTile(
-                        title: Text(
-                            '${result['username']} (${result['schoolName']}, ${result['schoolNum']})'),
-                        onTap: () {
-                          _addTeamMember(result);
-                        },
-                      );
-                    }).toList(),
+                  color: Colors.transparent, // 터치 이벤트 감지용
+                ),
+              ),
+              Positioned(
+                left: offset.dx,
+                top: offset.dy + size.height + 5,
+                width: size.width,
+                child: Material(
+                  elevation: 2.0,
+                  child: Container(
+                    color: Colors.white,
+                    child: ListView(
+                      padding: EdgeInsets.zero,
+                      shrinkWrap: true,
+                      children: results.map((result) {
+                        return ListTile(
+                          title: Text(
+                              '${result['username']} (${result['schoolName']}, ${result['schoolNum']})'),
+                          onTap: () {
+                            _addTeamMember(result);
+                          },
+                        );
+                      }).toList(),
+                    ),
                   ),
                 ),
               ),
-            ),
-          ],
+            ],
+          ),
         ),
-      ),
-    );
+      );
 
-    Overlay.of(context).insert(dropdownOverlayEntry!);
-     });
+      Overlay.of(context).insert(dropdownOverlayEntry!);
+    });
   }
 
   void removeDropdownOverlay() {
@@ -123,7 +124,7 @@ class _AddProjectPageState extends State<AddProjectPage> {
     dropdownOverlayEntry = null;
   }
 
-  void _createProject() {
+  Future<void> _createProject() async {
     if (projectNameController.text.isNotEmpty &&
         selectedProjectType.isNotEmpty &&
         endYearController.text.isNotEmpty &&
@@ -144,7 +145,7 @@ class _AddProjectPageState extends State<AddProjectPage> {
         return;
       }
 
-      showGeneralDialog(
+      /* showGeneralDialog(
         barrierLabel: "Popup",
         barrierDismissible: true,
         barrierColor: Colors.black.withOpacity(0.3),
@@ -168,7 +169,7 @@ class _AddProjectPageState extends State<AddProjectPage> {
                 await apiService.createWorkspace(newProject);
                 showSuccessPopup(context, '프로젝트가 성공적으로 생성되었습니다.',
                     onConfirm: () {
-                  Navigator.pop(context); // 현재 화면을 pop 합니다.
+                  Navigator.pop(context);
                 });
               } catch (e) {
                 showErrorPopup(context, '프로젝트 생성에 실패했습니다.');
@@ -184,8 +185,31 @@ class _AddProjectPageState extends State<AddProjectPage> {
           );
         },
       );
+    }  */
+      // 알림 API 미구현으로 일방적 유저 추가 및 화면 전환 진행
+      String formatToTwoDigits(int number) {
+        return number.toString().padLeft(2, '0');
+      }
+
+      try {
+        final newProject = {
+          'name': projectNameController.text,
+          'description': projectTypeController.text,
+          'type': selectedProjectType,
+          'deadline':
+              '${endYearController.text}-${formatToTwoDigits(int.parse(endMonthController.text))}-${formatToTwoDigits(int.parse(endDayController.text))}',
+          'members': teamMembers.map((member) => member['userId']).toList(),
+        };
+
+        await apiService.createWorkspace(newProject);
+        showSuccessPopup(context, '프로젝트가 성공적으로 생성되었습니다.', onConfirm: () {
+          Navigator.pop(context); 
+        });
+      } catch (e) {
+        showErrorPopup(context, '프로젝트 생성에 실패했습니다.');
+      }
     } else {
-      // 필수 입력 필드가 비어있을 경우 경고 메시지를 표시합니다.
+      // 필수 입력 필드가 비어있을 경우 경고 메시지 표시
       showGeneralDialog(
         barrierLabel: "Popup",
         barrierDismissible: true,
@@ -520,67 +544,68 @@ class _AddProjectPageState extends State<AddProjectPage> {
                       ),
                     ),
                     Wrap(
-  children: teamMembers.toSet().map((member) {
-    final text = '${member['username']} (${member['schoolName']}, ${member['schoolNum']})';
-    final textSpan = TextSpan(
-      text: text,
-      style: TextStyle(
-        fontFamily: 'Inter',
-        fontWeight: FontWeight.w400,
-        fontSize: 14,
-        color: Color(0xFF484848),
-      ),
-    );
-    final textPainter = TextPainter(
-      text: textSpan,
-      maxLines: 2,
-      textDirection: TextDirection.ltr,
-    );
-    textPainter.layout(maxWidth: 200);
+                      children: teamMembers.toSet().map((member) {
+                        final text =
+                            '${member['username']} (${member['schoolName']}, ${member['schoolNum']})';
+                        final textSpan = TextSpan(
+                          text: text,
+                          style: TextStyle(
+                            fontFamily: 'Inter',
+                            fontWeight: FontWeight.w400,
+                            fontSize: 14,
+                            color: Color(0xFF484848),
+                          ),
+                        );
+                        final textPainter = TextPainter(
+                          text: textSpan,
+                          maxLines: 2,
+                          textDirection: TextDirection.ltr,
+                        );
+                        textPainter.layout(maxWidth: 200);
 
-    final numLines = textPainter.computeLineMetrics().length;
-    final containerHeight = (numLines > 1) ? 55.0 : 40.0;
-    
-    return Container(
-      margin: EdgeInsets.only(top: 10),
-      padding: EdgeInsets.fromLTRB(15, 0, 0, 0),
-      height: containerHeight,
-      decoration: BoxDecoration(
-        color: Colors.white,
-        border: Border.all(color: Color(0xFFD1D1D1)),
-        borderRadius: BorderRadius.circular(10),
-      ),
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-        children: [
-          Expanded(
-            child: Text(
-              text,
-              style: TextStyle(
-                fontFamily: 'Inter',
-                fontWeight: FontWeight.w400,
-                fontSize: 14,
-                color: Color(0xFF484848),
-              ),
-              maxLines: 2,
-              overflow: TextOverflow.ellipsis,
-            ),
-          ),
-          IconButton(
-            icon: Icon(
-              Icons.close,
-              color: Color(0xFF484848),
-            ),
-            padding: EdgeInsets.zero,
-            constraints: BoxConstraints(),
-            onPressed: () => _removeTeamMember(member),
-          ),
-        ],
-      ),
-    );
-  }).toList(),
-)
-,
+                        final numLines =
+                            textPainter.computeLineMetrics().length;
+                        final containerHeight = (numLines > 1) ? 50.0 : 40.0;
+
+                        return Container(
+                          margin: EdgeInsets.only(top: 10),
+                          padding: EdgeInsets.fromLTRB(15, 0, 0, 0),
+                          height: containerHeight,
+                          decoration: BoxDecoration(
+                            color: Colors.white,
+                            border: Border.all(color: Color(0xFFD1D1D1)),
+                            borderRadius: BorderRadius.circular(10),
+                          ),
+                          child: Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            children: [
+                              Expanded(
+                                child: Text(
+                                  text,
+                                  style: TextStyle(
+                                    fontFamily: 'Inter',
+                                    fontWeight: FontWeight.w400,
+                                    fontSize: 14,
+                                    color: Color(0xFF484848),
+                                  ),
+                                  maxLines: 2,
+                                  overflow: TextOverflow.ellipsis,
+                                ),
+                              ),
+                              IconButton(
+                                icon: Icon(
+                                  Icons.close,
+                                  color: Color(0xFF484848),
+                                ),
+                                padding: EdgeInsets.zero,
+                                constraints: BoxConstraints(),
+                                onPressed: () => _removeTeamMember(member),
+                              ),
+                            ],
+                          ),
+                        );
+                      }).toList(),
+                    ),
                     SizedBox(height: 200),
                   ],
                 ),
